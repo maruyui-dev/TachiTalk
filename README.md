@@ -45,7 +45,7 @@
 
 面向普通用户，请下载 [Releases](https://github.com/maruyui-dev/TachiTalk/releases) 中的**完整 Windows 运行包**。GitHub 自动生成的 Source code 压缩包不含推理运行库和模型，不能当作完整运行包。
 
-1. 下载同一版本的全部分卷及 `合并完整包.cmd`，放在同一个文件夹。双击脚本生成 `TachiTalk.zip`。Release 附件受单文件大小限制，因此采用分卷分发。
+1. 下载同一版本的全部分卷及 `Merge-TachiTalk.cmd`（合并完整包脚本），放在同一个文件夹。双击脚本生成 `TachiTalk.zip`。Release 附件受单文件大小限制，因此采用分卷分发。
 2. 完整解压 ZIP，进入 `TachiTalk` 文件夹，双击 `TachiTalk.exe`。不要直接在压缩包中启动，也不要只复制 EXE。
 3. 在 **AI 服务**中填写自己的接口地址、API Key 和模型。使用语音输入时，再在 **语音与音频**中配置 ASR；只用文字对话无需 ASR Key。
 4. 首次启动需要加载本地语音模型并静默预热，观察运行日志确认就绪。随后可输入文字，或按录音开关使用语音输入。
