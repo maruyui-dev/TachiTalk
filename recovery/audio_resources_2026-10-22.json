@@ -1,0 +1,79 @@
+{
+  "purpose": "Audio manager integration smoke test; these are not before/after performance claims.",
+  "date": "2026-10-22",
+  "text": "今日はいい天気ですね。少し休みましょう。",
+  "reference_sha256": "b25fecf13450caa758f6653975ee391d3f5df63809e35bf59db15fab91e8df15",
+  "runtime": {
+    "device": "cuda",
+    "is_half": true,
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "reason": "",
+    "torch": "2.7.1+cu128",
+    "cuda": "12.8"
+  },
+  "smoke": {
+    "model_load_and_warmup_seconds": 44.052430800002185,
+    "results": [
+      {
+        "stage": "renamed",
+        "nickname": "温柔试读",
+        "path": "D:\\TachiTalk\\assets\\audio\\tts_reference\\mak006_070.ogg_0000000000_0000166400.wav",
+        "first_audio_seconds": 1.2241035999977612,
+        "complete_seconds": 1.7997146999987308,
+        "audio_seconds": 3.88,
+        "nonzero_pcm": true
+      },
+      {
+        "stage": "replaced",
+        "nickname": "温柔试读",
+        "path": "D:\\TachiTalk\\scratch\\audio_manager_tts\\audio_files\\5c906bc78a284abcab2c111bc12a5f94.wav",
+        "first_audio_seconds": 1.0164970999976504,
+        "complete_seconds": 1.4547860999955446,
+        "audio_seconds": 3.64,
+        "nonzero_pcm": true
+      }
+    ],
+    "owned_service_exited": true
+  },
+  "paid_llm_or_asr_called": false,
+  "microphone_enabled": false,
+  "physical_playback_measured": false,
+  "ui_dimensions": [
+    1200,
+    920
+  ],
+  "limitations": [
+    "Only 3-10 second PCM16 WAV references with Japanese transcripts.",
+    "Removed and replaced library copies are retained so active replies can finish.",
+    "LLM protocol was validated with local HTTP mocks; no paid model call was made."
+  ],
+  "verification": {
+    "full_suite": {
+      "command": ".venv/Scripts/python.exe -B -m unittest discover -s tests -v",
+      "platform": "Windows Qt",
+      "tests": 269,
+      "seconds": 258.45,
+      "result": "passed"
+    },
+    "post_review_audio_and_settings_tests": {
+      "tests": 29,
+      "seconds": 54.949,
+      "result": "passed"
+    },
+    "preview_and_runtime_checks": {
+      "tests": 14,
+      "seconds": 3.367,
+      "result": "passed"
+    },
+    "original_portrait_ui_qss_and_business_code_changed": false,
+    "stable_tag_commit": "8eb0d2b145ea065ba23f8035abb94ac0c9036956",
+    "portrait_test_note": "The original baseline also intermittently failed fixed 230ms waits before the 200ms Qt animation completed. Tests now wait for transition completion and retain exact expression/pixel assertions; product animation is unchanged."
+  },
+  "review": {
+    "correctness": "Checked rename/replace between streamed parts, next-turn changes, empty/disabled/missing references, failed atomic saves, preview cancellation and recovery.",
+    "readability": "Kept reference persistence and Qt actions in separate focused modules; Designer layout is a new UI resource.",
+    "architecture": "Traced desktop worker, LLM snapshot/schema/parser, turn-lock pipeline, TTS payload, playback lease and global configuration callers.",
+    "security": "Validated WAV size/duration/format, bounded import/configuration sizes, unique names and UUID resource IDs; rejected export path traversal and duplicate response keys.",
+    "performance": "Kept bounded streaming queues and existing sampling settings; deferred construction of audio widgets until first opening the tab."
+  }
+}
