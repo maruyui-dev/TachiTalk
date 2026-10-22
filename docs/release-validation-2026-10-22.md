@@ -26,6 +26,8 @@
 
 不能据此宣称所有 Windows 10/11 机器或所有 RTX 50 型号均已消除全部问题。
 
+GPU 环境另遵循 [CUDA 12.8 官方 Windows 支持表](https://docs.nvidia.com/cuda/archive/12.8.0/cuda-installation-guide-microsoft-windows/index.html)：Win10 22H2、Win11 22H2 / 23H2 / 24H2。安装程序的较低系统门槛不构成对旧版 Win10 CUDA 环境的验收。
+
 ## 完整包实测
 
 完整包解压到新的、包含中文和空格的目录后运行冻结 EXE；使用独立用户数据目录、精简 PATH 和空闲本地端口，没有启用麦克风或调用收费 LLM/ASR。
