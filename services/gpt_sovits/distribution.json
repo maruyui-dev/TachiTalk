@@ -1,0 +1,15 @@
+{
+  "source": "Local GPT-SoVITS v2ProPlus inference distribution",
+  "upstream": "https://github.com/RVC-Boss/GPT-SoVITS",
+  "selected_gpt": "GPT_weights_v2ProPlus/常陆茉子-e15.ckpt",
+  "selected_sovits": "SoVITS_weights_v2ProPlus/常陆茉子_e8_s736.pth",
+  "runtime_python": "3.9.13",
+  "runtime_torch": "2.7.1+cu128",
+  "runtime_torchaudio": "2.7.1+cu128",
+  "runtime_torchvision": "0.22.1+cu128",
+  "runtime_cuda": "12.8",
+  "runtime_onnxruntime": "1.19.2 (CPU; text preprocessing)",
+  "gpu_selection": "Actual FFT, complex abs, GEMM and cuDNN probe; CPU full precision on probe failure",
+  "compiled_gpu_architectures": ["sm_50", "sm_60", "sm_61", "sm_70", "sm_75", "sm_80", "sm_86", "sm_90", "sm_100", "sm_120"],
+  "excluded": "Training datasets, logs, output history, unused checkpoints, ASR/UVR utilities, caches"
+}
