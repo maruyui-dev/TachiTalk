@@ -1,0 +1,46 @@
+# 本机环境、IDE设置和Python缓存
+.venv/
+.idea/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# config.py 仅含非敏感默认配置，随源码版本管理；密钥由UI填写。
+# 本机私密文件不进入版本历史。
+.env
+.env.*
+*.pem
+*.key
+
+# 临时文件、联调产物和构建结果
+_qt_runtime_tmp/
+output/
+scratch/
+backups/
+ui_template_work/
+build/
+dist/
+*.egg-info/
+*.log
+.coverage
+htmlcov/
+
+# 随项目迁入的独立推理环境、模型和运行缓存；不要误提交数GB二进制。
+/services/gpt_sovits/runtime/
+/services/gpt_sovits/GPT_SoVITS/pretrained_models/
+/services/gpt_sovits/GPT_weights*/
+/services/gpt_sovits/SoVITS_weights*/
+/services/gpt_sovits/TEMP/
+/services/gpt_sovits/cache/
+
+# 公开源码快照不包含超大超分辨率权重和训练清单；完整运行包保留原文件。
+/services/gpt_sovits/tools/AP_BWE_main/24kto48k/g_24kto48k.zip
+/services/gpt_sovits/GPT_SoVITS/BigVGAN/filelists/
+
+# 用户导出的完整设置可能包含API Key。
+*.tachitalk.json
+
+# 立绘管理的本机目录/映射；保留磁盘上的用户设置，不进入公开源码。
+/resources/resource_library.json
