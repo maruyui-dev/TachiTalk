@@ -68,6 +68,8 @@
 
 请为解压后的完整推理环境预留约 **12 GB** 空间，并额外保留下载压缩包的空间。本轮实机 GPU 为 RTX 4060 Laptop；Windows 10 与 RTX 50 的实机结果不应由此推断。相关依据：[PyTorch 2.7 Blackwell 支持](https://pytorch.org/blog/pytorch-2-7/)、[Qt Windows 支持](https://doc.qt.io/qt-6.12/windows.html)。
 
+GPU 模式建议使用 **Windows 10 22H2**，或 NVIDIA 支持表列出的 Windows 11 版本；CUDA 12.8 的官方 Windows 表列有 Win10 22H2、Win11 22H2 / 23H2 / 24H2。程序的安装下限不代表较早的 Windows 10 版本已通过 CUDA 验收，详见 [NVIDIA 系统要求](https://docs.nvidia.com/cuda/archive/12.8.0/cuda-installation-guide-microsoft-windows/index.html)。
+
 ## 配置与数据
 
 - 运行包的配置、日志和导入资源位于 `%LOCALAPPDATA%\TachiTalk`；源码运行时位于项目的 `_qt_runtime_tmp`。
