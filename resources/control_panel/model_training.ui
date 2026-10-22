@@ -1,0 +1,1837 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+  <class>TrainingPage</class>
+  <widget class="QWidget" name="trainingPage">
+    <layout class="QVBoxLayout" name="trainingPageLayout">
+      <property name="leftMargin">
+        <number>0</number>
+      </property>
+      <property name="topMargin">
+        <number>0</number>
+      </property>
+      <property name="rightMargin">
+        <number>0</number>
+      </property>
+      <property name="bottomMargin">
+        <number>0</number>
+      </property>
+      <property name="spacing">
+        <number>12</number>
+      </property>
+      <item>
+        <widget class="QLabel" name="trainingNotice">
+          <property name="text">
+            <string>功能开发中 · 当前仅供界面预览，数据处理、训练与模型应用暂未开放。</string>
+          </property>
+          <property name="wordWrap">
+            <bool>true</bool>
+          </property>
+        </widget>
+      </item>
+      <item>
+        <widget class="QWidget" name="trainingSteps">
+          <layout class="QHBoxLayout" name="trainingStepsLayout">
+            <property name="leftMargin">
+              <number>0</number>
+            </property>
+            <property name="topMargin">
+              <number>0</number>
+            </property>
+            <property name="rightMargin">
+              <number>0</number>
+            </property>
+            <property name="bottomMargin">
+              <number>0</number>
+            </property>
+            <property name="spacing">
+              <number>8</number>
+            </property>
+            <item>
+              <widget class="QWidget" name="trainingStep1">
+                <layout class="QHBoxLayout" name="trainingStep1Layout" stretch="0,1">
+                  <property name="leftMargin">
+                    <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                    <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                    <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                    <number>0</number>
+                  </property>
+                  <property name="spacing">
+                    <number>8</number>
+                  </property>
+                  <item>
+                    <widget class="QLabel" name="trainingStepNumber1">
+                      <property name="text">
+                        <string>1</string>
+                      </property>
+                      <property name="trainingStepNumber" stdset="0">
+                        <bool>true</bool>
+                      </property>
+                      <property name="active" stdset="0">
+                        <bool>true</bool>
+                      </property>
+                      <property name="alignment">
+                        <set>Qt::AlignmentFlag::AlignCenter</set>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QLabel" name="trainingStepText1">
+                      <property name="text">
+                        <string>数据准备</string>
+                      </property>
+                      <property name="trainingStepTitle" stdset="0">
+                        <bool>true</bool>
+                      </property>
+                      <property name="active" stdset="0">
+                        <bool>true</bool>
+                      </property>
+                    </widget>
+                  </item>
+                </layout>
+              </widget>
+            </item>
+            <item>
+              <widget class="QLabel" name="trainingStepDivider1">
+                <property name="text">
+                  <string>›</string>
+                </property>
+                <property name="tone" stdset="0">
+                  <string>muted</string>
+                </property>
+              </widget>
+            </item>
+            <item>
+              <widget class="QWidget" name="trainingStep2">
+                <layout class="QHBoxLayout" name="trainingStep2Layout" stretch="0,1">
+                  <property name="leftMargin">
+                    <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                    <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                    <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                    <number>0</number>
+                  </property>
+                  <property name="spacing">
+                    <number>8</number>
+                  </property>
+                  <item>
+                    <widget class="QLabel" name="trainingStepNumber2">
+                      <property name="text">
+                        <string>2</string>
+                      </property>
+                      <property name="trainingStepNumber" stdset="0">
+                        <bool>true</bool>
+                      </property>
+                      <property name="active" stdset="0">
+                        <bool>false</bool>
+                      </property>
+                      <property name="alignment">
+                        <set>Qt::AlignmentFlag::AlignCenter</set>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QLabel" name="trainingStepText2">
+                      <property name="text">
+                        <string>标注校对</string>
+                      </property>
+                      <property name="trainingStepTitle" stdset="0">
+                        <bool>true</bool>
+                      </property>
+                      <property name="active" stdset="0">
+                        <bool>false</bool>
+                      </property>
+                    </widget>
+                  </item>
+                </layout>
+              </widget>
+            </item>
+            <item>
+              <widget class="QLabel" name="trainingStepDivider2">
+                <property name="text">
+                  <string>›</string>
+                </property>
+                <property name="tone" stdset="0">
+                  <string>muted</string>
+                </property>
+              </widget>
+            </item>
+            <item>
+              <widget class="QWidget" name="trainingStep3">
+                <layout class="QHBoxLayout" name="trainingStep3Layout" stretch="0,1">
+                  <property name="leftMargin">
+                    <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                    <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                    <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                    <number>0</number>
+                  </property>
+                  <property name="spacing">
+                    <number>8</number>
+                  </property>
+                  <item>
+                    <widget class="QLabel" name="trainingStepNumber3">
+                      <property name="text">
+                        <string>3</string>
+                      </property>
+                      <property name="trainingStepNumber" stdset="0">
+                        <bool>true</bool>
+                      </property>
+                      <property name="active" stdset="0">
+                        <bool>false</bool>
+                      </property>
+                      <property name="alignment">
+                        <set>Qt::AlignmentFlag::AlignCenter</set>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QLabel" name="trainingStepText3">
+                      <property name="text">
+                        <string>模型训练</string>
+                      </property>
+                      <property name="trainingStepTitle" stdset="0">
+                        <bool>true</bool>
+                      </property>
+                      <property name="active" stdset="0">
+                        <bool>false</bool>
+                      </property>
+                    </widget>
+                  </item>
+                </layout>
+              </widget>
+            </item>
+            <item>
+              <widget class="QLabel" name="trainingStepDivider3">
+                <property name="text">
+                  <string>›</string>
+                </property>
+                <property name="tone" stdset="0">
+                  <string>muted</string>
+                </property>
+              </widget>
+            </item>
+            <item>
+              <widget class="QWidget" name="trainingStep4">
+                <layout class="QHBoxLayout" name="trainingStep4Layout" stretch="0,1">
+                  <property name="leftMargin">
+                    <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                    <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                    <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                    <number>0</number>
+                  </property>
+                  <property name="spacing">
+                    <number>8</number>
+                  </property>
+                  <item>
+                    <widget class="QLabel" name="trainingStepNumber4">
+                      <property name="text">
+                        <string>4</string>
+                      </property>
+                      <property name="trainingStepNumber" stdset="0">
+                        <bool>true</bool>
+                      </property>
+                      <property name="active" stdset="0">
+                        <bool>false</bool>
+                      </property>
+                      <property name="alignment">
+                        <set>Qt::AlignmentFlag::AlignCenter</set>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QLabel" name="trainingStepText4">
+                      <property name="text">
+                        <string>试听应用</string>
+                      </property>
+                      <property name="trainingStepTitle" stdset="0">
+                        <bool>true</bool>
+                      </property>
+                      <property name="active" stdset="0">
+                        <bool>false</bool>
+                      </property>
+                    </widget>
+                  </item>
+                </layout>
+              </widget>
+            </item>
+          </layout>
+        </widget>
+      </item>
+      <item>
+        <widget class="QScrollArea" name="trainingScroll">
+          <property name="widgetResizable">
+            <bool>true</bool>
+          </property>
+          <property name="frameShape">
+            <enum>QFrame::Shape::NoFrame</enum>
+          </property>
+          <property name="pageScroll" stdset="0">
+            <bool>true</bool>
+          </property>
+          <widget class="QWidget" name="trainingContent">
+            <property name="pageContent" stdset="0">
+              <bool>true</bool>
+            </property>
+            <layout class="QHBoxLayout" name="trainingContentLayout" stretch="11,10">
+              <property name="leftMargin">
+                <number>0</number>
+              </property>
+              <property name="topMargin">
+                <number>0</number>
+              </property>
+              <property name="rightMargin">
+                <number>0</number>
+              </property>
+              <property name="bottomMargin">
+                <number>0</number>
+              </property>
+              <property name="spacing">
+                <number>16</number>
+              </property>
+              <item>
+                <widget class="QWidget" name="trainingLeftColumn">
+                  <layout class="QVBoxLayout" name="trainingLeftColumnLayout">
+                    <property name="leftMargin">
+                      <number>0</number>
+                    </property>
+                    <property name="topMargin">
+                      <number>0</number>
+                    </property>
+                    <property name="rightMargin">
+                      <number>0</number>
+                    </property>
+                    <property name="bottomMargin">
+                      <number>0</number>
+                    </property>
+                    <property name="spacing">
+                      <number>14</number>
+                    </property>
+                    <item>
+                      <widget class="QFrame" name="trainingProjectCard">
+                        <property name="uiCard" stdset="0">
+                          <bool>true</bool>
+                        </property>
+                        <layout class="QVBoxLayout" name="trainingProjectCardLayout">
+                          <property name="leftMargin">
+                            <number>0</number>
+                          </property>
+                          <property name="topMargin">
+                            <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                            <number>0</number>
+                          </property>
+                          <property name="bottomMargin">
+                            <number>0</number>
+                          </property>
+                          <property name="spacing">
+                            <number>0</number>
+                          </property>
+                          <item>
+                            <widget class="QWidget" name="trainingProjectCardHeading">
+                              <property name="cardHeading" stdset="0">
+                                <bool>true</bool>
+                              </property>
+                              <layout class="QHBoxLayout" name="trainingProjectCardHeadingLayout" stretch="0,1">
+                                <property name="leftMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="topMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="rightMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="bottomMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="spacing">
+                                  <number>9</number>
+                                </property>
+                                <item>
+                                  <widget class="QLabel" name="trainingProjectCardIcon">
+                                    <property name="text">
+                                      <string />
+                                    </property>
+                                    <property name="iconName" stdset="0">
+                                      <string>folder</string>
+                                    </property>
+                                    <property name="maximumSize">
+                                      <size>
+                                        <width>21</width>
+                                        <height>21</height>
+                                      </size>
+                                    </property>
+                                  </widget>
+                                </item>
+                                <item>
+                                  <widget class="QLabel" name="trainingProjectCardTitle">
+                                    <property name="text">
+                                      <string>训练工程</string>
+                                    </property>
+                                    <property name="cardTitle" stdset="0">
+                                      <bool>true</bool>
+                                    </property>
+                                  </widget>
+                                </item>
+                              </layout>
+                            </widget>
+                          </item>
+                          <item>
+                            <widget class="QWidget" name="trainingProjectCardBody">
+                              <layout class="QVBoxLayout" name="trainingProjectCardBodyLayout">
+                                <property name="leftMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="topMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="rightMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="bottomMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="spacing">
+                                  <number>12</number>
+                                </property>
+                                <item>
+                                  <widget class="QWidget" name="trainingProjectForm">
+                                    <layout class="QGridLayout" name="trainingProjectFormLayout">
+                                      <property name="leftMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="topMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="rightMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="bottomMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="spacing">
+                                        <number>10</number>
+                                      </property>
+                                      <item row="0" column="0">
+                                        <widget class="QLabel" name="trainingProjectNameCaption">
+                                          <property name="text">
+                                            <string>工程名称</string>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                      <item row="0" column="1">
+                                        <widget class="QWidget" name="trainingProjectNameField">
+                                          <layout class="QHBoxLayout" name="trainingProjectNameFieldLayout">
+                                            <property name="leftMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="topMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="rightMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="bottomMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="spacing">
+                                              <number>8</number>
+                                            </property>
+                                            <item>
+                                              <widget class="QLineEdit" name="trainingProjectNameEdit">
+                                                <property name="text">
+                                                  <string>茉子_新声音</string>
+                                                </property>
+                                                <property name="enabled">
+                                                  <bool>false</bool>
+                                                </property>
+                                              </widget>
+                                            </item>
+                                          </layout>
+                                        </widget>
+                                      </item>
+                                      <item row="1" column="0">
+                                        <widget class="QLabel" name="trainingVersionCaption">
+                                          <property name="text">
+                                            <string>模型版本</string>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                      <item row="1" column="1">
+                                        <widget class="QWidget" name="trainingVersionField">
+                                          <layout class="QHBoxLayout" name="trainingVersionFieldLayout">
+                                            <property name="leftMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="topMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="rightMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="bottomMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="spacing">
+                                              <number>8</number>
+                                            </property>
+                                            <item>
+                                              <widget class="QComboBox" name="trainingVersionCombo">
+                                                <property name="enabled">
+                                                  <bool>false</bool>
+                                                </property>
+                                                <item>
+                                                  <property name="text">
+                                                    <string>GPT-SoVITS v2ProPlus</string>
+                                                  </property>
+                                                </item>
+                                              </widget>
+                                            </item>
+                                          </layout>
+                                        </widget>
+                                      </item>
+                                      <item row="2" column="0">
+                                        <widget class="QLabel" name="trainingLanguageCaption">
+                                          <property name="text">
+                                            <string>训练语言</string>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                      <item row="2" column="1">
+                                        <widget class="QWidget" name="trainingLanguageField">
+                                          <layout class="QHBoxLayout" name="trainingLanguageFieldLayout">
+                                            <property name="leftMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="topMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="rightMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="bottomMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="spacing">
+                                              <number>8</number>
+                                            </property>
+                                            <item>
+                                              <widget class="QComboBox" name="trainingLanguageCombo">
+                                                <property name="enabled">
+                                                  <bool>false</bool>
+                                                </property>
+                                                <item>
+                                                  <property name="text">
+                                                    <string>日语</string>
+                                                  </property>
+                                                </item>
+                                                <item>
+                                                  <property name="text">
+                                                    <string>简体中文</string>
+                                                  </property>
+                                                </item>
+                                                <item>
+                                                  <property name="text">
+                                                    <string>英文</string>
+                                                  </property>
+                                                </item>
+                                              </widget>
+                                            </item>
+                                          </layout>
+                                        </widget>
+                                      </item>
+                                      <item row="3" column="0">
+                                        <widget class="QLabel" name="trainingAudioDirectoryCaption">
+                                          <property name="text">
+                                            <string>音频目录</string>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                      <item row="3" column="1">
+                                        <widget class="QWidget" name="trainingAudioDirectoryField">
+                                          <layout class="QHBoxLayout" name="trainingAudioDirectoryFieldLayout">
+                                            <property name="leftMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="topMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="rightMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="bottomMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="spacing">
+                                              <number>8</number>
+                                            </property>
+                                            <item>
+                                              <widget class="QLineEdit" name="trainingAudioDirectoryEdit">
+                                                <property name="placeholderText">
+                                                  <string>选择训练音频文件夹</string>
+                                                </property>
+                                                <property name="enabled">
+                                                  <bool>false</bool>
+                                                </property>
+                                              </widget>
+                                            </item>
+                                            <item>
+                                              <widget class="QPushButton" name="trainingBrowseButton">
+                                                <property name="text">
+                                                  <string>浏览</string>
+                                                </property>
+                                                <property name="enabled">
+                                                  <bool>false</bool>
+                                                </property>
+                                                <property name="toolTip">
+                                                  <string>功能正在开发中，当前仅展示界面</string>
+                                                </property>
+                                                <property name="accent" stdset="0">
+                                                  <string>blue</string>
+                                                </property>
+                                              </widget>
+                                            </item>
+                                          </layout>
+                                        </widget>
+                                      </item>
+                                    </layout>
+                                  </widget>
+                                </item>
+                                <item>
+                                  <widget class="QFrame" name="trainingDropZone">
+                                    <layout class="QVBoxLayout" name="trainingDropZoneLayout">
+                                      <property name="leftMargin">
+                                        <number>18</number>
+                                      </property>
+                                      <property name="topMargin">
+                                        <number>18</number>
+                                      </property>
+                                      <property name="rightMargin">
+                                        <number>18</number>
+                                      </property>
+                                      <property name="bottomMargin">
+                                        <number>18</number>
+                                      </property>
+                                      <property name="spacing">
+                                        <number>7</number>
+                                      </property>
+                                      <item>
+                                        <widget class="QLabel" name="trainingUploadIcon">
+                                          <property name="text">
+                                            <string />
+                                          </property>
+                                          <property name="iconName" stdset="0">
+                                            <string>upload</string>
+                                          </property>
+                                          <property name="alignment">
+                                            <set>Qt::AlignmentFlag::AlignCenter</set>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                      <item>
+                                        <widget class="QLabel" name="trainingDropHint">
+                                          <property name="text">
+                                            <string>拖入音频文件，或点击导入</string>
+                                          </property>
+                                          <property name="alignment">
+                                            <set>Qt::AlignmentFlag::AlignCenter</set>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                      <item>
+                                        <widget class="QLabel" name="trainingDropFormats">
+                                          <property name="text">
+                                            <string>WAV / MP3 / FLAC</string>
+                                          </property>
+                                          <property name="tone" stdset="0">
+                                            <string>muted</string>
+                                          </property>
+                                          <property name="alignment">
+                                            <set>Qt::AlignmentFlag::AlignCenter</set>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                    </layout>
+                                  </widget>
+                                </item>
+                                <item>
+                                  <widget class="QWidget" name="trainingImportActions">
+                                    <layout class="QHBoxLayout" name="trainingImportActionsLayout">
+                                      <property name="leftMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="topMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="rightMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="bottomMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="spacing">
+                                        <number>8</number>
+                                      </property>
+                                      <item>
+                                        <widget class="QPushButton" name="trainingImportButton">
+                                          <property name="text">
+                                            <string>导入音频</string>
+                                          </property>
+                                          <property name="enabled">
+                                            <bool>false</bool>
+                                          </property>
+                                          <property name="toolTip">
+                                            <string>功能正在开发中，当前仅展示界面</string>
+                                          </property>
+                                          <property name="accent" stdset="0">
+                                            <string>pink</string>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                      <item>
+                                        <widget class="QPushButton" name="trainingPrepareButton">
+                                          <property name="text">
+                                            <string>切分与自动标注</string>
+                                          </property>
+                                          <property name="enabled">
+                                            <bool>false</bool>
+                                          </property>
+                                          <property name="toolTip">
+                                            <string>功能正在开发中，当前仅展示界面</string>
+                                          </property>
+                                          <property name="accent" stdset="0">
+                                            <string>blue</string>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                    </layout>
+                                  </widget>
+                                </item>
+                                <item>
+                                  <widget class="QPushButton" name="trainingReviewButton">
+                                    <property name="text">
+                                      <string>校对标注文本</string>
+                                    </property>
+                                    <property name="enabled">
+                                      <bool>false</bool>
+                                    </property>
+                                    <property name="toolTip">
+                                      <string>功能正在开发中，当前仅展示界面</string>
+                                    </property>
+                                  </widget>
+                                </item>
+                              </layout>
+                            </widget>
+                          </item>
+                        </layout>
+                      </widget>
+                    </item>
+                    <item>
+                      <widget class="QFrame" name="trainingParametersCard">
+                        <property name="uiCard" stdset="0">
+                          <bool>true</bool>
+                        </property>
+                        <layout class="QVBoxLayout" name="trainingParametersCardLayout">
+                          <property name="leftMargin">
+                            <number>0</number>
+                          </property>
+                          <property name="topMargin">
+                            <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                            <number>0</number>
+                          </property>
+                          <property name="bottomMargin">
+                            <number>0</number>
+                          </property>
+                          <property name="spacing">
+                            <number>0</number>
+                          </property>
+                          <item>
+                            <widget class="QWidget" name="trainingParametersCardHeading">
+                              <property name="cardHeading" stdset="0">
+                                <bool>true</bool>
+                              </property>
+                              <layout class="QHBoxLayout" name="trainingParametersCardHeadingLayout" stretch="0,1">
+                                <property name="leftMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="topMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="rightMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="bottomMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="spacing">
+                                  <number>9</number>
+                                </property>
+                                <item>
+                                  <widget class="QLabel" name="trainingParametersCardIcon">
+                                    <property name="text">
+                                      <string />
+                                    </property>
+                                    <property name="iconName" stdset="0">
+                                      <string>settings</string>
+                                    </property>
+                                    <property name="maximumSize">
+                                      <size>
+                                        <width>21</width>
+                                        <height>21</height>
+                                      </size>
+                                    </property>
+                                  </widget>
+                                </item>
+                                <item>
+                                  <widget class="QLabel" name="trainingParametersCardTitle">
+                                    <property name="text">
+                                      <string>训练参数</string>
+                                    </property>
+                                    <property name="cardTitle" stdset="0">
+                                      <bool>true</bool>
+                                    </property>
+                                  </widget>
+                                </item>
+                              </layout>
+                            </widget>
+                          </item>
+                          <item>
+                            <widget class="QWidget" name="trainingParametersCardBody">
+                              <layout class="QVBoxLayout" name="trainingParametersCardBodyLayout">
+                                <property name="leftMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="topMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="rightMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="bottomMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="spacing">
+                                  <number>12</number>
+                                </property>
+                                <item>
+                                  <widget class="QCheckBox" name="trainingRecommendedCheck">
+                                    <property name="text">
+                                      <string>使用推荐参数</string>
+                                    </property>
+                                    <property name="checked">
+                                      <bool>true</bool>
+                                    </property>
+                                    <property name="enabled">
+                                      <bool>false</bool>
+                                    </property>
+                                  </widget>
+                                </item>
+                                <item>
+                                  <widget class="QWidget" name="trainingParameterFields">
+                                    <layout class="QGridLayout" name="trainingParameterFieldsLayout">
+                                      <property name="leftMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="topMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="rightMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="bottomMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="spacing">
+                                        <number>10</number>
+                                      </property>
+                                      <item row="0" column="0">
+                                        <widget class="QLabel" name="trainingSoVITSEpochsCaption">
+                                          <property name="text">
+                                            <string>SoVITS 轮数</string>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                      <item row="0" column="1">
+                                        <widget class="QSpinBox" name="trainingSoVITSEpochsSpin">
+                                          <property name="minimum">
+                                            <number>1</number>
+                                          </property>
+                                          <property name="maximum">
+                                            <number>1000</number>
+                                          </property>
+                                          <property name="value">
+                                            <number>8</number>
+                                          </property>
+                                          <property name="enabled">
+                                            <bool>false</bool>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                      <item row="0" column="2">
+                                        <widget class="QLabel" name="trainingGPTEpochsCaption">
+                                          <property name="text">
+                                            <string>GPT 轮数</string>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                      <item row="0" column="3">
+                                        <widget class="QSpinBox" name="trainingGPTEpochsSpin">
+                                          <property name="minimum">
+                                            <number>1</number>
+                                          </property>
+                                          <property name="maximum">
+                                            <number>1000</number>
+                                          </property>
+                                          <property name="value">
+                                            <number>15</number>
+                                          </property>
+                                          <property name="enabled">
+                                            <bool>false</bool>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                      <item row="1" column="0">
+                                        <widget class="QLabel" name="trainingBatchCaption">
+                                          <property name="text">
+                                            <string>批次大小</string>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                      <item row="1" column="1">
+                                        <widget class="QWidget" name="trainingBatchHolder">
+                                          <layout class="QHBoxLayout" name="trainingBatchHolderLayout">
+                                            <property name="leftMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="topMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="rightMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="bottomMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="spacing">
+                                              <number>10</number>
+                                            </property>
+                                            <item>
+                                              <widget class="QComboBox" name="trainingBatchCombo">
+                                                <property name="enabled">
+                                                  <bool>false</bool>
+                                                </property>
+                                                <item>
+                                                  <property name="text">
+                                                    <string>自动</string>
+                                                  </property>
+                                                </item>
+                                              </widget>
+                                            </item>
+                                          </layout>
+                                        </widget>
+                                      </item>
+                                      <item row="1" column="2">
+                                        <widget class="QLabel" name="trainingDeviceCaption">
+                                          <property name="text">
+                                            <string>训练设备</string>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                      <item row="1" column="3">
+                                        <widget class="QWidget" name="trainingDeviceHolder">
+                                          <layout class="QHBoxLayout" name="trainingDeviceHolderLayout">
+                                            <property name="leftMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="topMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="rightMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="bottomMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="spacing">
+                                              <number>10</number>
+                                            </property>
+                                            <item>
+                                              <widget class="QComboBox" name="trainingDeviceCombo">
+                                                <property name="enabled">
+                                                  <bool>false</bool>
+                                                </property>
+                                                <item>
+                                                  <property name="text">
+                                                    <string>自动选择 GPU</string>
+                                                  </property>
+                                                </item>
+                                              </widget>
+                                            </item>
+                                          </layout>
+                                        </widget>
+                                      </item>
+                                    </layout>
+                                  </widget>
+                                </item>
+                                <item>
+                                  <widget class="QLabel" name="trainingAdvancedHint">
+                                    <property name="text">
+                  <string>高级参数（开发中）</string>
+                                    </property>
+                                    <property name="tone" stdset="0">
+                                      <string>muted</string>
+                                    </property>
+                                  </widget>
+                                </item>
+                                <item>
+                                  <widget class="QLabel" name="trainingParameterHint">
+                                    <property name="text">
+                                      <string>参数仅作界面示例，当前不会运行训练。</string>
+                                    </property>
+                                    <property name="tone" stdset="0">
+                                      <string>muted</string>
+                                    </property>
+                                    <property name="wordWrap">
+                                      <bool>true</bool>
+                                    </property>
+                                  </widget>
+                                </item>
+                              </layout>
+                            </widget>
+                          </item>
+                        </layout>
+                      </widget>
+                    </item>
+                    <item>
+                      <spacer name="trainingLeftSpacer">
+                        <property name="orientation">
+                          <enum>Qt::Orientation::Vertical</enum>
+                        </property>
+                        <property name="sizeHint">
+                          <size>
+                            <width>0</width>
+                            <height>0</height>
+                          </size>
+                        </property>
+                      </spacer>
+                    </item>
+                  </layout>
+                </widget>
+              </item>
+              <item>
+                <widget class="QWidget" name="trainingRightColumn">
+                  <layout class="QVBoxLayout" name="trainingRightColumnLayout">
+                    <property name="leftMargin">
+                      <number>0</number>
+                    </property>
+                    <property name="topMargin">
+                      <number>0</number>
+                    </property>
+                    <property name="rightMargin">
+                      <number>0</number>
+                    </property>
+                    <property name="bottomMargin">
+                      <number>0</number>
+                    </property>
+                    <property name="spacing">
+                      <number>14</number>
+                    </property>
+                    <item>
+                      <widget class="QFrame" name="trainingTaskCard">
+                        <property name="uiCard" stdset="0">
+                          <bool>true</bool>
+                        </property>
+                        <layout class="QVBoxLayout" name="trainingTaskCardLayout">
+                          <property name="leftMargin">
+                            <number>0</number>
+                          </property>
+                          <property name="topMargin">
+                            <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                            <number>0</number>
+                          </property>
+                          <property name="bottomMargin">
+                            <number>0</number>
+                          </property>
+                          <property name="spacing">
+                            <number>0</number>
+                          </property>
+                          <item>
+                            <widget class="QWidget" name="trainingTaskCardHeading">
+                              <property name="cardHeading" stdset="0">
+                                <bool>true</bool>
+                              </property>
+                              <layout class="QHBoxLayout" name="trainingTaskCardHeadingLayout" stretch="0,1">
+                                <property name="leftMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="topMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="rightMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="bottomMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="spacing">
+                                  <number>9</number>
+                                </property>
+                                <item>
+                                  <widget class="QLabel" name="trainingTaskCardIcon">
+                                    <property name="text">
+                                      <string />
+                                    </property>
+                                    <property name="iconName" stdset="0">
+                                      <string>training</string>
+                                    </property>
+                                    <property name="maximumSize">
+                                      <size>
+                                        <width>21</width>
+                                        <height>21</height>
+                                      </size>
+                                    </property>
+                                  </widget>
+                                </item>
+                                <item>
+                                  <widget class="QLabel" name="trainingTaskCardTitle">
+                                    <property name="text">
+                                      <string>训练任务</string>
+                                    </property>
+                                    <property name="cardTitle" stdset="0">
+                                      <bool>true</bool>
+                                    </property>
+                                  </widget>
+                                </item>
+                              </layout>
+                            </widget>
+                          </item>
+                          <item>
+                            <widget class="QWidget" name="trainingTaskCardBody">
+                              <layout class="QVBoxLayout" name="trainingTaskCardBodyLayout">
+                                <property name="leftMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="topMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="rightMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="bottomMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="spacing">
+                                  <number>12</number>
+                                </property>
+                                <item>
+                                  <widget class="QLabel" name="trainingTaskState">
+                                    <property name="text">
+                                      <string>未开始</string>
+                                    </property>
+                                  </widget>
+                                </item>
+                                <item>
+                                  <widget class="QLabel" name="trainingEmptyTitle">
+                                    <property name="text">
+                                      <string>准备训练数据</string>
+                                    </property>
+                                    <property name="alignment">
+                                      <set>Qt::AlignmentFlag::AlignCenter</set>
+                                    </property>
+                                  </widget>
+                                </item>
+                                <item>
+                                  <widget class="QLabel" name="trainingEmptyHint">
+                                    <property name="text">
+                                      <string>完成音频导入与标注校对后即可开始</string>
+                                    </property>
+                                    <property name="tone" stdset="0">
+                                      <string>muted</string>
+                                    </property>
+                                    <property name="wordWrap">
+                                      <bool>true</bool>
+                                    </property>
+                                    <property name="alignment">
+                                      <set>Qt::AlignmentFlag::AlignCenter</set>
+                                    </property>
+                                  </widget>
+                                </item>
+                                <item>
+                                  <widget class="QWidget" name="trainingProgressRow">
+                                    <layout class="QHBoxLayout" name="trainingProgressRowLayout" stretch="1,0">
+                                      <property name="leftMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="topMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="rightMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="bottomMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="spacing">
+                                        <number>10</number>
+                                      </property>
+                                      <item>
+                                        <widget class="QLabel" name="trainingProgressCaption">
+                                          <property name="text">
+                                            <string>总体进度</string>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                      <item>
+                                        <widget class="QLabel" name="trainingProgressValue">
+                                          <property name="text">
+                                            <string>0%</string>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                    </layout>
+                                  </widget>
+                                </item>
+                                <item>
+                                  <widget class="QProgressBar" name="trainingProgress">
+                                    <property name="value">
+                                      <number>0</number>
+                                    </property>
+                                    <property name="textVisible">
+                                      <bool>false</bool>
+                                    </property>
+                                  </widget>
+                                </item>
+                                <item>
+                                  <widget class="QWidget" name="trainingTaskStage1">
+                                    <layout class="QHBoxLayout" name="trainingTaskStage1Layout" stretch="0,1,0">
+                                      <property name="leftMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="topMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="rightMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="bottomMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="spacing">
+                                        <number>9</number>
+                                      </property>
+                                      <item>
+                                        <widget class="QLabel" name="trainingTaskMark1">
+                                          <property name="text">
+                                            <string>○</string>
+                                          </property>
+                                          <property name="tone" stdset="0">
+                                            <string>muted</string>
+                                          </property>
+                                          <property name="trainingTaskMark" stdset="0">
+                                            <bool>true</bool>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                      <item>
+                                        <widget class="QLabel" name="trainingTaskTitle1">
+                                          <property name="text">
+                                            <string>数据准备</string>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                      <item>
+                                        <widget class="QLabel" name="trainingTaskStatus1">
+                                          <property name="text">
+                                            <string>等待</string>
+                                          </property>
+                                          <property name="tone" stdset="0">
+                                            <string>muted</string>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                    </layout>
+                                  </widget>
+                                </item>
+                                <item>
+                                  <widget class="QWidget" name="trainingTaskStage2">
+                                    <layout class="QHBoxLayout" name="trainingTaskStage2Layout" stretch="0,1,0">
+                                      <property name="leftMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="topMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="rightMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="bottomMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="spacing">
+                                        <number>9</number>
+                                      </property>
+                                      <item>
+                                        <widget class="QLabel" name="trainingTaskMark2">
+                                          <property name="text">
+                                            <string>○</string>
+                                          </property>
+                                          <property name="tone" stdset="0">
+                                            <string>muted</string>
+                                          </property>
+                                          <property name="trainingTaskMark" stdset="0">
+                                            <bool>true</bool>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                      <item>
+                                        <widget class="QLabel" name="trainingTaskTitle2">
+                                          <property name="text">
+                                            <string>标注与特征提取</string>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                      <item>
+                                        <widget class="QLabel" name="trainingTaskStatus2">
+                                          <property name="text">
+                                            <string>等待</string>
+                                          </property>
+                                          <property name="tone" stdset="0">
+                                            <string>muted</string>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                    </layout>
+                                  </widget>
+                                </item>
+                                <item>
+                                  <widget class="QWidget" name="trainingTaskStage3">
+                                    <layout class="QHBoxLayout" name="trainingTaskStage3Layout" stretch="0,1,0">
+                                      <property name="leftMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="topMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="rightMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="bottomMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="spacing">
+                                        <number>9</number>
+                                      </property>
+                                      <item>
+                                        <widget class="QLabel" name="trainingTaskMark3">
+                                          <property name="text">
+                                            <string>○</string>
+                                          </property>
+                                          <property name="tone" stdset="0">
+                                            <string>muted</string>
+                                          </property>
+                                          <property name="trainingTaskMark" stdset="0">
+                                            <bool>true</bool>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                      <item>
+                                        <widget class="QLabel" name="trainingTaskTitle3">
+                                          <property name="text">
+                                            <string>SoVITS / GPT 训练</string>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                      <item>
+                                        <widget class="QLabel" name="trainingTaskStatus3">
+                                          <property name="text">
+                                            <string>等待</string>
+                                          </property>
+                                          <property name="tone" stdset="0">
+                                            <string>muted</string>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                    </layout>
+                                  </widget>
+                                </item>
+                                <item>
+                                  <widget class="QWidget" name="trainingTaskStage4">
+                                    <layout class="QHBoxLayout" name="trainingTaskStage4Layout" stretch="0,1,0">
+                                      <property name="leftMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="topMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="rightMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="bottomMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="spacing">
+                                        <number>9</number>
+                                      </property>
+                                      <item>
+                                        <widget class="QLabel" name="trainingTaskMark4">
+                                          <property name="text">
+                                            <string>○</string>
+                                          </property>
+                                          <property name="tone" stdset="0">
+                                            <string>muted</string>
+                                          </property>
+                                          <property name="trainingTaskMark" stdset="0">
+                                            <bool>true</bool>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                      <item>
+                                        <widget class="QLabel" name="trainingTaskTitle4">
+                                          <property name="text">
+                                            <string>模型保存</string>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                      <item>
+                                        <widget class="QLabel" name="trainingTaskStatus4">
+                                          <property name="text">
+                                            <string>等待</string>
+                                          </property>
+                                          <property name="tone" stdset="0">
+                                            <string>muted</string>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                    </layout>
+                                  </widget>
+                                </item>
+                                <item>
+                                  <widget class="QLabel" name="trainingLogHint">
+                                    <property name="text">
+                                      <string>训练日志接入后将在右侧日志栏同步显示。</string>
+                                    </property>
+                                    <property name="tone" stdset="0">
+                                      <string>muted</string>
+                                    </property>
+                                    <property name="wordWrap">
+                                      <bool>true</bool>
+                                    </property>
+                                  </widget>
+                                </item>
+                              </layout>
+                            </widget>
+                          </item>
+                        </layout>
+                      </widget>
+                    </item>
+                    <item>
+                      <widget class="QFrame" name="trainingOutputCard">
+                        <property name="uiCard" stdset="0">
+                          <bool>true</bool>
+                        </property>
+                        <layout class="QVBoxLayout" name="trainingOutputCardLayout">
+                          <property name="leftMargin">
+                            <number>0</number>
+                          </property>
+                          <property name="topMargin">
+                            <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                            <number>0</number>
+                          </property>
+                          <property name="bottomMargin">
+                            <number>0</number>
+                          </property>
+                          <property name="spacing">
+                            <number>0</number>
+                          </property>
+                          <item>
+                            <widget class="QWidget" name="trainingOutputCardHeading">
+                              <property name="cardHeading" stdset="0">
+                                <bool>true</bool>
+                              </property>
+                              <layout class="QHBoxLayout" name="trainingOutputCardHeadingLayout" stretch="0,1">
+                                <property name="leftMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="topMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="rightMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="bottomMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="spacing">
+                                  <number>9</number>
+                                </property>
+                                <item>
+                                  <widget class="QLabel" name="trainingOutputCardIcon">
+                                    <property name="text">
+                                      <string />
+                                    </property>
+                                    <property name="iconName" stdset="0">
+                                      <string>headphones</string>
+                                    </property>
+                                    <property name="maximumSize">
+                                      <size>
+                                        <width>21</width>
+                                        <height>21</height>
+                                      </size>
+                                    </property>
+                                  </widget>
+                                </item>
+                                <item>
+                                  <widget class="QLabel" name="trainingOutputCardTitle">
+                                    <property name="text">
+                                      <string>试听与应用</string>
+                                    </property>
+                                    <property name="cardTitle" stdset="0">
+                                      <bool>true</bool>
+                                    </property>
+                                  </widget>
+                                </item>
+                              </layout>
+                            </widget>
+                          </item>
+                          <item>
+                            <widget class="QWidget" name="trainingOutputCardBody">
+                              <layout class="QVBoxLayout" name="trainingOutputCardBodyLayout">
+                                <property name="leftMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="topMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="rightMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="bottomMargin">
+                                  <number>14</number>
+                                </property>
+                                <property name="spacing">
+                                  <number>12</number>
+                                </property>
+                                <item>
+                                  <widget class="QWidget" name="trainingOutputForm">
+                                    <layout class="QGridLayout" name="trainingOutputFormLayout">
+                                      <property name="leftMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="topMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="rightMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="bottomMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="spacing">
+                                        <number>10</number>
+                                      </property>
+                                      <item row="0" column="0">
+                                        <widget class="QLabel" name="trainingSoVITSModelCaption">
+                                          <property name="text">
+                                            <string>SoVITS 模型</string>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                      <item row="0" column="1">
+                                        <widget class="QWidget" name="trainingSoVITSModelField">
+                                          <layout class="QHBoxLayout" name="trainingSoVITSModelFieldLayout">
+                                            <property name="leftMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="topMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="rightMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="bottomMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="spacing">
+                                              <number>8</number>
+                                            </property>
+                                            <item>
+                                              <widget class="QLineEdit" name="trainingSoVITSModelEdit">
+                                                <property name="placeholderText">
+                                                  <string>尚未生成 .pth</string>
+                                                </property>
+                                                <property name="enabled">
+                                                  <bool>false</bool>
+                                                </property>
+                                              </widget>
+                                            </item>
+                                          </layout>
+                                        </widget>
+                                      </item>
+                                      <item row="1" column="0">
+                                        <widget class="QLabel" name="trainingGPTModelCaption">
+                                          <property name="text">
+                                            <string>GPT 模型</string>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                      <item row="1" column="1">
+                                        <widget class="QWidget" name="trainingGPTModelField">
+                                          <layout class="QHBoxLayout" name="trainingGPTModelFieldLayout">
+                                            <property name="leftMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="topMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="rightMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="bottomMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="spacing">
+                                              <number>8</number>
+                                            </property>
+                                            <item>
+                                              <widget class="QLineEdit" name="trainingGPTModelEdit">
+                                                <property name="placeholderText">
+                                                  <string>尚未生成 .ckpt</string>
+                                                </property>
+                                                <property name="enabled">
+                                                  <bool>false</bool>
+                                                </property>
+                                              </widget>
+                                            </item>
+                                          </layout>
+                                        </widget>
+                                      </item>
+                                      <item row="2" column="0">
+                                        <widget class="QLabel" name="trainingPreviewTextCaption">
+                                          <property name="text">
+                                            <string>试听文本</string>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                      <item row="2" column="1">
+                                        <widget class="QWidget" name="trainingPreviewTextField">
+                                          <layout class="QHBoxLayout" name="trainingPreviewTextFieldLayout">
+                                            <property name="leftMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="topMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="rightMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="bottomMargin">
+                                              <number>0</number>
+                                            </property>
+                                            <property name="spacing">
+                                              <number>8</number>
+                                            </property>
+                                            <item>
+                                              <widget class="QLineEdit" name="trainingPreviewTextEdit">
+                                                <property name="text">
+                                                  <string>こんにちは、よろしくね。</string>
+                                                </property>
+                                                <property name="enabled">
+                                                  <bool>false</bool>
+                                                </property>
+                                              </widget>
+                                            </item>
+                                          </layout>
+                                        </widget>
+                                      </item>
+                                    </layout>
+                                  </widget>
+                                </item>
+                                <item>
+                                  <widget class="QWidget" name="trainingOutputActions">
+                                    <layout class="QHBoxLayout" name="trainingOutputActionsLayout" stretch="1,1">
+                                      <property name="leftMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="topMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="rightMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="bottomMargin">
+                                        <number>0</number>
+                                      </property>
+                                      <property name="spacing">
+                                        <number>8</number>
+                                      </property>
+                                      <item>
+                                        <widget class="QPushButton" name="trainingPreviewButton">
+                                          <property name="text">
+                                            <string>试听声音</string>
+                                          </property>
+                                          <property name="enabled">
+                                            <bool>false</bool>
+                                          </property>
+                                          <property name="toolTip">
+                                            <string>功能正在开发中，当前仅展示界面</string>
+                                          </property>
+                                          <property name="accent" stdset="0">
+                                            <string>blue</string>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                      <item>
+                                        <widget class="QPushButton" name="trainingApplyButton">
+                                          <property name="text">
+                                            <string>应用到当前角色</string>
+                                          </property>
+                                          <property name="enabled">
+                                            <bool>false</bool>
+                                          </property>
+                                          <property name="toolTip">
+                                            <string>功能正在开发中，当前仅展示界面</string>
+                                          </property>
+                                          <property name="accent" stdset="0">
+                                            <string>pink</string>
+                                          </property>
+                                        </widget>
+                                      </item>
+                                    </layout>
+                                  </widget>
+                                </item>
+                                <item>
+                                  <widget class="QLabel" name="trainingApplyHint">
+                                    <property name="text">
+                                      <string>训练完成后试听，确认满意再替换当前声音。</string>
+                                    </property>
+                                    <property name="tone" stdset="0">
+                                      <string>muted</string>
+                                    </property>
+                                    <property name="wordWrap">
+                                      <bool>true</bool>
+                                    </property>
+                                  </widget>
+                                </item>
+                              </layout>
+                            </widget>
+                          </item>
+                        </layout>
+                      </widget>
+                    </item>
+                    <item>
+                      <spacer name="trainingRightSpacer">
+                        <property name="orientation">
+                          <enum>Qt::Orientation::Vertical</enum>
+                        </property>
+                        <property name="sizeHint">
+                          <size>
+                            <width>0</width>
+                            <height>0</height>
+                          </size>
+                        </property>
+                      </spacer>
+                    </item>
+                  </layout>
+                </widget>
+              </item>
+            </layout>
+          </widget>
+        </widget>
+      </item>
+      <item>
+        <widget class="QWidget" name="trainingActions">
+          <layout class="QHBoxLayout" name="trainingActionsLayout">
+            <property name="leftMargin">
+              <number>0</number>
+            </property>
+            <property name="topMargin">
+              <number>0</number>
+            </property>
+            <property name="rightMargin">
+              <number>0</number>
+            </property>
+            <property name="bottomMargin">
+              <number>0</number>
+            </property>
+            <property name="spacing">
+              <number>9</number>
+            </property>
+            <item>
+              <widget class="QPushButton" name="trainingDetectButton">
+                <property name="text">
+                  <string>检测环境</string>
+                </property>
+                <property name="enabled">
+                  <bool>false</bool>
+                </property>
+                <property name="toolTip">
+                  <string>功能正在开发中，当前仅展示界面</string>
+                </property>
+              </widget>
+            </item>
+            <item>
+              <widget class="QPushButton" name="trainingStopButton">
+                <property name="text">
+                  <string>停止训练</string>
+                </property>
+                <property name="enabled">
+                  <bool>false</bool>
+                </property>
+                <property name="toolTip">
+                  <string>功能正在开发中，当前仅展示界面</string>
+                </property>
+              </widget>
+            </item>
+            <item>
+              <widget class="QPushButton" name="trainingStartButton">
+                <property name="text">
+                  <string>开始训练</string>
+                </property>
+                <property name="enabled">
+                  <bool>false</bool>
+                </property>
+                <property name="toolTip">
+                  <string>功能正在开发中，当前仅展示界面</string>
+                </property>
+                <property name="accent" stdset="0">
+                  <string>pink</string>
+                </property>
+              </widget>
+            </item>
+          </layout>
+        </widget>
+      </item>
+    </layout>
+  </widget>
+  <resources />
+  <connections />
+</ui>
