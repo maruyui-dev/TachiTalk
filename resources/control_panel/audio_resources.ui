@@ -1,0 +1,736 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+  <class>AudioResourcesPage</class>
+  <widget class="QWidget" name="audioResourcesPage">
+    <property name="pageContent" stdset="0">
+      <bool>true</bool>
+    </property>
+    <layout class="QHBoxLayout" name="audioResourceColumns" stretch="7,4">
+      <property name="leftMargin">
+        <number>0</number>
+      </property>
+      <property name="topMargin">
+        <number>0</number>
+      </property>
+      <property name="rightMargin">
+        <number>0</number>
+      </property>
+      <property name="bottomMargin">
+        <number>0</number>
+      </property>
+      <property name="spacing">
+        <number>18</number>
+      </property>
+      <item>
+        <widget class="QWidget" name="audioResourceLeft">
+          <layout class="QVBoxLayout" name="audioResourceLeftLayout" stretch="0,1">
+            <property name="leftMargin">
+              <number>0</number>
+            </property>
+            <property name="topMargin">
+              <number>0</number>
+            </property>
+            <property name="rightMargin">
+              <number>0</number>
+            </property>
+            <property name="bottomMargin">
+              <number>0</number>
+            </property>
+            <property name="spacing">
+              <number>14</number>
+            </property>
+            <item>
+              <widget class="QFrame" name="audioPackCard">
+                <property name="uiCard" stdset="0">
+                  <bool>true</bool>
+                </property>
+                <layout class="QVBoxLayout" name="audioPackCardLayout">
+                  <property name="leftMargin">
+                    <number>14</number>
+                  </property>
+                  <property name="topMargin">
+                    <number>14</number>
+                  </property>
+                  <property name="rightMargin">
+                    <number>14</number>
+                  </property>
+                  <property name="bottomMargin">
+                    <number>14</number>
+                  </property>
+                  <property name="spacing">
+                    <number>10</number>
+                  </property>
+                  <item>
+                    <widget class="QLabel" name="audioPackCardTitle">
+                      <property name="text">
+                        <string>角色音频库</string>
+                      </property>
+                      <property name="textFormat">
+                        <enum>Qt::TextFormat::PlainText</enum>
+                      </property>
+                      <property name="cardTitle" stdset="0">
+                        <bool>true</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QWidget" name="audioPackRow">
+                      <layout class="QHBoxLayout" name="audioPackRowLayout">
+                        <property name="leftMargin">
+                          <number>0</number>
+                        </property>
+                        <property name="topMargin">
+                          <number>0</number>
+                        </property>
+                        <property name="rightMargin">
+                          <number>0</number>
+                        </property>
+                        <property name="bottomMargin">
+                          <number>0</number>
+                        </property>
+                        <property name="spacing">
+                          <number>7</number>
+                        </property>
+                        <item>
+                          <widget class="QComboBox" name="audioPackCombo" />
+                        </item>
+                        <item>
+                          <widget class="QPushButton" name="audioNewPackButton">
+                            <property name="text">
+                              <string>新建</string>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <widget class="QPushButton" name="audioRenamePackButton">
+                            <property name="text">
+                              <string>重命名</string>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <widget class="QPushButton" name="audioRemovePackButton">
+                            <property name="text">
+                              <string>移除</string>
+                            </property>
+                          </widget>
+                        </item>
+                      </layout>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QWidget" name="audioPackActions">
+                      <layout class="QHBoxLayout" name="audioPackActionsLayout">
+                        <property name="leftMargin">
+                          <number>0</number>
+                        </property>
+                        <property name="topMargin">
+                          <number>0</number>
+                        </property>
+                        <property name="rightMargin">
+                          <number>0</number>
+                        </property>
+                        <property name="bottomMargin">
+                          <number>0</number>
+                        </property>
+                        <property name="spacing">
+                          <number>7</number>
+                        </property>
+                        <item>
+                          <widget class="QPushButton" name="audioImportPackButton">
+                            <property name="text">
+                              <string>导入音频包</string>
+                            </property>
+                            <property name="accent" stdset="0">
+                              <string>blue</string>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <widget class="QLabel" name="audioPackHint">
+                            <property name="text">
+                              <string>独立选择音频包，下轮对话生效</string>
+                            </property>
+                            <property name="tone" stdset="0">
+                              <string>muted</string>
+                            </property>
+                            <property name="textFormat">
+                              <enum>Qt::TextFormat::PlainText</enum>
+                            </property>
+                            <property name="wordWrap">
+                              <bool>true</bool>
+                            </property>
+                          </widget>
+                        </item>
+                      </layout>
+                    </widget>
+                  </item>
+                </layout>
+              </widget>
+            </item>
+            <item>
+              <widget class="QFrame" name="audioLibraryCard">
+                <property name="uiCard" stdset="0">
+                  <bool>true</bool>
+                </property>
+                <layout class="QVBoxLayout" name="audioLibraryCardLayout">
+                  <property name="leftMargin">
+                    <number>14</number>
+                  </property>
+                  <property name="topMargin">
+                    <number>14</number>
+                  </property>
+                  <property name="rightMargin">
+                    <number>14</number>
+                  </property>
+                  <property name="bottomMargin">
+                    <number>14</number>
+                  </property>
+                  <property name="spacing">
+                    <number>10</number>
+                  </property>
+                  <item>
+                    <widget class="QLabel" name="audioLibraryCardTitle">
+                      <property name="text">
+                        <string>茉子 · 参考音频</string>
+                      </property>
+                      <property name="textFormat">
+                        <enum>Qt::TextFormat::PlainText</enum>
+                      </property>
+                      <property name="cardTitle" stdset="0">
+                        <bool>true</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QWidget" name="audioSearchRow">
+                      <layout class="QHBoxLayout" name="audioSearchRowLayout">
+                        <property name="leftMargin">
+                          <number>0</number>
+                        </property>
+                        <property name="topMargin">
+                          <number>0</number>
+                        </property>
+                        <property name="rightMargin">
+                          <number>0</number>
+                        </property>
+                        <property name="bottomMargin">
+                          <number>0</number>
+                        </property>
+                        <property name="spacing">
+                          <number>7</number>
+                        </property>
+                        <item>
+                          <widget class="QLineEdit" name="audioSearchEdit">
+                            <property name="placeholderText">
+                              <string>按昵称或文件名查找…</string>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <widget class="QPushButton" name="audioImportButton">
+                            <property name="text">
+                              <string>导入音频</string>
+                            </property>
+                            <property name="accent" stdset="0">
+                              <string>blue</string>
+                            </property>
+                          </widget>
+                        </item>
+                      </layout>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QTableWidget" name="audioResourceTable">
+                      <property name="alternatingRowColors">
+                        <bool>true</bool>
+                      </property>
+                      <property name="showGrid">
+                        <bool>false</bool>
+                      </property>
+                      <column>
+                        <property name="text">
+                          <string>音频昵称</string>
+                        </property>
+                      </column>
+                      <column>
+                        <property name="text">
+                          <string>语言</string>
+                        </property>
+                      </column>
+                      <column>
+                        <property name="text">
+                          <string>文件名</string>
+                        </property>
+                      </column>
+                      <column>
+                        <property name="text">
+                          <string>状态</string>
+                        </property>
+                      </column>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QLabel" name="audioResourceCount">
+                      <property name="text">
+                        <string />
+                      </property>
+                      <property name="tone" stdset="0">
+                        <string>muted</string>
+                      </property>
+                      <property name="textFormat">
+                        <enum>Qt::TextFormat::PlainText</enum>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QLabel" name="audioResourceStatus">
+                      <property name="text">
+                        <string>音频原文需与录音一致；启用后供LLM选择。</string>
+                      </property>
+                      <property name="tone" stdset="0">
+                        <string>muted</string>
+                      </property>
+                      <property name="textFormat">
+                        <enum>Qt::TextFormat::PlainText</enum>
+                      </property>
+                      <property name="wordWrap">
+                        <bool>true</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QWidget" name="audioResourceActions1">
+                      <layout class="QHBoxLayout" name="audioResourceActions1Layout">
+                        <property name="leftMargin">
+                          <number>0</number>
+                        </property>
+                        <property name="topMargin">
+                          <number>0</number>
+                        </property>
+                        <property name="rightMargin">
+                          <number>0</number>
+                        </property>
+                        <property name="bottomMargin">
+                          <number>0</number>
+                        </property>
+                        <property name="spacing">
+                          <number>7</number>
+                        </property>
+                        <item>
+                          <widget class="QPushButton" name="audioOpenFolderButton">
+                            <property name="text">
+                              <string>打开目录</string>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <widget class="QPushButton" name="audioDefaultButton">
+                            <property name="text">
+                              <string>设为默认</string>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <widget class="QPushButton" name="audioRemoveButton">
+                            <property name="text">
+                              <string>移除</string>
+                            </property>
+                            <property name="accent" stdset="0">
+                              <string>danger</string>
+                            </property>
+                          </widget>
+                        </item>
+                      </layout>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QWidget" name="audioResourceActions2">
+                      <layout class="QHBoxLayout" name="audioResourceActions2Layout">
+                        <property name="leftMargin">
+                          <number>0</number>
+                        </property>
+                        <property name="topMargin">
+                          <number>0</number>
+                        </property>
+                        <property name="rightMargin">
+                          <number>0</number>
+                        </property>
+                        <property name="bottomMargin">
+                          <number>0</number>
+                        </property>
+                        <property name="spacing">
+                          <number>7</number>
+                        </property>
+                        <item>
+                          <widget class="QPushButton" name="audioRenameButton">
+                            <property name="text">
+                              <string>重命名</string>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <widget class="QPushButton" name="audioReplaceButton">
+                            <property name="text">
+                              <string>替换音频</string>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <widget class="QPushButton" name="audioExportPackButton">
+                            <property name="text">
+                              <string>导出音频包</string>
+                            </property>
+                          </widget>
+                        </item>
+                      </layout>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QLabel" name="audioImportHint">
+                      <property name="text">
+                        <string>支持3～10秒、16位PCM WAV；导入不会改动原文件。
+音频包为WAV及同名TXT原文的文件夹。</string>
+                      </property>
+                      <property name="tone" stdset="0">
+                        <string>muted</string>
+                      </property>
+                      <property name="textFormat">
+                        <enum>Qt::TextFormat::PlainText</enum>
+                      </property>
+                      <property name="wordWrap">
+                        <bool>true</bool>
+                      </property>
+                    </widget>
+                  </item>
+                </layout>
+              </widget>
+            </item>
+          </layout>
+        </widget>
+      </item>
+      <item>
+        <widget class="QWidget" name="audioResourceRight">
+          <layout class="QVBoxLayout" name="audioResourceRightLayout">
+            <property name="leftMargin">
+              <number>0</number>
+            </property>
+            <property name="topMargin">
+              <number>0</number>
+            </property>
+            <property name="rightMargin">
+              <number>0</number>
+            </property>
+            <property name="bottomMargin">
+              <number>0</number>
+            </property>
+            <property name="spacing">
+              <number>14</number>
+            </property>
+            <item>
+              <widget class="QFrame" name="audioPreviewCard">
+                <property name="uiCard" stdset="0">
+                  <bool>true</bool>
+                </property>
+                <layout class="QVBoxLayout" name="audioPreviewCardLayout">
+                  <property name="leftMargin">
+                    <number>12</number>
+                  </property>
+                  <property name="topMargin">
+                    <number>12</number>
+                  </property>
+                  <property name="rightMargin">
+                    <number>12</number>
+                  </property>
+                  <property name="bottomMargin">
+                    <number>12</number>
+                  </property>
+                  <property name="spacing">
+                    <number>6</number>
+                  </property>
+                  <item>
+                    <widget class="QLabel" name="audioPreviewCardTitle">
+                      <property name="text">
+                        <string>音频预览</string>
+                      </property>
+                      <property name="textFormat">
+                        <enum>Qt::TextFormat::PlainText</enum>
+                      </property>
+                      <property name="cardTitle" stdset="0">
+                        <bool>true</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QLabel" name="audioPreviewName">
+                      <property name="text">
+                        <string>请选择参考音频</string>
+                      </property>
+                      <property name="textFormat">
+                        <enum>Qt::TextFormat::PlainText</enum>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QLabel" name="audioPreviewFile">
+                      <property name="text">
+                        <string />
+                      </property>
+                      <property name="tone" stdset="0">
+                        <string>muted</string>
+                      </property>
+                      <property name="textFormat">
+                        <enum>Qt::TextFormat::PlainText</enum>
+                      </property>
+                      <property name="wordWrap">
+                        <bool>true</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QLabel" name="audioWaveform">
+                      <property name="minimumSize">
+                        <size>
+                          <width>0</width>
+                          <height>56</height>
+                        </size>
+                      </property>
+                      <property name="maximumHeight">
+                        <number>56</number>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QLabel" name="audioPreviewMetadata">
+                      <property name="text">
+                        <string />
+                      </property>
+                      <property name="tone" stdset="0">
+                        <string>muted</string>
+                      </property>
+                      <property name="textFormat">
+                        <enum>Qt::TextFormat::PlainText</enum>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QWidget" name="audioPreviewButtons">
+                      <layout class="QHBoxLayout" name="audioPreviewButtonsLayout">
+                        <property name="leftMargin">
+                          <number>0</number>
+                        </property>
+                        <property name="topMargin">
+                          <number>0</number>
+                        </property>
+                        <property name="rightMargin">
+                          <number>0</number>
+                        </property>
+                        <property name="bottomMargin">
+                          <number>0</number>
+                        </property>
+                        <property name="spacing">
+                          <number>7</number>
+                        </property>
+                        <item>
+                          <widget class="QPushButton" name="audioRawPreviewButton">
+                            <property name="text">
+                              <string>试听原音</string>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <widget class="QPushButton" name="audioTTSPreviewButton">
+                            <property name="text">
+                              <string>TTS试读</string>
+                            </property>
+                            <property name="accent" stdset="0">
+                              <string>blue</string>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <widget class="QPushButton" name="audioStopPreviewButton">
+                            <property name="text">
+                              <string>停止</string>
+                            </property>
+                          </widget>
+                        </item>
+                      </layout>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QLabel" name="audioPreviewStatus">
+                      <property name="text">
+                        <string>TTS试读使用固定日文，不调用LLM或ASR。</string>
+                      </property>
+                      <property name="tone" stdset="0">
+                        <string>muted</string>
+                      </property>
+                      <property name="textFormat">
+                        <enum>Qt::TextFormat::PlainText</enum>
+                      </property>
+                      <property name="wordWrap">
+                        <bool>true</bool>
+                      </property>
+                    </widget>
+                  </item>
+                </layout>
+              </widget>
+            </item>
+            <item>
+              <widget class="QFrame" name="audioInfoCard">
+                <property name="uiCard" stdset="0">
+                  <bool>true</bool>
+                </property>
+                <layout class="QVBoxLayout" name="audioInfoCardLayout">
+                  <property name="leftMargin">
+                    <number>12</number>
+                  </property>
+                  <property name="topMargin">
+                    <number>12</number>
+                  </property>
+                  <property name="rightMargin">
+                    <number>12</number>
+                  </property>
+                  <property name="bottomMargin">
+                    <number>12</number>
+                  </property>
+                  <property name="spacing">
+                    <number>6</number>
+                  </property>
+                  <item>
+                    <widget class="QLabel" name="audioInfoCardTitle">
+                      <property name="text">
+                        <string>音频信息</string>
+                      </property>
+                      <property name="textFormat">
+                        <enum>Qt::TextFormat::PlainText</enum>
+                      </property>
+                      <property name="cardTitle" stdset="0">
+                        <bool>true</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QLabel" name="audioNameLabel">
+                      <property name="text">
+                        <string>音频昵称</string>
+                      </property>
+                      <property name="textFormat">
+                        <enum>Qt::TextFormat::PlainText</enum>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QLineEdit" name="audioNicknameEdit" />
+                  </item>
+                  <item>
+                    <widget class="QLabel" name="audioSceneLabel">
+                      <property name="text">
+                        <string>使用场景</string>
+                      </property>
+                      <property name="textFormat">
+                        <enum>Qt::TextFormat::PlainText</enum>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QLineEdit" name="audioSceneEdit">
+                      <property name="placeholderText">
+                        <string>例如：日常、安慰、轻松回应</string>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QLabel" name="audioPromptLabel">
+                      <property name="text">
+                        <string>音频原文（日语）</string>
+                      </property>
+                      <property name="textFormat">
+                        <enum>Qt::TextFormat::PlainText</enum>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QPlainTextEdit" name="audioPromptEdit">
+                      <property name="placeholderText">
+                        <string>填写与所选录音逐字对应的日语原文</string>
+                      </property>
+                      <property name="minimumSize">
+                        <size>
+                          <width>0</width>
+                          <height>68</height>
+                        </size>
+                      </property>
+                      <property name="maximumHeight">
+                        <number>90</number>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QCheckBox" name="audioEnabledCheck">
+                      <property name="text">
+                        <string>启用此音频，供LLM选择</string>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QCheckBox" name="audioDefaultCheck">
+                      <property name="text">
+                        <string>设为默认参考音频</string>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QLabel" name="audioAllowedNames">
+                      <property name="text">
+                        <string />
+                      </property>
+                      <property name="tone" stdset="0">
+                        <string>muted</string>
+                      </property>
+                      <property name="textFormat">
+                        <enum>Qt::TextFormat::PlainText</enum>
+                      </property>
+                      <property name="wordWrap">
+                        <bool>true</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QLabel" name="audioTurnHint">
+                      <property name="text">
+                        <string>保存后从下一轮生效。整轮固定同一参考，立绘可随分句变化。</string>
+                      </property>
+                      <property name="tone" stdset="0">
+                        <string>muted</string>
+                      </property>
+                      <property name="textFormat">
+                        <enum>Qt::TextFormat::PlainText</enum>
+                      </property>
+                      <property name="wordWrap">
+                        <bool>true</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QPushButton" name="audioSaveButton">
+                      <property name="text">
+                        <string>保存音频</string>
+                      </property>
+                      <property name="accent" stdset="0">
+                        <string>pink</string>
+                      </property>
+                    </widget>
+                  </item>
+                </layout>
+              </widget>
+            </item>
+          </layout>
+        </widget>
+      </item>
+    </layout>
+  </widget>
+  <resources />
+  <connections />
+</ui>
