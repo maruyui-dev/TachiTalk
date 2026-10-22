@@ -2,7 +2,7 @@
 
 完整便携包：全部解压 TachiTalk.zip 后，进入 TachiTalk 文件夹运行 TachiTalk.exe。
 不要在压缩包内运行，也不要只复制EXE，旁边的资源和推理环境必须保留。
-GitHub分卷下载后，把全部 TachiTalk.zip.partNNN 与“合并完整包.cmd”放在同一目录，
+GitHub分卷下载后，把全部 TachiTalk.zip.partNNN 与“Merge-TachiTalk.cmd”（合并脚本）放在同一目录，
 运行脚本生成ZIP，对照SHA256SUMS.txt校验后解压。
 若另行提供安装程序，默认使用 Program Files，可在安装时更改位置。
 安装包包含主程序运行环境、GPT-SoVITS 推理环境、茉子语音模型、参考音频及立绘。
