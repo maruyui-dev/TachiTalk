@@ -1,0 +1,6 @@
+GPT-SoVITS upstream: https://github.com/RVC-Boss/GPT-SoVITS
+Code license: MIT; see LICENSE.
+This directory contains a selected local v2ProPlus inference distribution, not an upstream source checkout.
+Runtime dependencies and pretrained models retain their individual license/notice files.
+Character voice weights and reference recordings are local user-provided resources.
+Relocation changes: runtime/Lib/site-packages/users.pth now uses project-relative paths.
