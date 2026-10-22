@@ -2,10 +2,22 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
 
-from scripts.package_portable import files, split_archive, sha256, runtime_libraries, MSVC_LIBRARIES
+from scripts.package_portable import files, split_archive, sha256, runtime_libraries, MSVC_LIBRARIES, release_assets
 
 
 class PortablePackageTests(unittest.TestCase):
+    def test_merge_script_uses_a_github_safe_ascii_filename(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            service = root / 'services/gpt_sovits'
+            service.mkdir(parents=True)
+            (service / 'distribution.json').write_text('{}', encoding='utf-8')
+            archive = root / 'TachiTalk.zip'
+            archive.write_bytes(b'archive-fixture')
+            release = root / 'release'
+            release_assets(root, archive, release, 1)
+            self.assertTrue((release / 'Merge-TachiTalk.cmd').is_file())
+
     def test_missing_inference_msvc_libraries_are_supplied_without_duplicate_entries(self):
         with TemporaryDirectory() as directory:
             root = Path(directory)
