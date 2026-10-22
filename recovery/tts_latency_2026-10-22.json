@@ -1,0 +1,1583 @@
+{
+  "date": "2026-10-22",
+  "baseline_commit": "8eb0d2b145ea065ba23f8035abb94ac0c9036956",
+  "stable_tag_object": "979a8fba7a18acaae7c579ed7795ddf75a08d9de",
+  "hardware_runtime": {
+    "device": "cuda",
+    "is_half": true,
+    "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "reason": "",
+    "torch": "2.7.1+cu128",
+    "cuda": "12.8"
+  },
+  "scope": "Local GPT-SoVITS v2ProPlus only. No microphone, paid ASR/LLM, packaging or learning Markdown changes.",
+  "method": {
+    "text": "今日はよく頑張ったね。少し休んでから一緒にお茶を飲もう。",
+    "reference": "D:\\TachiTalk\\assets\\audio\\tts_reference\\mak006_070.ogg_0000000000_0000166400.wav",
+    "prompt": "気をつけないといけませんよ 今回は無事だから良かったものの",
+    "sampling_payload": {
+      "text": "今日はよく頑張ったね。少し休んでから一緒にお茶を飲もう。",
+      "text_lang": "ja",
+      "prompt_lang": "ja",
+      "ref_audio_path": "D:\\TachiTalk\\assets\\audio\\tts_reference\\mak006_070.ogg_0000000000_0000166400.wav",
+      "prompt_text": "気をつけないといけませんよ 今回は無事だから良かったものの",
+      "media_type": "wav",
+      "text_split_method": "cut5",
+      "batch_size": 1,
+      "split_bucket": false,
+      "top_k": 15,
+      "top_p": 1.0,
+      "temperature": 1.0,
+      "seed": 12345,
+      "repetition_penalty": 1.35,
+      "speed_factor": 1.0,
+      "fragment_interval": 0.3,
+      "sample_steps": 32,
+      "super_sampling": false,
+      "streaming_mode": 1,
+      "parallel_infer": true
+    },
+    "baseline_loading": "Original TTS.py and sv.py read with git show 8eb0d2b:<path> and loaded via importlib in the same bundled runtime. Current API warmup explicitly disabled; models and runtime unchanged.",
+    "hot_download_repetitions": 4,
+    "hot_real_playback_repetitions": 3,
+    "first_pcm": "First decoded 20ms PCM, excluding HTTP headers and empty WAV header.",
+    "synthesis_complete": "Complete HTTP response with immediate PCM drain and no playback backpressure. Different from playback-drained response time.",
+    "playback": "Real sounddevice RawOutputStream at low latency. First timestamp is device submission; reported device latency 0.091s estimates DAC time. No acoustic loopback measurement.",
+    "cold": "Fresh service process and first formal request; not a reboot or flushed OS filesystem cache. Optimized startup includes a silent local warmup.",
+    "playback_prebuffer_ms": 60,
+    "frame_ms": 20,
+    "playback_buffer_ms": 1000
+  },
+  "summary_before": {
+    "service_ready_seconds": 31.858573999998043,
+    "warmup": null,
+    "cold_first_pcm_seconds": 2.920421399998304,
+    "cold_first_device_submit_seconds": 2.9892065999956685,
+    "hot_first_pcm_median_seconds": 0.5437604000035208,
+    "hot_synthesis_complete_median_seconds": 1.7138319500008947,
+    "hot_first_device_submit_median_seconds": 0.6688931000026059
+  },
+  "summary_after": {
+    "service_ready_seconds": 35.25645140000415,
+    "warmup": {
+      "status": "ready",
+      "seconds": 2.816283600000002
+    },
+    "cold_first_pcm_seconds": 0.5779369999945629,
+    "cold_first_device_submit_seconds": 0.6478975999998511,
+    "hot_first_pcm_median_seconds": 0.5048504999977013,
+    "hot_synthesis_complete_median_seconds": 1.37620115000027,
+    "hot_first_device_submit_median_seconds": 0.5626316999987466
+  },
+  "controlled_trials": {
+    "before": {
+      "text": "今日はよく頑張ったね。少し休んでから一緒にお茶を飲もう。",
+      "reference": "D:\\TachiTalk\\assets\\audio\\tts_reference\\mak006_070.ogg_0000000000_0000166400.wav",
+      "prompt": "気をつけないといけませんよ 今回は無事だから良かったものの",
+      "payload": {
+        "text": "今日はよく頑張ったね。少し休んでから一緒にお茶を飲もう。",
+        "text_lang": "ja",
+        "prompt_lang": "ja",
+        "ref_audio_path": "D:\\TachiTalk\\assets\\audio\\tts_reference\\mak006_070.ogg_0000000000_0000166400.wav",
+        "prompt_text": "気をつけないといけませんよ 今回は無事だから良かったものの",
+        "media_type": "wav",
+        "text_split_method": "cut5",
+        "batch_size": 1,
+        "split_bucket": false,
+        "top_k": 15,
+        "top_p": 1.0,
+        "temperature": 1.0,
+        "seed": 12345,
+        "repetition_penalty": 1.35,
+        "speed_factor": 1.0,
+        "fragment_interval": 0.3,
+        "sample_steps": 32,
+        "super_sampling": false,
+        "streaming_mode": 1,
+        "parallel_infer": true
+      },
+      "runs": [
+        {
+          "headers_seconds": 0.015086899999005254,
+          "first_pcm_seconds": 2.920421399998304,
+          "first_device_submit_seconds": 2.9892065999956685,
+          "device_latency_seconds": 0.091,
+          "estimated_first_dac_seconds": 3.0802065999956687,
+          "response_complete_seconds": 7.572472100000596,
+          "playback_finished_seconds": 8.622576899993874,
+          "underflows": 0,
+          "name": "mode1_cold_play",
+          "mode": 1,
+          "playback": true,
+          "pcm_sha256": "7f5118ac92eef73cc0e9a4733e3e3d148e6b0b3eb0aea140105103bf27009e50",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.0013747000048169866,
+          "first_pcm_seconds": 0.515483300005144,
+          "response_complete_seconds": 1.698921800001699,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "mode1_0",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "ab3bc928e3ee899f570755219f4640fc7151ef1b4262fed03f2fbdd0a9c8481c",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.002863900001102593,
+          "first_pcm_seconds": 0.5742376999987755,
+          "response_complete_seconds": 1.7394562999979826,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "mode1_1",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "f55132689408659ebb63fbd43e7b710ccae643ab796aeb54769aa8cf38b52747",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.0012253999957465567,
+          "first_pcm_seconds": 0.48151259999576723,
+          "response_complete_seconds": 1.7154544000004535,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "mode1_2",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "45c194b695556ab9b94e3e824790a182bbec1f4c63214ff0962e9734b56d63de",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.0011871000024257228,
+          "first_pcm_seconds": 0.5720375000018976,
+          "response_complete_seconds": 1.712209500001336,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "mode1_3",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "f8414d83a39628743fb04a1d30ab27ee540706cfe6a77a83a6e8e713c3e0e740",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.0011213999969186261,
+          "first_pcm_seconds": 0.448297700000694,
+          "first_device_submit_seconds": 0.5274136000007275,
+          "device_latency_seconds": 0.091,
+          "estimated_first_dac_seconds": 0.6184136000007274,
+          "response_complete_seconds": 5.113520999999309,
+          "playback_finished_seconds": 6.1637412999989465,
+          "underflows": 0,
+          "name": "mode1_play0",
+          "mode": 1,
+          "playback": true,
+          "pcm_sha256": "875b2a1ee3b65a6f323c4d540a4bdea2ac2ff5b59c1d443687b8c0853fff2da8",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.0012981000036234036,
+          "first_pcm_seconds": 0.5647221000035643,
+          "first_device_submit_seconds": 0.6688931000026059,
+          "device_latency_seconds": 0.091,
+          "estimated_first_dac_seconds": 0.7598931000026059,
+          "response_complete_seconds": 5.253504000000248,
+          "playback_finished_seconds": 6.303899500002444,
+          "underflows": 0,
+          "name": "mode1_play1",
+          "mode": 1,
+          "playback": true,
+          "pcm_sha256": "5a7c08d89fa0a04ddfcbf79cb74c29317e783ef284bd59f9d834fe60dfaf2165",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.0015299000006052665,
+          "first_pcm_seconds": 0.6480290000035893,
+          "first_device_submit_seconds": 0.7389669999975013,
+          "device_latency_seconds": 0.091,
+          "estimated_first_dac_seconds": 0.8299669999975012,
+          "response_complete_seconds": 5.323310699997819,
+          "playback_finished_seconds": 6.373789700002817,
+          "underflows": 0,
+          "name": "mode1_play2",
+          "mode": 1,
+          "playback": true,
+          "pcm_sha256": "a281b544708e4b4d5ac0e8e917e65c164ea490112925e86c15a8b10909a45a73",
+          "audio_seconds": 5.52
+        }
+      ],
+      "service_ready_seconds": 31.858573999998043,
+      "runtime_status": {
+        "device": "cuda",
+        "is_half": true,
+        "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "reason": "",
+        "torch": "2.7.1+cu128",
+        "cuda": "12.8"
+      }
+    },
+    "after": {
+      "text": "今日はよく頑張ったね。少し休んでから一緒にお茶を飲もう。",
+      "reference": "D:\\TachiTalk\\assets\\audio\\tts_reference\\mak006_070.ogg_0000000000_0000166400.wav",
+      "prompt": "気をつけないといけませんよ 今回は無事だから良かったものの",
+      "payload": {
+        "text": "今日はよく頑張ったね。少し休んでから一緒にお茶を飲もう。",
+        "text_lang": "ja",
+        "prompt_lang": "ja",
+        "ref_audio_path": "D:\\TachiTalk\\assets\\audio\\tts_reference\\mak006_070.ogg_0000000000_0000166400.wav",
+        "prompt_text": "気をつけないといけませんよ 今回は無事だから良かったものの",
+        "media_type": "wav",
+        "text_split_method": "cut5",
+        "batch_size": 1,
+        "split_bucket": false,
+        "top_k": 15,
+        "top_p": 1.0,
+        "temperature": 1.0,
+        "seed": 12345,
+        "repetition_penalty": 1.35,
+        "speed_factor": 1.0,
+        "fragment_interval": 0.3,
+        "sample_steps": 32,
+        "super_sampling": false,
+        "streaming_mode": 1,
+        "parallel_infer": true
+      },
+      "runs": [
+        {
+          "headers_seconds": 0.014739499994902872,
+          "first_pcm_seconds": 0.5779369999945629,
+          "first_device_submit_seconds": 0.6478975999998511,
+          "device_latency_seconds": 0.091,
+          "estimated_first_dac_seconds": 0.738897599999851,
+          "response_complete_seconds": 5.230768399997032,
+          "playback_finished_seconds": 6.281051300000399,
+          "underflows": 0,
+          "name": "mode1_cold_play",
+          "mode": 1,
+          "playback": true,
+          "pcm_sha256": "38116950831d2504a078c533adf0dc29da6b43d637b360ff609acc41a6935b20",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.0013287999972817488,
+          "first_pcm_seconds": 0.4704517999998643,
+          "response_complete_seconds": 1.3977243999979692,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "mode1_0",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "176983a8001d7aaf024feef50929247d6adf2acdd479bdff28c769e18aab0022",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.0014421999949263409,
+          "first_pcm_seconds": 0.499776099997689,
+          "response_complete_seconds": 1.3263344999941182,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "mode1_1",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "c34d951e3d41608ff415de44c0683699c080fc99446cba508ef77e660fa771d3",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.0011181000008946285,
+          "first_pcm_seconds": 0.5165077999990899,
+          "response_complete_seconds": 1.4841646999993827,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "mode1_2",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "062b353181912f06a5ec0cf02943f50d979863592178ba3d8a34d7c3234bc63a",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.0012385000009089708,
+          "first_pcm_seconds": 0.5099248999977135,
+          "response_complete_seconds": 1.3546779000025708,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "mode1_3",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "a494c58af3866de4a373b0f11b76c4092682e2306c3b3a4cc88c6b6845e2a861",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.0010916000028373674,
+          "first_pcm_seconds": 0.4423384000037913,
+          "first_device_submit_seconds": 0.5626316999987466,
+          "device_latency_seconds": 0.091,
+          "estimated_first_dac_seconds": 0.6536316999987466,
+          "response_complete_seconds": 5.142940999998245,
+          "playback_finished_seconds": 6.1934834999992745,
+          "underflows": 0,
+          "name": "mode1_play0",
+          "mode": 1,
+          "playback": true,
+          "pcm_sha256": "be1fbbdfb2c449a0d5b68600cee8293c29dc68872777aaf861179597ec226ded",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.0013153000036254525,
+          "first_pcm_seconds": 0.4830618999985745,
+          "first_device_submit_seconds": 0.5522433000005549,
+          "device_latency_seconds": 0.091,
+          "estimated_first_dac_seconds": 0.6432433000005549,
+          "response_complete_seconds": 5.133792499997071,
+          "playback_finished_seconds": 6.184355500001402,
+          "underflows": 0,
+          "name": "mode1_play1",
+          "mode": 1,
+          "playback": true,
+          "pcm_sha256": "a3ea364d71f082376cc77e9300b41b4f172053cd113739a8050669a66b033a97",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.0015989999956218526,
+          "first_pcm_seconds": 0.4883946999980253,
+          "first_device_submit_seconds": 0.573286899998493,
+          "device_latency_seconds": 0.091,
+          "estimated_first_dac_seconds": 0.664286899998493,
+          "response_complete_seconds": 5.1634675999957835,
+          "playback_finished_seconds": 6.21381609999662,
+          "underflows": 0,
+          "name": "mode1_play2",
+          "mode": 1,
+          "playback": true,
+          "pcm_sha256": "2b540d8f1869f3e3fa7ac0380ebf4eb8ddc5baed1ec61497802c61c37f5850c5",
+          "audio_seconds": 5.52
+        }
+      ],
+      "service_ready_seconds": 35.25645140000415,
+      "runtime_status": {
+        "device": "cuda",
+        "is_half": true,
+        "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "reason": "",
+        "torch": "2.7.1+cu128",
+        "cuda": "12.8"
+      },
+      "warmup_status": {
+        "status": "ready",
+        "seconds": 2.816283600000002
+      }
+    }
+  },
+  "initial_mode_comparison": {
+    "text": "今日はよく頑張ったね。少し休んでから一緒にお茶を飲もう。",
+    "reference": "D:\\TachiTalk\\assets\\audio\\tts_reference\\mak006_070.ogg_0000000000_0000166400.wav",
+    "prompt": "気をつけないといけませんよ 今回は無事だから良かったものの",
+    "payload": {
+      "text": "今日はよく頑張ったね。少し休んでから一緒にお茶を飲もう。",
+      "text_lang": "ja",
+      "prompt_lang": "ja",
+      "ref_audio_path": "D:\\TachiTalk\\assets\\audio\\tts_reference\\mak006_070.ogg_0000000000_0000166400.wav",
+      "prompt_text": "気をつけないといけませんよ 今回は無事だから良かったものの",
+      "media_type": "wav",
+      "text_split_method": "cut5",
+      "batch_size": 1,
+      "split_bucket": false,
+      "top_k": 15,
+      "top_p": 1.0,
+      "temperature": 1.0,
+      "seed": 12345,
+      "repetition_penalty": 1.35,
+      "speed_factor": 1.0,
+      "fragment_interval": 0.3,
+      "sample_steps": 32,
+      "super_sampling": false,
+      "streaming_mode": 3,
+      "parallel_infer": false
+    },
+    "runs": [
+      {
+        "headers_seconds": 0.03868800000054762,
+        "first_pcm_seconds": 5.849820999996155,
+        "response_complete_seconds": 8.658976099999563,
+        "playback_finished_seconds": null,
+        "underflows": null,
+        "name": "mode1_0",
+        "mode": 1,
+        "playback": false,
+        "pcm_sha256": "917265de753363e5255984d61046e22ba6c72d7f555d2be6a0040521a1ff5c12",
+        "audio_seconds": 5.52
+      },
+      {
+        "headers_seconds": 0.002137299998139497,
+        "first_pcm_seconds": 0.5868052000005264,
+        "response_complete_seconds": 2.1739463999983855,
+        "playback_finished_seconds": null,
+        "underflows": null,
+        "name": "mode1_1",
+        "mode": 1,
+        "playback": false,
+        "pcm_sha256": "be7a8a50b4bcdcd3524a559b8ce1c26b4888015152996907be435101537cfd5a",
+        "audio_seconds": 5.52
+      },
+      {
+        "headers_seconds": 0.002513299994461704,
+        "first_pcm_seconds": 0.5431196999998065,
+        "response_complete_seconds": 1.862408900000446,
+        "playback_finished_seconds": null,
+        "underflows": null,
+        "name": "mode1_2",
+        "mode": 1,
+        "playback": false,
+        "pcm_sha256": "92140334d8e546037bba0107c637ceabc6696507f9efa22a8f88d9155c5a33a4",
+        "audio_seconds": 5.52
+      },
+      {
+        "headers_seconds": 0.0021606000009342097,
+        "first_pcm_seconds": 0.5248753999985638,
+        "response_complete_seconds": 1.8810759000043618,
+        "playback_finished_seconds": null,
+        "underflows": null,
+        "name": "mode1_3",
+        "mode": 1,
+        "playback": false,
+        "pcm_sha256": "1b0013a51b4f90b9d94713aa4483dc93ec95ded4540a4a728bb3822130eaa833",
+        "audio_seconds": 5.52
+      },
+      {
+        "headers_seconds": 0.001651099999435246,
+        "first_pcm_seconds": 0.5554525999978068,
+        "first_device_submit_seconds": 0.7061570000005304,
+        "device_latency_seconds": 0.091,
+        "estimated_first_dac_seconds": 0.7971570000005304,
+        "response_complete_seconds": 5.295691300001636,
+        "playback_finished_seconds": 6.346361799995066,
+        "underflows": 0,
+        "name": "mode1_play",
+        "mode": 1,
+        "playback": true,
+        "pcm_sha256": "b95cf946c3b9bd9b8f26e9fb8afd4d90e1c441ab227984483ac26d8992e1505c",
+        "audio_seconds": 5.52
+      },
+      {
+        "headers_seconds": 0.0017400999931851402,
+        "first_pcm_seconds": 0.5148042000000714,
+        "response_complete_seconds": 1.7197840999942855,
+        "playback_finished_seconds": null,
+        "underflows": null,
+        "name": "mode2_0",
+        "mode": 2,
+        "playback": false,
+        "pcm_sha256": "f04d1db459a7dbee407c7ba647cd62ac6776d2b022d8f284ba878b2209be3e54",
+        "audio_seconds": 5.52
+      },
+      {
+        "headers_seconds": 0.001188700000056997,
+        "first_pcm_seconds": 0.5251582999990205,
+        "response_complete_seconds": 1.7129960999955074,
+        "playback_finished_seconds": null,
+        "underflows": null,
+        "name": "mode2_1",
+        "mode": 2,
+        "playback": false,
+        "pcm_sha256": "0918369fb41c465936d0e907984ccf2016e1ae1ae9a05a46199184483da0404c",
+        "audio_seconds": 5.52
+      },
+      {
+        "headers_seconds": 0.0014053999984753318,
+        "first_pcm_seconds": 0.6448014000052353,
+        "response_complete_seconds": 1.7777115999997477,
+        "playback_finished_seconds": null,
+        "underflows": null,
+        "name": "mode2_2",
+        "mode": 2,
+        "playback": false,
+        "pcm_sha256": "4bb51b10c7dff2961c33ed0e6e2e2dc9c1192467a049fcbc05b7f586f385f93d",
+        "audio_seconds": 5.52
+      },
+      {
+        "headers_seconds": 0.0012022000009892508,
+        "first_pcm_seconds": 0.4686911000026157,
+        "response_complete_seconds": 1.6369275999968522,
+        "playback_finished_seconds": null,
+        "underflows": null,
+        "name": "mode2_3",
+        "mode": 2,
+        "playback": false,
+        "pcm_sha256": "91c735ab135bba48785daf3e03dc0dbd7dcb08a9cb33fcbcf68596562ef52d04",
+        "audio_seconds": 5.52
+      },
+      {
+        "headers_seconds": 0.0019331000003148802,
+        "first_pcm_seconds": 0.4993164999978035,
+        "first_device_submit_seconds": 0.6231609000024037,
+        "device_latency_seconds": 0.091,
+        "estimated_first_dac_seconds": 0.7141609000024036,
+        "response_complete_seconds": 5.206811900003231,
+        "playback_finished_seconds": 6.257163200003561,
+        "underflows": 0,
+        "name": "mode2_play",
+        "mode": 2,
+        "playback": true,
+        "pcm_sha256": "ae47845ef027b5e03b49fe31b28aff5a49ce4d628e07677dfab4fa052629b333",
+        "audio_seconds": 5.52
+      },
+      {
+        "headers_seconds": 0.0016417000006185845,
+        "first_pcm_seconds": 0.5837354000032065,
+        "response_complete_seconds": 2.267296500001976,
+        "playback_finished_seconds": null,
+        "underflows": null,
+        "name": "mode3_0",
+        "mode": 3,
+        "playback": false,
+        "pcm_sha256": "7d28e0eb58796f140d8dbdc7f02d49e3068723d756be1eb1121695ec36e35485",
+        "audio_seconds": 4.82859375
+      },
+      {
+        "headers_seconds": 0.0012575000000651926,
+        "first_pcm_seconds": 0.23293220000050496,
+        "response_complete_seconds": 1.6996824000016204,
+        "playback_finished_seconds": null,
+        "underflows": null,
+        "name": "mode3_1",
+        "mode": 3,
+        "playback": false,
+        "pcm_sha256": "97d655722ce6489b311161c3cb04f7ef36a043aef203ebd730718065d31d6252",
+        "audio_seconds": 4.82859375
+      },
+      {
+        "headers_seconds": 0.0014015999986440875,
+        "first_pcm_seconds": 0.22637499999837019,
+        "response_complete_seconds": 1.8323677000007592,
+        "playback_finished_seconds": null,
+        "underflows": null,
+        "name": "mode3_2",
+        "mode": 3,
+        "playback": false,
+        "pcm_sha256": "3bf9cd8342ae35f261ef06e5fe43a71fde55c437fa0bc30dcd91b6fa6025ae26",
+        "audio_seconds": 4.82859375
+      },
+      {
+        "headers_seconds": 0.002101600002788473,
+        "first_pcm_seconds": 0.2592360000053304,
+        "response_complete_seconds": 1.7367741000052774,
+        "playback_finished_seconds": null,
+        "underflows": null,
+        "name": "mode3_3",
+        "mode": 3,
+        "playback": false,
+        "pcm_sha256": "f10cf038ed7ba6e9887518c373a9b21432015821f8898490d086999392bdb882",
+        "audio_seconds": 4.82859375
+      },
+      {
+        "headers_seconds": 0.0011365000027581118,
+        "first_pcm_seconds": 0.2341281999979401,
+        "first_device_submit_seconds": 0.317229899999802,
+        "device_latency_seconds": 0.091,
+        "estimated_first_dac_seconds": 0.40822989999980197,
+        "response_complete_seconds": 4.218577699997695,
+        "playback_finished_seconds": 5.258610099997895,
+        "underflows": 0,
+        "name": "mode3_play",
+        "mode": 3,
+        "playback": true,
+        "pcm_sha256": "78130411ac7c37be44acd1bf63ba6bd8ebd8e547a6d92a6a6f8c42334c1440ee",
+        "audio_seconds": 4.82859375
+      }
+    ],
+    "service_ready_seconds": 48.593446699997
+  },
+  "initial_unprofiled_first_download_after_warmup": {
+    "text": "今日はよく頑張ったね。少し休んでから一緒にお茶を飲もう。",
+    "reference": "D:\\TachiTalk\\assets\\audio\\tts_reference\\mak006_070.ogg_0000000000_0000166400.wav",
+    "prompt": "気をつけないといけませんよ 今回は無事だから良かったものの",
+    "payload": {
+      "text": "今日はよく頑張ったね。少し休んでから一緒にお茶を飲もう。",
+      "text_lang": "ja",
+      "prompt_lang": "ja",
+      "ref_audio_path": "D:\\TachiTalk\\assets\\audio\\tts_reference\\mak006_070.ogg_0000000000_0000166400.wav",
+      "prompt_text": "気をつけないといけませんよ 今回は無事だから良かったものの",
+      "media_type": "wav",
+      "text_split_method": "cut5",
+      "batch_size": 1,
+      "split_bucket": false,
+      "top_k": 15,
+      "top_p": 1.0,
+      "temperature": 1.0,
+      "seed": 12345,
+      "repetition_penalty": 1.35,
+      "speed_factor": 1.0,
+      "fragment_interval": 0.3,
+      "sample_steps": 32,
+      "super_sampling": false,
+      "streaming_mode": 1,
+      "parallel_infer": true
+    },
+    "runs": [
+      {
+        "headers_seconds": 0.01960480000707321,
+        "first_pcm_seconds": 0.6329557000062778,
+        "response_complete_seconds": 2.4431320000003325,
+        "playback_finished_seconds": null,
+        "underflows": null,
+        "name": "mode1_0",
+        "mode": 1,
+        "playback": false,
+        "pcm_sha256": "54c21c1a3d03f067b364b84070c6e04496a5ddd047d5f2cc92a9aaa7349931e7",
+        "audio_seconds": 5.52
+      },
+      {
+        "headers_seconds": 0.0013551000010920689,
+        "first_pcm_seconds": 0.5323716000057175,
+        "response_complete_seconds": 1.4729242000030354,
+        "playback_finished_seconds": null,
+        "underflows": null,
+        "name": "mode1_1",
+        "mode": 1,
+        "playback": false,
+        "pcm_sha256": "1507887e6f6e64b660b9b5a1d4366670414c70e75b8b3f4fdaf08d005f7d1333",
+        "audio_seconds": 5.52
+      },
+      {
+        "headers_seconds": 0.0010971000010613352,
+        "first_pcm_seconds": 0.48569429999770364,
+        "response_complete_seconds": 1.3921465999956126,
+        "playback_finished_seconds": null,
+        "underflows": null,
+        "name": "mode1_2",
+        "mode": 1,
+        "playback": false,
+        "pcm_sha256": "6ebde857dea6cf5d304866de1e37dfd7176996ae449f8e22cfe6a7c8794e0388",
+        "audio_seconds": 5.52
+      },
+      {
+        "headers_seconds": 0.0012344999995548278,
+        "first_pcm_seconds": 0.5902427999972133,
+        "response_complete_seconds": 1.5415747000006377,
+        "playback_finished_seconds": null,
+        "underflows": null,
+        "name": "mode1_3",
+        "mode": 1,
+        "playback": false,
+        "pcm_sha256": "56d4fdd16d64a26ec47a870c016b4491162f7d03a2969ff09ba96ea0aeaeef65",
+        "audio_seconds": 5.52
+      },
+      {
+        "headers_seconds": 0.0011957000024267472,
+        "first_pcm_seconds": 0.5047581000035279,
+        "response_complete_seconds": 1.467804600004456,
+        "playback_finished_seconds": null,
+        "underflows": null,
+        "name": "mode1_4",
+        "mode": 1,
+        "playback": false,
+        "pcm_sha256": "ee0791d951c9782708056a1e7c2241ca8d99574327ae28f7aae44b47246e56b9",
+        "audio_seconds": 5.52
+      },
+      {
+        "headers_seconds": 0.0011367000042810105,
+        "first_pcm_seconds": 0.5057409000000916,
+        "first_device_submit_seconds": 0.5976306000011391,
+        "device_latency_seconds": 0.091,
+        "estimated_first_dac_seconds": 0.6886306000011391,
+        "response_complete_seconds": 5.183018600000651,
+        "playback_finished_seconds": 6.233188700003666,
+        "underflows": 0,
+        "name": "mode1_play",
+        "mode": 1,
+        "playback": true,
+        "pcm_sha256": "a166e7a128d09e9f4126a5a4103e46a9b8dec30ab442531a176665b0ad934a68",
+        "audio_seconds": 5.52
+      }
+    ],
+    "service_ready_seconds": 40.91811840000446
+  },
+  "profile_before": [
+    {
+      "stage": "set_ref_audio",
+      "seconds": 1.4779774000000003
+    },
+    {
+      "stage": "segment_and_extract_feature_for_text",
+      "seconds": 0.35010979999999847
+    },
+    {
+      "stage": "compute_embedding3",
+      "seconds": 0.3425395000000009
+    },
+    {
+      "stage": "compute_embedding3",
+      "seconds": 0.035409399999998925
+    },
+    {
+      "stage": "empty_cache",
+      "seconds": 0.41247520000000293
+    },
+    {
+      "stage": "compute_embedding3",
+      "seconds": 0.0354837999999944
+    },
+    {
+      "stage": "compute_embedding3",
+      "seconds": 0.031130899999993744
+    },
+    {
+      "stage": "empty_cache",
+      "seconds": 0.3258128999999954
+    },
+    {
+      "stage": "compute_embedding3",
+      "seconds": 0.043512099999993836
+    },
+    {
+      "stage": "compute_embedding3",
+      "seconds": 0.03252080000000035
+    },
+    {
+      "stage": "empty_cache",
+      "seconds": 0.46949389999999624
+    }
+  ],
+  "stress_validation": {
+    "results": {
+      "text": "今日はよく頑張ったね。少し休んでから一緒にお茶を飲もう。",
+      "reference": "D:\\TachiTalk\\assets\\audio\\tts_reference\\mak006_070.ogg_0000000000_0000166400.wav",
+      "prompt": "気をつけないといけませんよ 今回は無事だから良かったものの",
+      "payload": {
+        "text": "今日はよく頑張ったね。少し休んでから一緒にお茶を飲もう。",
+        "text_lang": "ja",
+        "prompt_lang": "ja",
+        "ref_audio_path": "D:\\TachiTalk\\assets\\audio\\tts_reference\\mak006_070.ogg_0000000000_0000166400.wav",
+        "prompt_text": "気をつけないといけませんよ 今回は無事だから良かったものの",
+        "media_type": "wav",
+        "text_split_method": "cut5",
+        "batch_size": 1,
+        "split_bucket": false,
+        "top_k": 15,
+        "top_p": 1.0,
+        "temperature": 1.0,
+        "seed": 12345,
+        "repetition_penalty": 1.35,
+        "speed_factor": 1.0,
+        "fragment_interval": 0.3,
+        "sample_steps": 32,
+        "super_sampling": false,
+        "streaming_mode": 1,
+        "parallel_infer": true
+      },
+      "runs": [
+        {
+          "headers_seconds": 0.01491130000067642,
+          "first_pcm_seconds": 0.6645630999992136,
+          "response_complete_seconds": 2.525258200003009,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "mode1_0",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "7e2310f5cc2215df1bbcddc89c6aeb803882a901de1ce694ee1e9f750baf3fe6",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.0011028000008082017,
+          "first_pcm_seconds": 0.4772512999988976,
+          "response_complete_seconds": 1.322786000004271,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "mode1_1",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "d6b287ec0e3d55690009db664f5f0df9f87ceef73b83b03ebc75d98a918f3c5f",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.0012096999998902902,
+          "first_pcm_seconds": 0.49077350000152364,
+          "response_complete_seconds": 1.4139626000032877,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "mode1_2",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "4fdcb3db99bf94785d6c5bc2df20aaf3db755cda913ddcbe15a54ad2c937e08a",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.001084299998183269,
+          "first_pcm_seconds": 0.49854689999483526,
+          "response_complete_seconds": 1.364998099998047,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "mode1_3",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "19d9d334a5021ddfb2240567cb82af88a4662f8ca9e760f66c16e03f75b53907",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.001259500000742264,
+          "first_pcm_seconds": 0.4907212999969488,
+          "response_complete_seconds": 1.426955299997644,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "mode1_4",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "27bc80a3565563d12610b878a27a2a393c6336e10d2444a1c8393e5b927f22c9",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.0010238999966531992,
+          "first_pcm_seconds": 0.4867214999976568,
+          "response_complete_seconds": 1.3115610999957426,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "mode1_5",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "0fcd5107f73b6a02f9b5bad0ae499516276bd422dc5666f7e5c6ee7a2809aa73",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.0010814999986905605,
+          "first_pcm_seconds": 0.5264468999957899,
+          "response_complete_seconds": 1.4684634000004735,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "mode1_6",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "4d64559e189b9f1fc2e5616610830b8e2a0147814829398963e732d0e73df536",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.0010637000013957731,
+          "first_pcm_seconds": 0.49417680000624387,
+          "response_complete_seconds": 1.3182796000037342,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "mode1_7",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "40473a4c07c261962c414bb100568edcc4e76e1bb5c39a392fa9fd0634df98b4",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.001237500000570435,
+          "first_pcm_seconds": 0.4655745999989449,
+          "response_complete_seconds": 1.2998120999982348,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "mode1_8",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "12dc9382a422aa9ecd77d4e39aca1e1ccb06d94ad8f73ae873ef2a984cb1e3bd",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.001059200003510341,
+          "first_pcm_seconds": 0.43400970000220696,
+          "response_complete_seconds": 1.3121152000021539,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "mode1_9",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "abd008766ebfc60995b80dbf3d0d722fe042c97e4a2f787ecc078b9e501adc2f",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.001094100000045728,
+          "first_pcm_seconds": 0.5794342000008328,
+          "response_complete_seconds": 1.485442699995474,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "mode1_10",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "7ceb7bd5369ad1505b8d0c871dba00b7a07c4fc099b90b77e83fa5739ff26cc4",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.001463000000512693,
+          "first_pcm_seconds": 0.5436303999958909,
+          "response_complete_seconds": 1.4790692999958992,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "mode1_11",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "fb976cedc6805ea8f80024fd183792d074f5d6cf3d6533a9cda3ab6d84ca3152",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.001261299999896437,
+          "first_pcm_seconds": 0.45805109999491833,
+          "response_complete_seconds": 1.3159843999965233,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "mode1_12",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "30b6a20db8b79886a460e45465ccc5a531c4efd4e564623bfda7818d61b68c49",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.0011403999960748479,
+          "first_pcm_seconds": 0.47512660000211326,
+          "response_complete_seconds": 1.3640749999976833,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "mode1_13",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "6316a5ed5084b91f35523f56e0f09b6786fc852842a594e83811a162416f1b9c",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.0012515000053099357,
+          "first_pcm_seconds": 0.5141153000004124,
+          "response_complete_seconds": 1.6413567000054172,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "mode1_14",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "a3e32fc5c76f1b11c07b02c8a92a7c642adf177f98043acebe792e6a7b97a8f5",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.0010551000013947487,
+          "first_pcm_seconds": 0.43727720000606496,
+          "response_complete_seconds": 1.3229124000063166,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "mode1_15",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "799b57fe6e4242fcd7029881db0a6eda4274cbfbde55b7f72f9d1e3245528e98",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.0010714000018197112,
+          "first_pcm_seconds": 0.4414796999990358,
+          "response_complete_seconds": 1.2935310000029858,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "mode1_16",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "a919df0cc3c8eabdd0ae07d0c6f3424374a7415bf5e677580af9ef5338220e15",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.0010973000025842339,
+          "first_pcm_seconds": 0.45443320000049425,
+          "response_complete_seconds": 1.4521976999967592,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "mode1_17",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "a649c023daf68e4232690edaabee04c0855c6fdc821e42148c0c9f38496a5e97",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.0015617999961250462,
+          "first_pcm_seconds": 0.5057994000017061,
+          "response_complete_seconds": 1.4655458999986877,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "mode1_18",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "e6c867d95e5f0953dd7143db3e971cba1f2409d87b808acb39783c45fbee418f",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.0012072000026819296,
+          "first_pcm_seconds": 0.5245923999973456,
+          "response_complete_seconds": 1.4144480000031763,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "mode1_19",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "71b191f46f033da3cc05c678ab6c8d7733f86078b265b7dc669b108a91a2377d",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.003552100002707448,
+          "first_pcm_seconds": 0.8017653000060818,
+          "response_complete_seconds": 1.941171200000099,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "after_cancel",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "8209005dc594fb0c4d7b740fe8b5acfc996915da4e08d92864a18c8a0693c834",
+          "audio_seconds": 4.76
+        },
+        {
+          "headers_seconds": 0.00121009999566013,
+          "first_pcm_seconds": 0.6521491999956197,
+          "response_complete_seconds": 1.620224499994947,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "after_error",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "59749e5d907d7fde569bc44ca7505015cf8711059c23de301942c9ca6eeab4e3",
+          "audio_seconds": 5.52
+        },
+        {
+          "headers_seconds": 0.0010603999980958179,
+          "first_pcm_seconds": 0.8489562999966438,
+          "response_complete_seconds": 1.899510499999451,
+          "playback_finished_seconds": null,
+          "underflows": null,
+          "name": "changed_reference",
+          "mode": 1,
+          "playback": false,
+          "pcm_sha256": "934124a7e74b89df6c1473a29d3b0278b0d63224ee3c87fc530ce6f4ba74cb14",
+          "audio_seconds": 5.2
+        }
+      ],
+      "service_ready_seconds": 34.06122879999748,
+      "runtime_status": {
+        "device": "cuda",
+        "is_half": true,
+        "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "reason": "",
+        "torch": "2.7.1+cu128",
+        "cuda": "12.8"
+      },
+      "warmup_status": {
+        "status": "ready",
+        "seconds": 3.1667691999999974
+      },
+      "recovery_checks": "passed: HTTP cancel, rejected request, changed reference"
+    },
+    "profile": [
+      {
+        "stage": "set_ref_audio",
+        "seconds": 1.4559561000000016,
+        "allocated": 1343132160,
+        "reserved": 1870659584
+      },
+      {
+        "stage": "segment_and_extract_feature_for_text",
+        "seconds": 0.3565285999999972,
+        "allocated": 1343406592,
+        "reserved": 1870659584
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 0.2531081999999998,
+        "allocated": 1343691776,
+        "reserved": 1870659584
+      },
+      {
+        "stage": "empty_cache",
+        "seconds": 4.7500000000866294e-05,
+        "allocated": 1444765696,
+        "reserved": 1897922560
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.4899999996487168e-05,
+        "allocated": 1444513280,
+        "reserved": 1897922560
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.639999999980546e-05,
+        "allocated": 1454011904,
+        "reserved": 1927282688
+      },
+      {
+        "stage": "empty_cache",
+        "seconds": 0.0030463000000011675,
+        "allocated": 1455859712,
+        "reserved": 1927282688
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.2400000002799061e-05,
+        "allocated": 1455385088,
+        "reserved": 1927282688
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.3299999999105694e-05,
+        "allocated": 1454929408,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "empty_cache",
+        "seconds": 0.00022479999999802658,
+        "allocated": 1454514176,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.3599999995506096e-05,
+        "allocated": 1454039552,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.2900000001536682e-05,
+        "allocated": 1455093248,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "empty_cache",
+        "seconds": 0.0002495000000024561,
+        "allocated": 1455857664,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.3100000003873902e-05,
+        "allocated": 1455383040,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.3799999997843315e-05,
+        "allocated": 1454405120,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "empty_cache",
+        "seconds": 0.00033669999999830225,
+        "allocated": 1454514176,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.3400000000274304e-05,
+        "allocated": 1454039552,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.3500000001442913e-05,
+        "allocated": 1454142976,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "empty_cache",
+        "seconds": 0.00025440000000287455,
+        "allocated": 1455136768,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.2900000001536682e-05,
+        "allocated": 1454662144,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.5400000002330216e-05,
+        "allocated": 1453848064,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "empty_cache",
+        "seconds": 0.0002481000000003064,
+        "allocated": 1454675968,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.2800000000368073e-05,
+        "allocated": 1454201344,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.250000000396767e-05,
+        "allocated": 1453585920,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "empty_cache",
+        "seconds": 0.0003089000000002784,
+        "allocated": 1455038464,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.4200000002517754e-05,
+        "allocated": 1454563840,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.2800000000368073e-05,
+        "allocated": 1455027712,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "empty_cache",
+        "seconds": 0.0002822000000008984,
+        "allocated": 1454121984,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.2999999995599865e-05,
+        "allocated": 1453647360,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.1899999996956012e-05,
+        "allocated": 1452602880,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "empty_cache",
+        "seconds": 0.00026199999999931833,
+        "allocated": 1453596672,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.2699999999199463e-05,
+        "allocated": 1453122048,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.699999999971169e-05,
+        "allocated": 1453291008,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "empty_cache",
+        "seconds": 0.0002592999999961876,
+        "allocated": 1454219264,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.4100000001349144e-05,
+        "allocated": 1453744640,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.2699999999199463e-05,
+        "allocated": 1453356544,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "empty_cache",
+        "seconds": 0.0002646000000012805,
+        "allocated": 1455595520,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.2499999996862243e-05,
+        "allocated": 1455120896,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.3299999999105694e-05,
+        "allocated": 1455519232,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "empty_cache",
+        "seconds": 0.0002736999999939371,
+        "allocated": 1455432704,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.4400000004854974e-05,
+        "allocated": 1454958080,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.5900000001067838e-05,
+        "allocated": 1455583744,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "empty_cache",
+        "seconds": 0.0003834000000040305,
+        "allocated": 1455464448,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.3399999993168876e-05,
+        "allocated": 1454989824,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.3600000002611523e-05,
+        "allocated": 1454634496,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "empty_cache",
+        "seconds": 0.0002688000000006241,
+        "allocated": 1455531008,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.3400000000274304e-05,
+        "allocated": 1455056384,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.699999999971169e-05,
+        "allocated": 1454794240,
+        "reserved": 1929379840
+      },
+      {
+        "stage": "empty_cache",
+        "seconds": 0.25801089999999505,
+        "allocated": 1456738304,
+        "reserved": 1629487104
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.3700000003780133e-05,
+        "allocated": 1456263680,
+        "reserved": 1629487104
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.3299999999105694e-05,
+        "allocated": 1456011776,
+        "reserved": 1654652928
+      },
+      {
+        "stage": "empty_cache",
+        "seconds": 0.0001717999999968356,
+        "allocated": 1456610304,
+        "reserved": 1656750080
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.3199999997937084e-05,
+        "allocated": 1456135680,
+        "reserved": 1656750080
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.810000000546097e-05,
+        "allocated": 1455157760,
+        "reserved": 1656750080
+      },
+      {
+        "stage": "empty_cache",
+        "seconds": 5.55999999960477e-05,
+        "allocated": 1457071104,
+        "reserved": 1656750080
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.3200000005042511e-05,
+        "allocated": 1456596480,
+        "reserved": 1656750080
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.9299999998168005e-05,
+        "allocated": 1454077440,
+        "reserved": 1656750080
+      },
+      {
+        "stage": "empty_cache",
+        "seconds": 0.0003108000000011657,
+        "allocated": 1454547968,
+        "reserved": 1656750080
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.3799999997843315e-05,
+        "allocated": 1454073344,
+        "reserved": 1656750080
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.6800000004479898e-05,
+        "allocated": 1455322624,
+        "reserved": 1656750080
+      },
+      {
+        "stage": "empty_cache",
+        "seconds": 0.00032339999999919655,
+        "allocated": 1457463296,
+        "reserved": 1656750080
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.4999999997655777e-05,
+        "allocated": 1456988672,
+        "reserved": 1656750080
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.850000000302998e-05,
+        "allocated": 1456698880,
+        "reserved": 1656750080
+      },
+      {
+        "stage": "empty_cache",
+        "seconds": 0.00028879999999986694,
+        "allocated": 1457199104,
+        "reserved": 1656750080
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.71000000008803e-05,
+        "allocated": 1456724480,
+        "reserved": 1656750080
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.6300000005742277e-05,
+        "allocated": 1456895488,
+        "reserved": 1656750080
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.5600000004667436e-05,
+        "allocated": 1467796992,
+        "reserved": 1656750080
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 2.0300000002748675e-05,
+        "allocated": 1481654272,
+        "reserved": 1673527296
+      },
+      {
+        "stage": "empty_cache",
+        "seconds": 0.0002896000000021104,
+        "allocated": 1464202240,
+        "reserved": 1677721600
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.6899999991437653e-05,
+        "allocated": 1463809536,
+        "reserved": 1677721600
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.679999999737447e-05,
+        "allocated": 1466376704,
+        "reserved": 1677721600
+      },
+      {
+        "stage": "empty_cache",
+        "seconds": 0.0002901999999949112,
+        "allocated": 1465404416,
+        "reserved": 1677721600
+      },
+      {
+        "stage": "set_ref_audio",
+        "seconds": 0.2346726999999902,
+        "allocated": 1465441792,
+        "reserved": 1677721600
+      },
+      {
+        "stage": "segment_and_extract_feature_for_text",
+        "seconds": 0.01033069999999725,
+        "allocated": 1465679360,
+        "reserved": 1677721600
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 0.08948449999999752,
+        "allocated": 1465620480,
+        "reserved": 1677721600
+      },
+      {
+        "stage": "compute_embedding3",
+        "seconds": 1.659999999503725e-05,
+        "allocated": 1466960384,
+        "reserved": 1677721600
+      },
+      {
+        "stage": "empty_cache",
+        "seconds": 7.300000000043383e-05,
+        "allocated": 1466906624,
+        "reserved": 1677721600
+      }
+    ],
+    "interpretation": "20 consecutive syntheses succeeded, followed by recovery after HTTP cancellation, HTTP 400, and a new reference. Allocator reservation plateaued at 1840MiB before periodic cleanup at request 16; not a long-term leak proof."
+  },
+  "options_compared": [
+    {
+      "option": "Reference embedding reuse and CUDA allocator reuse",
+      "selected": true,
+      "reason": "Measured repeated SV embedding and full GC/empty_cache costs. Retain identical inference/segmentation/sampling with one cached reference and periodic/error cleanup."
+    },
+    {
+      "option": "Silent local startup warmup",
+      "selected": true,
+      "reason": "Measured first-inference initialization of reference processing, Japanese frontend and CUDA kernels. Run a local short inference before readiness; explicitly report its extra startup cost. No playback or cloud service."
+    },
+    {
+      "option": "Semantic-token streaming modes 2/3",
+      "selected": false,
+      "reason": "Mode 2 warm median first PCM approximately 0.525s; mode 3 approximately 0.233s. Official API labels mode 2 medium quality and mode 3 lower quality. Mode 3 also changed total PCM duration from 5.52s to 4.829s in this sample."
+    },
+    {
+      "option": "Earlier sentence submission / less playback prebuffer",
+      "selected": false,
+      "reason": "Already submits completed Japanese before translation completion, uses concurrent bounded LLM/TTS/playback queues, and buffers only 60ms. Preserve these existing behaviors."
+    }
+  ],
+  "sources": [
+    "https://github.com/RVC-Boss/GPT-SoVITS/blob/main/api_v2.py",
+    "https://github.com/RVC-Boss/GPT-SoVITS/blob/main/GPT_SoVITS/TTS_infer_pack/TTS.py",
+    "https://github.com/RVC-Boss/GPT-SoVITS/issues/2141",
+    "https://github.com/RVC-Boss/GPT-SoVITS/issues/1198",
+    "https://docs.pytorch.org/docs/main/notes/cuda.html#memory-management"
+  ],
+  "limitations": [
+    "GPU clock, background processes, filesystem caches and small sample counts affect timing. Do not extrapolate these medians to RTX 50-series hardware.",
+    "Startup warmup shifts initialization work earlier; fresh-process total readiness was 31.859s before versus 35.256s after, including 2.816s warmup. It does not eliminate model load time.",
+    "Subjective mechanical sound and voice quality were not evaluated with blind listening; model, speed, quality mode and sampling settings were retained. Waveforms were not bit-identical even between baseline repeats.",
+    "Single-reference embedding cache intentionally retains only one tensor; switching references recomputes embedding. Warmup uses the existing neutral reference, not every expression.",
+    "Mode 1 still waits for synthesis of a complete server-side text segment. Long unpunctuated Japanese can have higher first-audio latency.",
+    "Every 16 successful requests performs full GC and allocator cleanup; errors and interrupted generators force full cleanup.",
+    "Existing external service on port 9880 was kept running; restart the existing TachiTalk app/service for new code to take effect."
+  ],
+  "tests": {
+    "baseline": "228 tests; one desktop visibility failure. Isolated desktop retry: 5 passed. No unrelated UI fix.",
+    "final": "241 tests passed in 233.911s; unittest discover -s tests -v, project .venv, no skips.",
+    "targeted": "Cache 6 passed; TTS lifecycle/device/warmup 18 passed; pipeline 10 passed; API integration 14 passed."
+  },
+  "artifact_paths": {
+    "wav_and_logs": "D:/TachiTalk/scratch/tts_control_before and D:/TachiTalk/scratch/tts_control_after",
+    "stress": "D:/TachiTalk/scratch/tts_stress",
+    "test_log": "D:/TachiTalk/scratch/tts_final_tests.log"
+  },
+  "reproduce_optimized": ".\\.venv\\Scripts\\python.exe -B scripts\\benchmark_tts.py --launch --port 19880 --modes 1 --runs 4 --cold-play --play --play-runs 3 --check-recovery --output scratch/tts_recheck",
+  "review": {
+    "correctness": "Traced pipeline generate/synthesize/player callbacks, SpeechServices, API generator exhaustion, startup readiness and owned-process close. Regression and real local recovery checks passed.",
+    "readability": "Changes restricted to reference reuse, success/error cleanup policy, startup warmup, stage timing and standalone measurement script.",
+    "architecture": "Existing mode-1 inference, bounded queues, cancellation task group, 60ms prebuffer, per-turn voice expression lock and per-part portrait events retained.",
+    "security": "No dependency, key storage or authenticated endpoint changes. Warmup is configured only through the owned process environment and remains local; no cloud calls or microphone.",
+    "performance": "Controlled fixed-text medians plus cold first-play trial and per-stage synchronized profile captured. Extra startup warmup cost and device/acoustic measurement limits explicit."
+  },
+  "cleanup": "No listeners remain on test ports 19880/19881. Existing port 9880 PID 49688 preserved. stable-2026-10-22 still peels to baseline commit; independent backup untouched."
+}
