@@ -1,0 +1,6 @@
+aiohttp==3.14.4
+partial-json-parser==0.2.1.1.post7
+PyAudio==0.2.14
+sounddevice==0.5.6
+webrtcvad-wheels==2.0.14.post1
+PySide6>=6.8.3,<7
