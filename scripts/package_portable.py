@@ -136,7 +136,7 @@ def release_assets(root, output, release, file_count):
                 'echo Verify SHA256 below against SHA256SUMS.txt:',
                 'certutil -hashfile "TachiTalk.zip" SHA256',
                 r'echo Extract the complete ZIP, then run TachiTalk\TachiTalk.exe.', 'pause']
-    (release / '合并完整包.cmd').write_bytes(('\r\n'.join(command) + '\r\n').encode('ascii'))
+    (release / 'Merge-TachiTalk.cmd').write_bytes(('\r\n'.join(command) + '\r\n').encode('ascii'))
     manifest = {'archive': output.name, 'bytes': output.stat().st_size, 'files': file_count,
                 'sha256': checksums[0][0], 'parts': [p.name for p in parts],
                 'runtime': json.loads((root / 'services/gpt_sovits/distribution.json').read_text(encoding='utf-8'))}
