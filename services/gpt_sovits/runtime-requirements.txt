@@ -1,0 +1,9 @@
+# Private embedded Python 3.9 runtime update, not the main application venv.
+# Remaining dependencies are retained from the upstream inference distribution.
+# Official wheel index: https://download.pytorch.org/whl/cu128
+torch==2.7.1+cu128
+torchaudio==2.7.1+cu128
+torchvision==0.22.1+cu128
+sympy==1.13.3
+# PyPI; Chinese preprocessing uses CPU ONNX, model inference uses PyTorch CUDA.
+onnxruntime==1.19.2
