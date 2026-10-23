@@ -1,13 +1,17 @@
 # -*- mode: python ; coding: utf-8 -*-
+from pathlib import Path
+ROOT = Path(SPECPATH).parent
 
 
 a = Analysis(
-    ['D:/TachiTalk/main.py'],
+    [str(ROOT / 'main.py')],
     pathex=[],
     binaries=[],
-    datas=[('D:/TachiTalk/app/services/system_speech.ps1', 'app/services')],
+    datas=[(str(ROOT / 'app/services/system_speech.ps1'), 'app/services'),
+           (str(ROOT / 'packaging/release_keys.json'), 'packaging'),
+           (str(ROOT / 'packaging/download_sources.json'), 'packaging')],
     hiddenimports=['PySide6.QtUiTools', '_cffi_backend'],
-    hookspath=['D:/TachiTalk/packaging/hooks'],
+    hookspath=[str(ROOT / 'packaging/hooks')],
     hooksconfig={},
     runtime_hooks=[],
     excludes=['tkinter', 'pytest'],
@@ -32,7 +36,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['D:/TachiTalk/packaging/app.ico'],
+    icon=[str(ROOT / 'packaging/app.ico')],
 )
 coll = COLLECT(
     exe,

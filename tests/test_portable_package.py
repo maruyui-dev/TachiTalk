@@ -1,11 +1,35 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
+from unittest.mock import patch
 
-from scripts.package_portable import files, split_archive, sha256, runtime_libraries, MSVC_LIBRARIES, release_assets
+from scripts.package_portable import files, split_archive, sha256, runtime_libraries, MSVC_LIBRARIES, release_assets, entries
 
 
 class PortablePackageTests(unittest.TestCase):
+    def test_complete_portable_has_unique_docs_with_new_and_legacy_clients(self):
+        for client_has_docs in (False, True):
+            with self.subTest(client_has_docs=client_has_docs), TemporaryDirectory() as directory:
+                root = Path(directory)
+                client = root / 'dist/TachiTalk'
+                client.mkdir(parents=True)
+                (client / 'TachiTalk.exe').write_bytes(b'fixture')
+                for name in ('README.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md'):
+                    (root / name).write_bytes(b'project documentation')
+                    if client_has_docs:
+                        (client / name).write_bytes(b'project documentation')
+                voice = []
+                for name in ('services/gpt_sovits/runtime/python.exe', 'assets/audio/tts_reference/base.wav'):
+                    path = client / name
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    path.write_bytes(b'legacy client may already contain voice files')
+                    voice.append((path, Path(name)))
+                with patch('scripts.component_release.voice_entries', return_value=voice):
+                    paths = [path.as_posix() for _, path in entries(root)]
+                self.assertEqual(len(paths), len(set(paths)), '完整ZIP不能有同名的重复文件')
+                for name in ('README.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md'):
+                    self.assertEqual(paths.count('TachiTalk/' + name), 1)
+
     def test_merge_script_uses_a_github_safe_ascii_filename(self):
         with TemporaryDirectory() as directory:
             root = Path(directory)

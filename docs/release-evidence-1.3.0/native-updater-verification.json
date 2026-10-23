@@ -1,0 +1,7 @@
+{
+  "ok": true,
+  "embedded_updater_public_key_matches": true,
+  "production_signature_accepted_before_archive_validation": true,
+  "corrupt_archive_rejected_without_installation": true,
+  "native_error": "ValueError: 更新包完整性校验失败"
+}

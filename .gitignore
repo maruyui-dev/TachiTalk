@@ -22,6 +22,10 @@ backups/
 ui_template_work/
 build/
 dist/
+/work/
+/.tachitalk-update.lock
+/.tachitalk-pending.json
+/.tachitalk-transactions/
 *.egg-info/
 *.log
 .coverage
@@ -44,3 +48,7 @@ htmlcov/
 
 # 立绘管理的本机目录/映射；保留磁盘上的用户设置，不进入公开源码。
 /resources/resource_library.json
+
+# 本机发布传输进度及清理清单可能包含本机路径，不作为公开源码提交。
+/docs/release-evidence-1.3.0/github-*-state.json
+/docs/release-evidence-1.3.0/cleanup-*

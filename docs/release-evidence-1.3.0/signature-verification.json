@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "key_id": "release-1",
+  "component": "voice",
+  "version": "v2ProPlus-cu128-runtime-1",
+  "files": 40327,
+  "parts": 4,
+  "archive": {
+    "sha256": "981068572cc742caa44e56b48fa8fc40045af97bea04d6009b0f209b9b23060a",
+    "size": 6219221474
+  }
+}

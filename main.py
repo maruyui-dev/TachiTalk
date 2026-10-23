@@ -4,9 +4,11 @@ from app.bootstrap import main
 
 if __name__ == "__main__":
     import sys
-    if len(sys.argv) == 3 and sys.argv[1] == '--release-check':
+    if len(sys.argv) == 3 and sys.argv[1] in ('--release-check', '--core-check'):
         try:
-            from app.release_check import run
+            from app.release_check import run, run_core
+            if sys.argv[1] == '--core-check':
+                run = run_core
             result = run(sys.argv[2])
         except Exception as error:
             import json

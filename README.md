@@ -43,14 +43,18 @@
 
 ## 下载与启动
 
-面向普通用户，请下载 [Releases](https://github.com/maruyui-dev/TachiTalk/releases) 中的**完整 Windows 运行包**。GitHub 自动生成的 Source code 压缩包不含推理运行库和模型，不能当作完整运行包。
+v1.3.0 起支持**独立主程序 + 可选语音组件**。只安装主程序也可使用 UI、文字对话、立绘和气泡；在线 LLM 仍需自己的服务配置。语音可在安装最后或侧栏“更新与语音资源”中安装，下载失败可跳过。主程序增量更新不会重复下载 GPT-SoVITS。
 
-1. 下载同一版本的全部分卷及 `Merge-TachiTalk.cmd`（合并完整包脚本），放在同一个文件夹。双击脚本生成 `TachiTalk.zip`。Release 附件受单文件大小限制，因此采用分卷分发。
-2. 完整解压 ZIP，进入 `TachiTalk` 文件夹，双击 `TachiTalk.exe`。不要直接在压缩包中启动，也不要只复制 EXE。
+从 [Releases](https://github.com/maruyui-dev/TachiTalk/releases) 下载 `TachiTalk-v1.3.0-main.zip`（约78MB，仅主程序），或下载完整离线安装器及全部 BIN 文件。GitHub 自动生成的 Source code 不含推理运行库和模型。客户端已内置正式发布公钥，只接受签名和哈希验证通过的语音资源与更新；开发 QA 包不能公开分发。
+
+下载默认尝试官方源，失败后自动尝试配置中的待命公共代理；可调整优先级或彻底禁用。网络中断保留临时进度，服务器满足 ETag / Range 条件时续传；文件通过签名和 SHA-256 校验后才能安装。维护、构建、旧版免重下迁移和恢复方法见 [模块化更新说明](docs/modular-updates.md)。
+
+1. 仅安装主程序：完整解压 `TachiTalk-v1.3.0-main.zip`，确保其中的 `TachiTalk_main_setup.exe` 与 `TachiTalk_main_setup-1.bin` 位于同一目录。完整离线安装：将 `TachiTalk_setup.exe` 和所有 `TachiTalk_setup-*.bin` 下载到同一目录。
+2. 运行对应的 setup EXE，选择安装目录及所需组件。主程序安装不要求联网；之后可以从“更新与语音资源”面板下载语音。不要只复制安装 EXE，也不要直接在压缩包中运行。
 3. 在 **AI 服务**中填写自己的接口地址、API Key 和模型。使用语音输入时，再在 **语音与音频**中配置 ASR；只用文字对话无需 ASR Key。
-4. 首次启动需要加载本地语音模型并静默预热，观察运行日志确认就绪。随后可输入文字，或按录音开关使用语音输入。
+4. 安装语音后，首次启动需要加载本地模型并静默预热，观察运行日志确认就绪。未安装语音时自动使用文字模式，可先输入文字并配置 LLM；ASR 与朗读按各自服务可用状态启用。
 
-运行包包含客户端运行环境、GPT-SoVITS 私有推理环境、选定模型、立绘和参考音频，无须安装系统 Python 或 CUDA Toolkit。NVIDIA 显卡驱动需由用户安装。
+完整离线包包含客户端运行环境、GPT-SoVITS 私有推理环境、选定模型、立绘和参考音频；主程序小包不包含语音环境。无须安装系统 Python 或 CUDA Toolkit，NVIDIA 显卡驱动需由用户安装。旧版 v0.2.0 便携分卷仍使用其发布附带的 `Merge-TachiTalk.cmd` 合并脚本；新版主程序安装 ZIP 不需要合并。
 
 关闭控制面板会退出程序；隐藏角色或单独关闭角色窗口会保留控制面板。
 
@@ -66,7 +70,7 @@
 | 无可用 CUDA | 可使用 CPU 兼容模式，模型加载及合成会更慢 |
 | 网络 | 在线 LLM / ASR 需要联网及用户自己的账号；本地 TTS 无需付费 API |
 
-请为解压后的完整推理环境预留约 **12 GB** 空间，并额外保留下载压缩包的空间。本轮实机 GPU 为 RTX 4060 Laptop；Windows 10 与 RTX 50 的实机结果不应由此推断。相关依据：[PyTorch 2.7 Blackwell 支持](https://pytorch.org/blog/pytorch-2-7/)、[Qt Windows 支持](https://doc.qt.io/qt-6.12/windows.html)。
+请为解压后的完整推理环境预留约 **12 GB** 空间，并额外保留下载压缩包的空间。通过资源管理器安装或更新时还需分卷/合并缓存、解压暂存和事务备份，磁盘占用会明显超过最终环境大小；以面板预估及安装前检查为准，空间不足时清理其他文件后重试。本轮实机 GPU 为 RTX 4060 Laptop；Windows 10 与 RTX 50 的实机结果不应由此推断。相关依据：[PyTorch 2.7 Blackwell 支持](https://pytorch.org/blog/pytorch-2-7/)、[Qt Windows 支持](https://doc.qt.io/qt-6.12/windows.html)。
 
 GPU 模式建议使用 **Windows 10 22H2**，或 NVIDIA 支持表列出的 Windows 11 版本；CUDA 12.8 的官方 Windows 表列有 Win10 22H2、Win11 22H2 / 23H2 / 24H2。程序的安装下限不代表较早的 Windows 10 版本已通过 CUDA 验收，详见 [NVIDIA 系统要求](https://docs.nvidia.com/cuda/archive/12.8.0/cuda-installation-guide-microsoft-windows/index.html)。
 

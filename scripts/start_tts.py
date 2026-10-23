@@ -12,7 +12,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from app.paths import TTS_SERVICE_DIR, TTS_REFERENCE_DIR, PROJECT_ROOT, DATA_ROOT
 
 
-def check_files(root=TTS_SERVICE_DIR):
+def check_files(root=TTS_SERVICE_DIR, reference_dir=None):
     root = Path(root)
     required = [
         'runtime/python.exe', 'runtime/ffmpeg.exe', 'runtime/ffprobe.exe',
@@ -32,8 +32,9 @@ def check_files(root=TTS_SERVICE_DIR):
                     missing.append(str(path))
         except (ValueError, KeyError, TypeError) as error:
             missing.append(f'{manifest}（清单格式错误：{error}）')
-    if not any(TTS_REFERENCE_DIR.glob('*.wav')):
-        missing.append(str(TTS_REFERENCE_DIR / '*.wav'))
+    references = Path(reference_dir) if reference_dir is not None else TTS_REFERENCE_DIR
+    if not any(references.glob('*.wav')):
+        missing.append(str(references / '*.wav'))
     return missing
 
 

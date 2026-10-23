@@ -7,6 +7,7 @@ import subprocess
 import sys
 import os
 import wave
+import json
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -51,7 +52,12 @@ def icon():
     Image.open(png).save(ROOT / 'packaging/app.ico', sizes=[(16,16),(32,32),(48,48),(64,64),(128,128),(256,256)])
 
 
-def freeze():
+def freeze(target=None, work=None, trust_keys=None):
+    target = Path(target) if target is not None else ROOT / 'dist/TachiTalk'
+    work = Path(work) if work is not None else ROOT / 'build/pyinstaller'
+    trust_keys = Path(trust_keys) if trust_keys is not None else ROOT / 'packaging/release_keys.json'
+    if trust_keys.name != 'release_keys.json':
+        raise ValueError('公钥文件名必须为 release_keys.json')
     check_credentials()
     icon()
     build_env = os.environ.copy()
@@ -60,21 +66,32 @@ def freeze():
     build_env['PATH'] = os.pathsep.join(map(str, (Path(sys.executable).parent, Path(sys.base_prefix), system / 'System32', system)))
     subprocess.run([sys.executable, '-m', 'PyInstaller', '--noconfirm', '--clean', '--windowed', '--onedir',
                     '--name', 'TachiTalk', '--icon', str(ROOT / 'packaging/app.ico'),
-                    '--specpath', str(ROOT / 'packaging'), '--distpath', str(ROOT / 'dist'),
-                    '--workpath', str(ROOT / 'build/pyinstaller'),
+                    '--specpath', str(work / 'spec'), '--distpath', str(target.parent),
+                    '--workpath', str(work / 'client'),
                     '--add-data', str(ROOT / 'app/services/system_speech.ps1') + ';app/services',
                     '--hidden-import', 'PySide6.QtUiTools', '--hidden-import', '_cffi_backend',
+                    '--add-data', str(trust_keys.resolve()) + ';packaging',
+                    '--add-data', str(ROOT / 'packaging/download_sources.json') + ';packaging',
                     '--additional-hooks-dir', str(ROOT / 'packaging/hooks'),
                     '--exclude-module', 'tkinter', '--exclude-module', 'pytest', str(ROOT / 'main.py')],
                    cwd=ROOT, env=build_env, check=True)
-    target = ROOT / 'dist/TachiTalk'
     for folder in ('assets', 'resources/control_panel'):
         shutil.copytree(ROOT / folder, target / folder, dirs_exist_ok=True,
-                        ignore=shutil.ignore_patterns('__pycache__', '*.pyc', '*.json'))
+                        ignore=shutil.ignore_patterns('__pycache__', '*.pyc', '*.json', 'audio'))
     (target / 'scripts').mkdir(exist_ok=True)
     shutil.copy2(ROOT / 'scripts/tts_service_entry.py', target / 'scripts/tts_service_entry.py')
     shutil.copy2(ROOT / 'app/services/whisper_worker.py', target / 'scripts/whisper_worker.py')
-    shutil.copy2(ROOT / 'requirements.txt', target / 'requirements.txt')
+    for name in ('requirements.txt', 'README.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md'):
+        shutil.copy2(ROOT / name, target / name)
+    from app.version import VERSION
+    (target / 'release-version.json').write_text(json.dumps({'version': VERSION}), encoding='utf-8')
+    # A onefile helper is copied to the user cache before it runs, so its own image is replaceable.
+    subprocess.run([sys.executable, '-m', 'PyInstaller', '--noconfirm', '--clean', '--windowed', '--onefile',
+                    '--name', 'TachiTalkUpdater', '--distpath', str(work / 'updater-dist'),
+                    '--workpath', str(work / 'updater'), '--specpath', str(work / 'spec'),
+                    '--add-data', str(trust_keys.resolve()) + ';packaging',
+                    str(ROOT / 'scripts/update_entry.py')], cwd=ROOT, env=build_env, check=True)
+    shutil.copy2(work / 'updater-dist/TachiTalkUpdater.exe', target / 'TachiTalkUpdater.exe')
     # 动态链接的Qt/PySide6及其他客户端依赖随包保留许可证。
     from importlib.metadata import distributions
     for distribution in distributions():
@@ -93,17 +110,40 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--compiler')
     parser.add_argument('--skip-freeze', action='store_true')
+    parser.add_argument('--output', type=Path, default=ROOT / 'dist/TachiTalk')
+    parser.add_argument('--work-dir', type=Path, default=ROOT / 'build/modular')
+    parser.add_argument('--main-only', action='store_true', help='不包含可选语音环境的主程序安装器')
+    parser.add_argument('--allow-unconfigured-key', action='store_true', help='仅本地QA；没有公钥的构建禁用下载和更新')
+    parser.add_argument('--trust-keys', type=Path, default=ROOT / 'packaging/release_keys.json')
     args = parser.parse_args()
     if sys.prefix == sys.base_prefix:
         raise SystemExit('请使用项目虚拟环境运行构建脚本')
+    if not json.loads(args.trust_keys.read_text(encoding='utf-8')) and not args.allow_unconfigured_key:
+        raise SystemExit('请先配置生产签名公钥；本地QA可显式使用 --allow-unconfigured-key')
+    if args.output.name != 'TachiTalk':
+        raise SystemExit('--output 的末级目录须为 TachiTalk')
     if not args.skip_freeze:
-        freeze()
+        freeze(args.output, args.work_dir, args.trust_keys)
     if args.compiler:
         check_credentials()
-        check_release_data()
-        subprocess.run([args.compiler, '/DReleaseDir=' + str(ROOT / 'dist/TachiTalk'),
-                        '/DServiceDir=' + str(ROOT / 'services/gpt_sovits'),
-                        '/DOutputDirectory=' + str(ROOT / 'dist/installer'),
+        voice = args.work_dir / 'voice-stage'
+        if not args.main_only:
+            check_release_data()
+            from scripts.component_release import voice_entries
+            if voice.exists():
+                raise ValueError('语音暂存目录已存在；请指定新的 --work-dir，避免混入旧文件')
+            for source, relative in voice_entries(ROOT):
+                destination = voice / relative
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(source, destination)
+            from scripts.component_release import inventory, voice_entries, VOICE_VERSION
+            from app.updates.manifest import atomic_json
+            atomic_json(voice / 'services/gpt_sovits/component-version.json',
+                        {'version': VOICE_VERSION, 'files': inventory(voice_entries(ROOT))})
+        subprocess.run([args.compiler, '/DReleaseDir=' + str(args.output.resolve()),
+                        '/DVoiceDir=' + str(voice.resolve()),
+                        '/DMainOnly=' + ('1' if args.main_only else '0'),
+                        '/DOutputDirectory=' + str(args.work_dir.resolve() / 'installer'),
                         str(ROOT / 'packaging/TachiTalk.iss')], cwd=ROOT, check=True)
 
 

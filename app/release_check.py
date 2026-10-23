@@ -19,6 +19,49 @@ from app.ui.desktop_pet import DesktopPetWindow
 from app.ui.console import ConsoleUI
 
 
+def run_core(destination):
+    """Offline QA for the core-only product; no microphone, inference or external APIs."""
+    from dataclasses import replace
+    from types import SimpleNamespace
+    from app.core.components import voice_status
+    from app.core.pipeline import Pipeline
+    from app.core.models import CaptionPart
+    from app.core.voice_settings import VoiceSettings
+    from app.ui.desktop import DesktopSignals, DesktopUI
+    from PySide6.QtWidgets import QPushButton
+    app = QApplication.instance() or QApplication([])
+    pet = DesktopPetWindow()
+    panel = load_window(pet=pet)
+    panel.ensure_update_controls()
+    result = {'frozen': FROZEN, 'root': str(PROJECT_ROOT), 'data': str(DATA_ROOT),
+              'voice': voice_status(), 'ui_loaded': True,
+              'resource_panel': hasattr(panel, 'update_controls'),
+              'entry_enabled': panel.findChild(QPushButton, 'navDelivery').isEnabled()}
+    signals = DesktopSignals()
+    ui = DesktopUI(signals, Settings().max_reply_parts)
+    captions, expressions = [], []
+    signals.caption.connect(lambda turn, text: (captions.append(text), pet.set_reply_text(turn, text)))
+    signals.expression.connect(lambda turn, text: (expressions.append(text), pet.play_expression(turn, text)))
+    voices = VoiceSettings(Settings())
+    voices.set_tts(replace(voices.snapshot().tts, auto_read=False))
+    async def events(*args, **kwargs):
+        yield SpeechPart(0, 'こんにちは。', '平常')
+        yield CaptionPart(0, '离线验证：文字、立绘和气泡正常。')
+    pipeline = Pipeline(Settings(), None, SimpleNamespace(events=events), None, None, ui, voices=voices)
+    panel.show()
+    pet.show()
+    asyncio.run(pipeline.process_text('验证主程序'))
+    app.processEvents()
+    result.update(captions=captions, expressions=expressions, spoken=pipeline.last_metrics['spoken'])
+    panel.grab().save(str(Path(destination).with_suffix('.png')))
+    result['ok'] = bool(result['resource_panel'] and result['entry_enabled'] and captions and expressions and not result['spoken'])
+    panel.close()
+    pet.shutdown()
+    app.processEvents()
+    Path(destination).write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding='utf-8')
+    return 0 if result['ok'] else 1
+
+
 def run(destination):
     app = QApplication.instance() or QApplication([])
     panel = pet = None

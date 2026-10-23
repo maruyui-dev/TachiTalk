@@ -46,23 +46,18 @@ def entries(root):
     if not (client / 'TachiTalk.exe').is_file():
         raise ValueError('请先构建最新的dist/TachiTalk客户端')
     for source, relative in files(client):
+        if relative.as_posix().startswith(('services/gpt_sovits/', 'assets/audio/tts_reference/')):
+            continue  # Legacy client folders may still contain voice; the selected component owns it.
         yield source, Path('TachiTalk') / relative
-    service = root / 'services/gpt_sovits'
-    for name in SERVICE_ITEMS:
-        path = service / name
-        if not path.exists():
-            raise ValueError(f'完整运行包缺少推理资源：{name}')
-        if path.is_dir():
-            for source, relative in files(path):
-                yield source, Path('TachiTalk/services/gpt_sovits') / name / relative
-        else:
-            yield path, Path('TachiTalk/services/gpt_sovits') / name
+    from scripts.component_release import voice_entries
+    for source, relative in voice_entries(root):
+        yield source, Path('TachiTalk') / relative
     for name in ('README.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md'):
-        yield root / name, Path('TachiTalk') / name
+        if not (client / name).is_file():
+            yield root / name, Path('TachiTalk') / name
     for source, relative in files(root / 'docs'):
         yield source, Path('TachiTalk/docs') / relative
     yield root / 'packaging/安装说明.txt', Path('TachiTalk/安装说明.txt')
-    yield from runtime_libraries(root)
 
 
 def sha256(path):

@@ -45,6 +45,37 @@ async def run(settings, ui, check_only=False):
 
 
 def main():
+    from app.paths import PROJECT_ROOT, DATA_ROOT
+    from app.updates.install import InstallLock
+    try:
+        if (PROJECT_ROOT / '.tachitalk-pending.json').exists():
+            import subprocess
+            import shutil
+            import os
+            import uuid
+            directory = DATA_ROOT / 'updates/updaters'
+            directory.mkdir(parents=True, exist_ok=True)
+            if getattr(sys, 'frozen', False):
+                updater = directory / f'{uuid.uuid4().hex}.exe'
+                shutil.copy2(PROJECT_ROOT / 'TachiTalkUpdater.exe', updater)
+                command = [str(updater)]
+            else:
+                command = [sys.executable, str(PROJECT_ROOT / 'scripts/update_entry.py')]
+            command += ['--root', str(PROJECT_ROOT), '--recover', '--parent-pid', str(os.getpid()),
+                        '--result', str(DATA_ROOT / 'updates/install-result.json'), '--restart']
+            subprocess.Popen(command, cwd=directory, creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
+            return 0
+        if (PROJECT_ROOT / '.tachitalk-update.lock').exists():
+            with InstallLock(PROJECT_ROOT):
+                pass
+    except (OSError, RuntimeError, ValueError) as error:
+        # No application DLL is replaced by this startup check. Crash recovery runs first.
+        if getattr(sys, 'frozen', False):
+            import ctypes
+            ctypes.windll.user32.MessageBoxW(None, f'更新事务需要处理：{error}', 'TachiTalk', 0x10)
+        else:
+            print(f'更新事务需要处理：{error}')
+        return 1
     if not getattr(sys, 'frozen', False) and sys.prefix == sys.base_prefix:
         print("请先激活项目虚拟环境：Windows .\\.venv\\Scripts\\Activate.ps1；macOS/Linux source .venv/bin/activate")
         return 2
@@ -66,6 +97,7 @@ def main():
     parser.add_argument("--check", action="store_true", help="仅检查配置与服务后结束；不启动常驻监听")
     parser.add_argument("--list-devices", action="store_true", help="列出PyAudio输入设备索引后结束")
     parser.add_argument("--headless", action="store_true", help="仅用终端运行语音链路，不显示立绘")
+    parser.add_argument('--install-voice', action='store_true', help='打开可选语音安装面板；下载失败不影响主程序')
     args = parser.parse_args()
     ui = ConsoleUI()
     if args.list_devices:

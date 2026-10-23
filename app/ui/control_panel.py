@@ -302,6 +302,20 @@ def load_window(startup_records=(), pet=None, library=None, audio_library=None, 
         audio_library = AudioLibrary(DATA_ROOT / 'resources' / 'audio_library.json', REF_MAP)
     window.audio_resource_controls = AudioResourceControls(window, audio_library, BASE_DIR / 'audio_resources.ui')
     window.settings_controls = SettingsControls(window, RESOURCE_DIRECTORY, RESOURCE_BUBBLE_DIRECTORY)
+    def ensure_update_controls(show=False):
+        try:
+            if not hasattr(window, 'update_controls'):
+                from app.ui.update_controls import UpdateControls
+                window.update_controls = UpdateControls(window)
+            if show:
+                window.update_controls.show()
+            return window.update_controls
+        except Exception as error:
+            logging.getLogger('tachitalk.ui').error('更新模块不可用：%s', error)
+            window.findChild(QPushButton, 'navDelivery').setToolTip(str(error))
+            return None
+    window.ensure_update_controls = ensure_update_controls
+    window.findChild(QPushButton, 'navDelivery').clicked.connect(lambda: ensure_update_controls(show=True))
     if remember:
         remember_session(window)
     return window

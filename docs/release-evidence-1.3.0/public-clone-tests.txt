@@ -1,0 +1,17 @@
+test_at_sign_is_accepted_in_a_long_enough_password (tests.test_signing_setup.SigningSetupTests.test_at_sign_is_accepted_in_a_long_enough_password) ... ok
+test_cancelled_prompt_removes_only_empty_destination (tests.test_signing_setup.SigningSetupTests.test_cancelled_prompt_removes_only_empty_destination) ... ok
+test_check_directory_uses_real_writes_without_prompt_or_key_generation (tests.test_signing_setup.SigningSetupTests.test_check_directory_uses_real_writes_without_prompt_or_key_generation) ... ok
+test_encrypted_private_key_matches_public_client_configuration (tests.test_signing_setup.SigningSetupTests.test_encrypted_private_key_matches_public_client_configuration) ... ok
+test_existing_key_directory_is_preserved (tests.test_signing_setup.SigningSetupTests.test_existing_key_directory_is_preserved) ... ok
+test_file_write_denied_also_fails_before_password_prompt (tests.test_signing_setup.SigningSetupTests.test_file_write_denied_also_fails_before_password_prompt) ... ok
+test_partial_key_write_is_preserved_and_retry_cannot_overwrite_it (tests.test_signing_setup.SigningSetupTests.test_partial_key_write_is_preserved_and_retry_cannot_overwrite_it) ... ok
+test_password_mismatch_releases_only_empty_reserved_directory (tests.test_signing_setup.SigningSetupTests.test_password_mismatch_releases_only_empty_reserved_directory) ... ok
+test_private_key_cannot_be_generated_inside_repository (tests.test_signing_setup.SigningSetupTests.test_private_key_cannot_be_generated_inside_repository) ... ok
+test_signing_prompts_in_local_terminal_but_never_waits_for_ci_input (tests.test_signing_setup.SigningSetupTests.test_signing_prompts_in_local_terminal_but_never_waits_for_ci_input) ... ok
+test_unwritable_directory_fails_before_password_prompt_without_traceback (tests.test_signing_setup.SigningSetupTests.test_unwritable_directory_fails_before_password_prompt_without_traceback) ... ok
+test_weak_password_and_invalid_key_id_are_rejected_before_writes (tests.test_signing_setup.SigningSetupTests.test_weak_password_and_invalid_key_id_are_rejected_before_writes) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.118s
+
+OK

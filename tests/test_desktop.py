@@ -58,6 +58,11 @@ class DesktopStartupTests(unittest.TestCase):
                                  if hasattr(item, 'session_controls'))
                     result['restored_before_backend'] = panel.session_controls.restore_attempted
                     original_start()
+                    # Functional checks begin once construction/restore finished. The 3s close
+                    # watchdog must not fire during cold image/.ui loading under build I/O.
+                    app = QApplication.instance()
+                    QTimer.singleShot(0, app.check_windows)
+                    QTimer.singleShot(3000, app.timeout_exit)
                 worker.start = checked_start
                 workers.append(worker)
                 return worker
@@ -65,8 +70,6 @@ class DesktopStartupTests(unittest.TestCase):
             class CheckedApplication(QApplication):
                 def __init__(self, args):
                     super().__init__(args)
-                    QTimer.singleShot(200, self.check_windows)
-                    QTimer.singleShot(3000, self.timeout_exit)
 
                 def timeout_exit(self):
                     result['forced_exit'] = True

@@ -1,30 +1,46 @@
 #ifndef ReleaseDir
   #define ReleaseDir "..\dist\TachiTalk"
 #endif
-#ifndef ServiceDir
-  #define ServiceDir "..\services\gpt_sovits"
+#ifndef VoiceDir
+  #define VoiceDir "..\build\modular\voice-stage"
+#endif
+#ifndef MainOnly
+  #define MainOnly 0
+#endif
+#ifndef QAMode
+  #define QAMode 0
 #endif
 #ifndef OutputDirectory
   #define OutputDirectory "..\dist\installer"
 #endif
 [Setup]
+#if Int(QAMode)
+AppId={{97CB57C4-BD64-4535-8762-427674F9659C}
+CreateUninstallRegKey=no
+Uninstallable=no
+#else
 AppId={{ABD38416-108D-4C54-9044-BC4E59DD3D83}
+#endif
 AppName=TachiTalk
-AppVersion=0.2.0
+AppVersion=1.3.0
 AppPublisher=TachiTalk
-DefaultDirName={autopf}\TachiTalk
+DefaultDirName={localappdata}\Programs\TachiTalk
 DefaultGroupName=TachiTalk
 DisableDirPage=no
 DisableProgramGroupPage=yes
-PrivilegesRequired=admin
+PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=commandline
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 MinVersion=10.0.19041
 OutputDir={#OutputDirectory}
+#if Int(MainOnly)
+OutputBaseFilename=TachiTalk_main_setup
+#else
 OutputBaseFilename=TachiTalk_setup
+#endif
 DiskSpanning=yes
-DiskSliceSize=max
+DiskSliceSize=1900000000
 SetupIconFile=app.ico
 UninstallDisplayIcon={app}\TachiTalk.exe
 WizardStyle=modern
@@ -43,27 +59,63 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "创建桌面快捷方式"; GroupDescription: "快捷方式："
+Name: "downloadvoice"; Description: "安装结束后打开语音资源下载面板（失败可跳过，主程序正常使用）"; GroupDescription: "可选语音："; Flags: unchecked
+
+[Types]
+Name: "main"; Description: "仅安装主程序"
+#if Int(MainOnly) == 0
+Name: "full"; Description: "完整离线安装（主程序与语音）"
+#endif
+Name: "custom"; Description: "自定义安装"; Flags: iscustom
+
+[Components]
+#if Int(MainOnly)
+Name: "main"; Description: "TachiTalk 主程序"; Types: main custom; Flags: fixed
+#else
+Name: "main"; Description: "TachiTalk 主程序"; Types: main full custom; Flags: fixed
+#endif
+#if Int(MainOnly) == 0
+Name: "voice"; Description: "GPT-SoVITS v2ProPlus 语音环境和模型（可选）"; Types: full custom
+#endif
 
 [Files]
-Source: "{#ReleaseDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "{#ServiceDir}\*"; DestDir: "{app}\services\gpt_sovits"; Excludes: "__pycache__,*.pyc,*.pyo,*.log,*.tmp,TEMP,cache,.git"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#ReleaseDir}\*"; DestDir: "{app}"; Excludes: "assets"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: main
+Source: "{#ReleaseDir}\assets\*"; DestDir: "{app}\assets"; Flags: onlyifdoesntexist recursesubdirs createallsubdirs; Components: main
+#if Int(MainOnly) == 0
+Source: "{#VoiceDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: voice
+#endif
 Source: "安装说明.txt"; DestDir: "{app}"; Flags: ignoreversion
 
-[InstallDelete]
-; 整体替换私有运行环境，防止旧CUDA DLL残留混入新版本。
-Type: filesandordirs; Name: "{app}\services\gpt_sovits\runtime"
-
 [Icons]
+#if Int(QAMode) == 0
 Name: "{autoprograms}\TachiTalk"; Filename: "{app}\TachiTalk.exe"; WorkingDir: "{app}"; IconFilename: "{app}\TachiTalk.exe"
 Name: "{autodesktop}\TachiTalk"; Filename: "{app}\TachiTalk.exe"; WorkingDir: "{app}"; IconFilename: "{app}\TachiTalk.exe"; Tasks: desktopicon
+#endif
 
 [Run]
-Filename: "{app}\TachiTalk.exe"; Description: "启动 TachiTalk"; Flags: nowait postinstall skipifsilent runasoriginaluser
-
-[UninstallDelete]
-Type: filesandordirs; Name: "{app}\_internal"
+#if Int(QAMode) == 0
+Filename: "{app}\TachiTalk.exe"; Parameters: "{code:GetLaunchParameters}"; Description: "启动 TachiTalk / 可选语音下载"; Flags: nowait postinstall skipifsilent runasoriginaluser
+#endif
 
 [Code]
+function GetLaunchParameters(Param: String): String;
+begin
+  Result := '';
+  if WizardIsTaskSelected('downloadvoice') then Result := '--install-voice';
+end;
+
+procedure InitializeWizard();
+var
+  OldDirectory: String;
+begin
+#if Int(QAMode) == 0
+  if RegQueryStringValue(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Uninstall\{ABD38416-108D-4C54-9044-BC4E59DD3D83}_is1', 'InstallLocation', OldDirectory) or
+     RegQueryStringValue(HKLM, 'Software\Microsoft\Windows\CurrentVersion\Uninstall\{ABD38416-108D-4C54-9044-BC4E59DD3D83}_is1', 'InstallLocation', OldDirectory) then
+    if FileExists(AddBackslash(OldDirectory) + 'TachiTalk.exe') then
+      WizardForm.DirEdit.Text := OldDirectory;
+#endif
+end;
+
 function InitializeSetup(): Boolean;
 var
   DataFilename: String;

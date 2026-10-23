@@ -197,6 +197,11 @@ def run_desktop(settings, catalog, startup_logs=None):
     control_panel.ai_controls.bind_runtime(worker.ai, worker.inputs)
     control_panel.resource_controls.bind_expressions(worker.expressions)
     remember_session(control_panel)
+    from app.core.components import prepare_optional_voice
+    if not prepare_optional_voice(worker.voices):
+        control_panel.voice_controls.fill_tts(worker.voices.snapshot().tts)
+        control_panel.voice_controls.apply_preferences()
+        ui.info('本地语音未安装、资源不完整或配置不可用，已启用文字模式；可在“更新与语音资源”中安装或修复。')
     queued = Qt.ConnectionType.QueuedConnection
     caption_relay = CaptionRelay(window)
     signals.transcript.connect(window.add_transcript, queued)
@@ -222,6 +227,14 @@ def run_desktop(settings, catalog, startup_logs=None):
     if not control_panel.session_controls.loaded or control_panel.session_controls.pet_visible:
         window.show()
     control_panel.show()
+    def check_updates():
+        if control_panel._closing:
+            return
+        controls = control_panel.ensure_update_controls(show='--install-voice' in sys.argv)
+        if controls is not None:
+            controls.install_after_check = '--install-voice' in sys.argv
+            controls.check(automatic=True)
+    QTimer.singleShot(1200, check_updates)
     try:
         return app.exec()
     finally:
