@@ -32,6 +32,8 @@ class MainFeedTests(unittest.IsolatedAsyncioTestCase):
 
         async def fetch(url, configured, **kwargs):
             requests.append((url, copy.deepcopy(configured), dict(kwargs)))
+            if url == f'https://api.github.com/repos/maruyui-dev/TachiTalk/releases/latest':
+                raise ValueError('GitHub fallback deliberately unavailable in malformed-feed fixture')
             self.assertEqual(url, ENTRY + 'main-latest.json')
             self.assertEqual(main_feed.URL, url)
             self.assertEqual(len(configured), 1, 'There must be no API, GitHub or proxy fallback')
@@ -45,7 +47,8 @@ class MainFeedTests(unittest.IsolatedAsyncioTestCase):
 
         with patch('app.updates.main_feed.fetch_small', fetch):
             result = await main_feed.check()
-        self.assertEqual(len(requests), 1, 'The metadata checker must use only the fixed public feed')
+        self.assertEqual(requests[0][0], main_feed.URL)
+        self.assertIn(len(requests), (1, 2))
         self.assertEqual(result['manifests'], {}, 'Unsigned metadata must not produce an executable manifest')
         self.assertNotIn('installer', result.get('main', {}))
         self.assertNotIn('archive', result.get('main', {}))
@@ -87,12 +90,14 @@ class MainFeedTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result['main']['state'], 'current')
         self.assertEqual(result['main']['version'], '1.3.5')
 
-    async def test_network_failure_returns_error_without_falling_back_to_other_services(self):
+    async def test_both_official_metadata_sources_unavailable_returns_error(self):
         transport = AsyncMock(side_effect=ValueError('HTTP 503 from ModelScope'))
         with patch('app.updates.main_feed.fetch_small', transport):
             result = await main_feed.check()
-        self.assertEqual(transport.await_count, 1)
-        self.assertEqual(transport.await_args.args[0], ENTRY + 'main-latest.json')
+        self.assertEqual(transport.await_count, 2)
+        self.assertEqual(transport.await_args_list[0].args[0], ENTRY + 'main-latest.json')
+        self.assertEqual(transport.await_args_list[1].args[0],
+            'https://api.github.com/repos/maruyui-dev/TachiTalk/releases/latest')
         self.assertEqual(result['main']['state'], 'error')
         self.assertEqual(result['manifests'], {})
         self.assertTrue(result['errors'])

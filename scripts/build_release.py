@@ -43,13 +43,11 @@ def check_release_data():
 
 
 def icon():
-    from PySide6.QtWidgets import QApplication
-    from app.ui.control_panel import make_icon
     from PIL import Image
-    app = QApplication.instance() or QApplication([])
     png = ROOT / 'packaging/app.png'
-    make_icon('cat', '#ec709d', 256).pixmap(256, 256).save(str(png))
+    shutil.copy2(ROOT / 'resources/control_panel/assets/tachitalk.png', png)
     Image.open(png).save(ROOT / 'packaging/app.ico', sizes=[(16,16),(32,32),(48,48),(64,64),(128,128),(256,256)])
+    shutil.copy2(ROOT / 'packaging/app.ico', ROOT / 'resources/control_panel/assets/tachitalk.ico')
 
 
 def freeze(target=None, work=None, trust_keys=None):
@@ -87,7 +85,7 @@ def freeze(target=None, work=None, trust_keys=None):
     (target / 'release-version.json').write_text(json.dumps({'version': VERSION}), encoding='utf-8')
     # A onefile helper is copied to the user cache before it runs, so its own image is replaceable.
     subprocess.run([sys.executable, '-m', 'PyInstaller', '--noconfirm', '--clean', '--windowed', '--onefile',
-                    '--name', 'TachiTalkUpdater', '--distpath', str(work / 'updater-dist'),
+                    '--name', 'TachiTalkUpdater', '--icon', str(ROOT / 'packaging/app.ico'), '--distpath', str(work / 'updater-dist'),
                     '--workpath', str(work / 'updater'), '--specpath', str(work / 'spec'),
                     '--add-data', str(trust_keys.resolve()) + ';packaging',
                     str(ROOT / 'scripts/update_entry.py')], cwd=ROOT, env=build_env, check=True)

@@ -18,7 +18,8 @@ class InstallerAssetTests(unittest.TestCase):
             release = root / 'release'
             ui_assets = release / 'resources/control_panel/assets'
             ui_assets.mkdir(parents=True)
-            names = ('arrow_down.svg', 'arrow_up.svg', 'switch_off.svg', 'switch_on.svg')
+            names = ('arrow_down.svg', 'arrow_up.svg', 'switch_off.svg', 'switch_on.svg',
+                'tachitalk.png', 'tachitalk.ico')
             for name in names:
                 (ui_assets / name).write_bytes((PROJECT / 'resources/control_panel/assets' / name).read_bytes())
             (release / 'TachiTalk.exe').write_bytes(b'installer payload fixture - never executed')

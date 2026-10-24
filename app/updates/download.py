@@ -4,6 +4,7 @@ import json
 import logging
 from pathlib import Path
 import re
+import urllib.request
 from threading import Event
 from time import monotonic
 from urllib.parse import urlsplit
@@ -83,7 +84,12 @@ async def _request_chain(session, url, headers, policy):
     from urllib.parse import urljoin
     for _ in range(6):
         policy.redirect(url, initial)
-        response = await session.get(url, headers=headers, allow_redirects=False)
+        # Match the system/environment proxy that the diagnostics panel reports.
+        # Resolve on every redirect so NO_PROXY/bypass applies to the actual host.
+        # Keep trust_env=False: no implicit .netrc credentials are read or sent.
+        proxy = system_proxy(url)
+        response = await session.get(url, headers=headers, allow_redirects=False,
+            **({'proxy': proxy} if proxy else {}))
         if response.status not in (301, 302, 303, 307, 308):
             return response
         location = response.headers.get('Location', '')
@@ -92,6 +98,17 @@ async def _request_chain(session, url, headers, policy):
             raise ValueError('重定向缺少地址')
         url = urljoin(url, location)
     raise ValueError('重定向次数过多')
+
+
+def system_proxy(url):
+    parsed = urlsplit(url)
+    if urllib.request.proxy_bypass(parsed.hostname or ''):
+        return None
+    configured = urllib.request.getproxies()
+    proxy = configured.get(parsed.scheme) or configured.get('all')
+    if proxy and urlsplit(proxy).scheme not in ('http', 'https'):
+        raise ValueError('系统代理协议不支持；请使用 HTTP/HTTPS 代理或系统全局路由')
+    return proxy
 
 
 async def request(session, url, headers, policy):

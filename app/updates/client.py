@@ -130,6 +130,47 @@ class UpdateClient:
         atomic_json(self.directory / 'voice-manifest.json', envelope)
         return envelope
 
+    async def main_manifest(self, version, progress=lambda value: None, *, stop=None, selected_source=None):
+        """A metadata hint never authorizes writes: independently verify the signed package."""
+        if version_tuple(version) <= version_tuple(VERSION):
+            raise ValueError('没有高于当前版本的主程序更新')
+        if stop is not None and stop.is_set():
+            raise Paused('已取消主程序更新检查')
+        configured = sources(self.configuration(), 'manifest_sources')
+        if selected_source:
+            configured = [s for s in configured if s['name'] == selected_source]
+        else:
+            configured.sort(key=lambda s: s.get('layout') != 'modelscope')
+        if not configured:
+            raise ValueError('所选主程序更新来源未启用')
+        def validate_manifest(body):
+            payload = verify(json.loads(body), self.keys)
+            if (payload['component'] != 'main' or payload['version'] != version
+                    or payload['base_version'] != VERSION):
+                raise ValueError('主程序签名清单的组件或版本与当前更新不匹配')
+        progress({'status': '正在获取并验证主程序更新清单'})
+        body = await fetch_small(f'https://github.com/{REPOSITORY}/releases/download/v{version}/main-from-{VERSION}.json',
+            configured, limit=MAX_MANIFEST, validator=validate_manifest)
+        validate_manifest(body)
+        if stop is not None and stop.is_set():
+            raise Paused('已取消主程序更新检查')
+        envelope = json.loads(body)
+        atomic_json(self.directory / 'main-manifest.json', envelope)
+        if selected_source:
+            cache = self.directory / 'downloads' / envelope['payload']['archive']['sha256']
+            lock = cache / 'source-lock.json'
+            if lock.exists():
+                if lock.stat().st_size > 16384:
+                    raise ValueError('主程序下载来源记录过大，请清理本任务后重试')
+                old = json.loads(lock.read_text(encoding='utf-8'))
+                selected = next(s for s in configured if s['name'] == selected_source)
+                if old != Downloader.source_identity(selected):
+                    config = self.configuration()
+                    config['restart_archives'] = sorted(set(config.get('restart_archives', [])) |
+                        {envelope['payload']['archive']['sha256']})
+                    atomic_json(self.config_path, config)
+        return envelope
+
     async def _discover_release(self, progress=lambda value: None):
         """Dormant release discovery retained for a later reopening; no UI callers."""
         config = self.configuration()
@@ -224,7 +265,7 @@ class UpdateClient:
         atomic_json(self.directory / f"{payload['component']}-manifest.json", envelope)
         return envelope
 
-    async def prepare(self, envelope, progress, stop):
+    async def prepare(self, envelope, progress, stop, *, selected_source=None):
         progress({'status':'正在验证资源签名','phase':'preparing'})
         payload = verify(envelope, self.keys)
         config = self.configuration()
@@ -247,7 +288,12 @@ class UpdateClient:
         if shutil.disk_usage(cache).free < 2 * payload['archive']['size'] + 32 * 1024 * 1024:
             raise ValueError('下载缓存磁盘空间不足')
         configured = sources(config)
-        preferred = config.get('preferred_download_source')
+        preferred = config.get('preferred_download_source') if payload['component'] == 'voice' else None
+        if payload['component'] == 'main' and selected_source:
+            configured = [s for s in configured if s['name'] == selected_source]
+            if not configured:
+                raise ValueError('所选主程序来源未启用')
+            preferred = selected_source
         has_cache = (cache / 'source-lock.json').exists() or any(
             p.is_file() and p.stat().st_size for pattern in ('*.bin','*.bin.part','package.zip') for p in cache.glob(pattern))
         if preferred and not has_cache:

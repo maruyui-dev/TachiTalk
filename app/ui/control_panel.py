@@ -100,6 +100,8 @@ ICON_PATHS = {
 
 def make_icon(name, color='#677184', size=24):
     """把SVG字符串绘制到透明QPixmap，再转成Qt图标。"""
+    if name == 'cat':
+        return QIcon(str(PROJECT_ROOT / 'resources/control_panel/assets/tachitalk.png'))
     svg = (f'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" '
            f'viewBox="0 0 24 24" fill="none" stroke="{color}" '
            f'stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'

@@ -107,11 +107,11 @@ Source: "安装说明.txt"; DestDir: "{app}"; Flags: ignoreversion
 [Icons]
 #if Int(QAMode) == 0
 #if Int(TestBuild)
-Name: "{autoprograms}\TachiTalk 测试版 2.0.0"; Filename: "{app}\TachiTalk.exe"; WorkingDir: "{app}"; IconFilename: "{app}\TachiTalk.exe"
-Name: "{autodesktop}\TachiTalk 测试版 2.0.0"; Filename: "{app}\TachiTalk.exe"; WorkingDir: "{app}"; IconFilename: "{app}\TachiTalk.exe"; Tasks: desktopicon
+Name: "{autoprograms}\TachiTalk 测试版 2.0.0"; Filename: "{app}\TachiTalk.exe"; WorkingDir: "{app}"; IconFilename: "{app}\resources\control_panel\assets\tachitalk.ico"; AppUserModelID: "TachiTalk.Desktop.Test"
+Name: "{autodesktop}\TachiTalk 测试版 2.0.0"; Filename: "{app}\TachiTalk.exe"; WorkingDir: "{app}"; IconFilename: "{app}\resources\control_panel\assets\tachitalk.ico"; AppUserModelID: "TachiTalk.Desktop.Test"; Tasks: desktopicon
 #else
-Name: "{autoprograms}\TachiTalk"; Filename: "{app}\TachiTalk.exe"; WorkingDir: "{app}"; IconFilename: "{app}\TachiTalk.exe"
-Name: "{autodesktop}\TachiTalk"; Filename: "{app}\TachiTalk.exe"; WorkingDir: "{app}"; IconFilename: "{app}\TachiTalk.exe"; Tasks: desktopicon
+Name: "{autoprograms}\TachiTalk"; Filename: "{app}\TachiTalk.exe"; WorkingDir: "{app}"; IconFilename: "{app}\resources\control_panel\assets\tachitalk.ico"; AppUserModelID: "TachiTalk.Desktop"
+Name: "{autodesktop}\TachiTalk"; Filename: "{app}\TachiTalk.exe"; WorkingDir: "{app}"; IconFilename: "{app}\resources\control_panel\assets\tachitalk.ico"; AppUserModelID: "TachiTalk.Desktop"; Tasks: desktopicon
 #endif
 #endif
 

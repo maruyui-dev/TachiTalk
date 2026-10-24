@@ -157,6 +157,7 @@ def main():
     parser.add_argument('--version', required=True)
     parser.add_argument('--base-version', default='*')
     parser.add_argument('--base-inventory', type=Path)
+    parser.add_argument('--full-main', action='store_true', help='完整主程序覆盖包；不带语音/个人数据，不需要旧版inventory')
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--notes', type=Path)
     parser.add_argument('--tag')
@@ -173,14 +174,17 @@ def main():
         entries = main_entries(args.client) if args.component == 'main' else voice_entries(args.root)
         atomic_json(args.output, {'component': args.component, 'version': args.version, 'files': inventory(entries)})
         return
-    if args.component == 'main' and (not args.base_inventory or args.base_version == '*'):
+    if args.full_main and args.component != 'main':
+        raise SystemExit('--full-main仅适用于主程序')
+    if args.component == 'main' and (args.base_version == '*' or not args.full_main and not args.base_inventory):
         raise SystemExit('主程序增量包必须提供基线 inventory 和明确 base-version；首次迁移使用主程序安装器')
     base = json.loads(args.base_inventory.read_text(encoding='utf-8')) if args.base_inventory else None
     if base and (base['component'] != args.component or base['version'] != args.base_version):
         raise ValueError('基线inventory组件或版本不匹配')
     entries = main_entries(args.client) if args.component == 'main' else voice_entries(args.root)
     payload = create_package(entries, args.output, args.component, args.version, args.base_version,
-        base_files=base['files'] if base else None, notes=args.notes.read_text(encoding='utf-8') if args.notes else '', tag=args.tag)
+        base_files=base['files'] if base and not args.full_main else None,
+        notes=args.notes.read_text(encoding='utf-8') if args.notes else '', tag=args.tag)
     key_path = os.environ.get('TACHITALK_SIGNING_KEY')
     if not key_path:
         raise SystemExit('已生成未签名包。未配置 TACHITALK_SIGNING_KEY，不能发布；私钥只能从安全环境读取')

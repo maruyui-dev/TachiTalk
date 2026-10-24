@@ -260,7 +260,7 @@ async def wait_for_manual_restart(ui):
     await asyncio.Event().wait()
 
 
-async def run_application(settings: Settings, ui, inputs=None, profiles=None, voices=None, ai=None, expressions=None, audio=None):
+async def run_application(settings: Settings, ui, inputs=None, profiles=None, voices=None, ai=None, expressions=None, audio=None, history=None):
     inputs = inputs if inputs is not None else ConversationInput(
         audio_options=RecordingOptions(device=settings.input_device, sample_rate=settings.sample_rate))
     profiles = profiles if profiles is not None else PersonaStore()
@@ -300,7 +300,7 @@ async def run_application(settings: Settings, ui, inputs=None, profiles=None, vo
                 await serve_conversations(pipeline, inputs, voices, bus, ui, (service_task, commands_task, ai_task),
                                           lambda: LLMClient(session, settings, profiles, ai=ai, expressions=expressions, audio=audio,
                                               audio_active=lambda: voices.snapshot().tts.auto_read
-                                              and voices.snapshot().tts.provider == 'gpt_sovits'))
+                                              and voices.snapshot().tts.provider == 'gpt_sovits', history=history))
             finally:
                 service_task.cancel()
                 commands_task.cancel()

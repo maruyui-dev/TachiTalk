@@ -37,8 +37,8 @@ class PersonaStore:
         if switch_expression is not None:
             changes['switch_expression'] = bool(switch_expression)
         if context_turns is not None:
-            if context_turns not in (5, 10, 20):
-                raise ValueError('上下文长度只支持最近5、10、20轮')
+            if type(context_turns) is not int or not 1 <= context_turns <= 500:
+                raise ValueError('对话记忆轮数须为1–500轮')
             changes['context_turns'] = context_turns
         with self._lock:
             self._profile = replace(self._profile, **changes)

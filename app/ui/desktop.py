@@ -95,6 +95,9 @@ class VoiceWorker:
         self.inputs = ConversationInput(on_change=signals.input_state.emit,
                                         audio_options=RecordingOptions(device=settings.input_device, sample_rate=settings.sample_rate))
         self.profiles = PersonaStore()
+        from app.core.history import ConversationHistory
+        from app.core.session_file import SessionFile
+        self.history = ConversationHistory(SessionFile(DATA_ROOT / 'memory/conversation.dat'), report=self.ui.error)
         self.voices = VoiceSettings(settings)
         self.ai = AISettings(settings)
         self.expressions = ExpressionStore(settings.available_expressions, settings.default_expression)
@@ -102,7 +105,7 @@ class VoiceWorker:
         self.ui.voice_settings = self.voices
         self.application = application if application is not None else partial(
             run_application, inputs=self.inputs, profiles=self.profiles, voices=self.voices, ai=self.ai,
-            expressions=self.expressions, audio=self.audio)
+            expressions=self.expressions, audio=self.audio, history=self.history)
         self.stop_event = Event()
         self.lock = Lock()
         self.loop = self.task = None
@@ -165,7 +168,16 @@ class VoiceWorker:
 
 
 def run_desktop(settings, catalog, startup_logs=None):
+    if sys.platform == 'win32':
+        import ctypes
+        # A stable explicit identity keeps Windows taskbar grouping on the app.
+        set_id = ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID
+        set_id.argtypes = (ctypes.c_wchar_p,)
+        set_id.restype = ctypes.c_long
+        set_id('TachiTalk.Desktop')
     app = QApplication([sys.argv[0]])
+    from app.ui.control_panel import make_icon
+    app.setWindowIcon(make_icon('cat', size=48))
     instance_lock = None
     if FROZEN:
         DATA_ROOT.mkdir(parents=True, exist_ok=True)
@@ -191,6 +203,7 @@ def run_desktop(settings, catalog, startup_logs=None):
     worker = VoiceWorker(settings, ui, signals, audio=control_panel.audio_resource_controls.library)
     control_panel.conversation_controls.bind_inputs(worker.inputs, signals)
     control_panel.persona_controls.bind_profiles(worker.profiles)
+    control_panel.persona_controls.bind_history(worker.history)
     control_panel.audio_controls.bind_inputs(worker.inputs)
     control_panel.voice_controls.bind_runtime(worker.voices, worker.inputs)
     control_panel.audio_resource_controls.bind_runtime(worker.voices)

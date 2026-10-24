@@ -125,7 +125,8 @@ class MainFeedUITests(unittest.TestCase):
         self.assertEqual(self.ui.main_result['source'], '魔搭社区')
         self.assertIs(self.ui.envelopes['voice'], voice)
         self.assertEqual(self.ui.check_errors['voice'], 'retained voice message')
-        self.assertFalse(self.ui.update_button.isEnabled(), 'Unsigned metadata cannot enable executable patching')
+        self.assertTrue(self.ui.update_button.isEnabled(), 'A user may request independent signed-package discovery')
+        self.assertNotIn('main', self.ui.envelopes, 'Unsigned metadata still cannot authorize executable patching')
         self.assertIsNone(self.ui.prompt)
 
     def test_long_main_notes_wrap_without_vertical_clipping(self):

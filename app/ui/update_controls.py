@@ -64,7 +64,7 @@ class UpdatePrompt(QDialog):
         row.addWidget(badge)
         box.addLayout(row)
         layout.addWidget(versions)
-        source_badge = label('主程序更新暂未开放')
+        source_badge = label('签名验证通过 · 下载后覆盖更新主程序')
         source_badge.setStyleSheet('color: #a65c17; background: #fff3df; border-radius: 7px; padding: 7px 10px')
         layout.addWidget(source_badge)
         layout.addWidget(label('本次更新', title=True))
@@ -107,6 +107,7 @@ class UpdateControls(QScrollArea):
         self.thread = None
         self.main_thread = None
         self.main_check_running = False
+        self.main_source = None
         self.prompt = None
         self.install_after_check = False
         self.install_after_probe = False
@@ -164,7 +165,7 @@ class UpdateControls(QScrollArea):
             if state == 'unchecked':
                 self.main_detail.setText('后台静默检测默认使用魔搭社区；语音资源独立管理。')
             elif state != 'error':
-                self.main_detail.setText(f"魔搭社区 · 最新发布 v{latest} · {self.main_result.get('title','')}\n{self.main_result.get('notes','')}")
+                self.main_detail.setText(f"{self.main_result.get('source', '魔搭社区')} · 最新发布 v{latest} · {self.main_result.get('title','')}\n{self.main_result.get('source_note', '')}\n{self.main_result.get('notes','')}")
         envelope = self.envelopes.get('voice')
         self.voice_state.setText('已安装' if status['installed'] else '尚未安装')
         self.voice_version.setText(f"GPT-SoVITS v2ProPlus  ·  本机：{status['version']}")
@@ -262,10 +263,9 @@ class UpdateControls(QScrollArea):
         for item in (self.check_button, self.install_button, self.clear_button, self.uninstall_button,
                      self.import_button, self.legacy_button, self.settings_button, self.network_check_button):
             item.setEnabled(not busy)
-        self.update_button.setEnabled(not busy and (('main' in self.envelopes
-            and self.main_result['state'] == 'update_available') or bool(self.main_result.get('installer'))))
         self.check_button.setEnabled(main_feed.ENABLED and not self.main_check_running)
-        self.update_button.setEnabled(False)
+        self.update_button.setEnabled(main_feed.ENABLED and not busy and not self.main_check_running
+            and self.main_result['state'] == 'update_available')
         downloading = busy and self.operation == 'prepare'
         self.pause_button.setEnabled(downloading)
         self.cancel_button.setEnabled(downloading or (busy and self.operation in ('diagnose', 'reset-download')) or
@@ -348,13 +348,17 @@ class UpdateControls(QScrollArea):
                 self.main_result = result['value']['main']
                 self.check_errors.pop('main',None)
                 self.check_errors.update(result['value']['errors'])
-            self.envelopes.pop('main',None)
+            existing = self.envelopes.get('main')
+            if existing and existing['payload']['version'] != self.main_result.get('version'):
+                self.envelopes.pop('main', None)
             state = self.main_result['state']
             text = {'current':'已是最新版本','update_available':'发现新版本','error':'版本检测暂不可用'}.get(state,'更新检查暂未开放')
             self.main_status.setText(f'当前版本 v{VERSION}  ·  {text}')
             self.main_detail.setText(self.check_errors.get('main') or
-                f"魔搭社区 · 最新发布 v{self.main_result.get('version','—')} · {self.main_result.get('title','')}\n{self.main_result.get('notes','')}")
+                f"{self.main_result.get('source', '魔搭社区')} · 最新发布 v{self.main_result.get('version','—')} · {self.main_result.get('title','')}\n"
+                f"{self.main_result.get('source_note', '')}\n{self.main_result.get('notes','')}")
             self.check_button.setEnabled(main_feed.ENABLED)
+            self.update_button.setEnabled(main_feed.ENABLED and not self.busy and state == 'update_available')
             # Do not touch voice busy/stop/progress, navigate, prompt, or install.
             return
         if name == 'check':
@@ -369,6 +373,8 @@ class UpdateControls(QScrollArea):
             self.set_busy(False)
             self.main_result = {'state':'unchecked' if main_feed.ENABLED else 'disabled','version':None}
             self.envelopes.pop('main', None)
+            if self.last_component == 'main':
+                self.last_component = None
             self.close_prompt()
             self.refresh_summary()
             self.set_busy(False)
@@ -417,7 +423,16 @@ class UpdateControls(QScrollArea):
                 self.refresh_summary()
             return
         value = result['value']
-        if name == 'voice-manifest':
+        if name == 'main-manifest':
+            if self.stop.is_set():
+                return
+            self.envelopes['main'] = value
+            self.close_prompt()
+            self.prompt = UpdatePrompt(value['payload'], self.panel)
+            self.prompt.accepted.connect(lambda: self.begin_download('main', confirm=False))
+            self.prompt.open()
+            self.state.setText('主程序更新签名已验证；确认后下载，保留语音、立绘和个人配置。')
+        elif name == 'voice-manifest':
             if self.stop.is_set():
                 self.finish_preparation()
                 return
@@ -629,20 +644,31 @@ class UpdateControls(QScrollArea):
             self.launch_updater(None)
 
     def update_main(self):
-        self.check()
-        return
-        if self.main_result.get('installer'):
-            QDesktopServices.openUrl(QUrl(self.main_result['installer']['url']))
+        if self.busy or self.shutting_down:
             return
-        if hasattr(self.panel, 'ensure_update_controls'):
-            self.panel.ensure_update_controls(show=True)
-        self.begin_download('main')
+        if not FROZEN:
+            self.state.setText('源码开发模式请使用 Git 更新；覆盖安装仅用于冻结安装版。')
+            return
+        if not main_feed.ENABLED or self.main_result['state'] != 'update_available':
+            self.check()
+            return
+        from app.updates.download import sources
+        try:
+            choices = [s['name'] for s in sources(self.client.configuration())
+                if s.get('layout') == 'modelscope' or not s.get('prefix')]
+            selected, ok = QInputDialog.getItem(self, '主程序更新来源',
+                '选择下载来源；切换已有任务的来源会清理该任务缓存并从零下载。', choices, 0, False)
+            if not ok or not selected:
+                return
+            self.main_source = selected
+            version = self.main_result['version']
+            self.start('main-manifest', lambda progress, stop: asyncio.run(
+                self.client.main_manifest(version, progress, stop=stop, selected_source=selected)))
+        except (OSError, ValueError) as error:
+            self.state.setText(f'无法检查主程序更新：{error}')
 
     def begin_download(self, component, *, confirm=True):
         if self.busy:
-            return
-        if component == 'main':
-            self.state.setText('主程序在线更新暂未开放。')
             return
         try:
             envelope = self.envelopes.get(component)
@@ -667,7 +693,11 @@ class UpdateControls(QScrollArea):
             self.last_component = component
             self.task_title.setText('正在准备语音资源下载' if component == 'voice' else '正在准备主程序更新')
             self.task_count.setText('1 个任务')
-            self.start('prepare', lambda progress, stop: asyncio.run(self.client.prepare(envelope, progress, stop)))
+            if component == 'main':
+                self.start('prepare', lambda progress, stop: asyncio.run(self.client.prepare(
+                    envelope, progress, stop, selected_source=self.main_source)))
+            else:
+                self.start('prepare', lambda progress, stop: asyncio.run(self.client.prepare(envelope, progress, stop)))
         except Exception as error:
             self.finish_preparation()
             self.state.setText(f'{error}；请先检查资源版本或导入维护者签名清单。')
@@ -691,7 +721,7 @@ class UpdateControls(QScrollArea):
             from app.updates.download import sources
             config = self.client.configuration()
             choices = ['自动选择（GitHub < 250 ms，否则魔搭）'] + [s['name'] for s in sources(config)]
-            current = config.get('preferred_download_source')
+            current = self.main_source if self.last_component == 'main' else config.get('preferred_download_source')
             index = choices.index(current) if current in choices else 0
             selected, ok = QInputDialog.getItem(self, '切换下载来源',
                 '更换来源将停止当前连接，删除本任务的下载缓存，再从 0% 重新下载。', choices, index, False)
@@ -708,7 +738,10 @@ class UpdateControls(QScrollArea):
         """All manual entries share the stop/reset/download protocol."""
         try:
             config = self.client.configuration()
-            config['preferred_download_source'] = preferred
+            if self.last_component == 'main':
+                self.main_source = preferred
+            else:
+                config['preferred_download_source'] = preferred
             if self.last_component in self.envelopes:
                 pending = set(config.get('restart_archives', []))
                 pending.add(self.envelopes[self.last_component]['payload']['archive']['sha256'])

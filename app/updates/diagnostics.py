@@ -119,7 +119,13 @@ async def diagnose(client, envelope=None, *, stop=None, progress=lambda value: N
     proxy = proxy_status()
     payload, manifest_error = None, ''
     try:
-        envelope = envelope if envelope is not None else client.cached('voice')
+        if envelope is None:
+            try:
+                envelope = client.cached('voice')
+            except (OSError, ValueError, KeyError, TypeError):
+                # A first-run prefix-only probe cannot discover a signed part URL.
+                # Fetch the bounded manifest, verify it, then probe <=1 KiB/part.
+                envelope = await client.voice_manifest(progress, stop=stop)
         payload = verify(envelope, client.keys)
         if payload['component'] != 'voice':
             raise ValueError('不是语音组件清单')
