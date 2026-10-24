@@ -11,8 +11,8 @@ ROOT = Path(__file__).resolve().parents[1]
 SERVICE_ITEMS = ('GPT_SoVITS', 'GPT_weights_v2ProPlus', 'SoVITS_weights_v2ProPlus',
                  'runtime', 'tools', 'api_v2.py', 'config.py', 'distribution.json',
                  'LICENSE', 'THIRD_PARTY_NOTICES.txt', 'requirements.txt', 'runtime-requirements.txt')
-EXCLUDED = {'.git', '__pycache__', '.cache', 'cache', 'TEMP', 'scratch', 'logs',
-            '_qt_runtime_tmp', 'backups', '.idea', '.venv'}
+EXCLUDED = {'.git', '__pycache__', '.cache', 'cache', 'temp', 'scratch', 'logs',
+            '_qt_runtime_tmp', 'user_data', 'backups', '.idea', '.venv'}
 PART_BYTES = 1900 * 1024 * 1024
 MSVC_LIBRARIES = ('MSVCP140.dll', 'MSVCP140_1.dll', 'MSVCP140_2.dll')
 
@@ -31,7 +31,7 @@ def runtime_libraries(root):
 def files(directory):
     directory = Path(directory)
     for base, directories, names in os.walk(directory, followlinks=False):
-        directories[:] = sorted(name for name in directories if name not in EXCLUDED
+        directories[:] = sorted(name for name in directories if name.casefold() not in EXCLUDED
                                 and not (Path(base) / name).is_symlink())
         for name in sorted(names):
             path = Path(base) / name

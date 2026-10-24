@@ -246,7 +246,9 @@ class DownloadTests(unittest.IsolatedAsyncioTestCase):
         try:
             for position in range(offset, len(self.data), 32768):
                 await response.write(self.data[position:position + 32768])
-                if self.mode == 'disconnect' and position > 100000:
+                if self.mode in ('disconnect', 'disconnect-once') and position > 100000:
+                    if self.mode == 'disconnect-once':
+                        self.mode = 'range'
                     request.transport.close()
                     break
                 await asyncio.sleep(.001)
@@ -315,6 +317,83 @@ class DownloadTests(unittest.IsolatedAsyncioTestCase):
         await Downloader(configured, policy=SimulatedProxyPolicy(test_origin=origin)).download(self.artifact, self.path)
         self.assertEqual(self.requests[0][0], '/fail')
         self.assertEqual(self.path.read_bytes(), self.data)
+
+    async def test_disconnect_after_progress_resumes_same_source_instead_of_switching(self):
+        self.mode = 'disconnect-once'
+        origin = self.origin
+        class SourcePolicy(Policy):
+            def source_url(self, url, source):
+                return origin + ('/file' if source['name'] == 'primary' else '/fallback')
+        configured = sources({'sources': [{'name':'primary','retries':0}, {'name':'fallback','priority':1,'retries':0}]})
+        await Downloader(configured, policy=SourcePolicy(test_origin=origin)).download(self.artifact,self.path)
+        self.assertEqual(self.path.read_bytes(), self.data)
+        self.assertEqual([p for p,_ in self.requests], ['/file','/file'])
+        self.assertIsNotNone(self.requests[-1][1], 'same-source retry must resume verified ETag range')
+
+    async def test_repeated_disconnects_never_switch_away_after_progress(self):
+        self.mode = 'disconnect'
+        origin = self.origin
+        class SourcePolicy(Policy):
+            def source_url(self, url, source):
+                return origin + ('/file' if source['name'] == 'primary' else '/fallback')
+        configured = sources({'sources': [{'name':'primary','retries':0}, {'name':'fallback','priority':1,'retries':0}]})
+        with self.assertRaises(ValueError):
+            await Downloader(configured, policy=SourcePolicy(test_origin=origin)).download(self.artifact,self.path)
+        self.assertTrue(self.requests)
+        self.assertTrue(all(p=='/file' for p,_ in self.requests), self.requests)
+        self.assertGreater(self.path.with_suffix('.zip.part').stat().st_size,0)
+
+    async def test_previous_partial_keeps_its_source_when_source_order_changes(self):
+        await self.paused()
+        origin = self.origin
+        class SourcePolicy(Policy):
+            def source_url(self, url, source):
+                return origin + ('/file' if source['name'] == 'local' else '/fallback')
+        configured = sources({'sources': [{'name':'fallback','retries':0}, {'name':'local','priority':1,'retries':0}]})
+        await Downloader(configured,policy=SourcePolicy(test_origin=origin)).download(self.artifact,self.path)
+        self.assertEqual(self.requests[-1][0],'/file')
+        self.assertIsNotNone(self.requests[-1][1])
+
+    async def test_source_lock_survives_completed_part_and_application_restart(self):
+        origin = self.origin
+        class SourcePolicy(Policy):
+            recovered = False
+            def source_url(self, url, source):
+                return origin + ('/file' if self.recovered else '/fail') if source['name']=='primary' else origin+'/fallback'
+        configured = sources({'sources':[{'name':'primary','retries':0},{'name':'fallback','priority':1,'retries':0}]})
+        policy=SourcePolicy(test_origin=origin)
+        lock=self.path.parent/'source-lock.json'
+        await Downloader(configured,policy=policy,source_lock=lock).download(self.artifact,self.path)
+        policy.recovered=True
+        self.requests.clear()
+        await Downloader(configured,policy=policy,source_lock=lock).download(self.artifact,self.path.parent/'part2.bin')
+        self.assertEqual([p for p,_ in self.requests],['/fallback'])
+
+    async def test_complete_legacy_partial_retains_source_for_the_next_part(self):
+        self.path.with_suffix('.zip.part').write_bytes(self.data)
+        atomic_json(self.path.with_suffix('.zip.state.json'),{'url':self.artifact['url'],
+            'etag':self.etag,'sha256':self.artifact['sha256'],'size':self.artifact['size']})
+        origin=self.origin
+        class SourcePolicy(Policy):
+            def source_url(self,url,source):
+                return origin+('/file' if source['name']=='local' else '/fallback')
+        configured=sources({'sources':[{'name':'fallback','retries':0},{'name':'local','priority':1,'retries':0}]})
+        lock=self.path.parent/'source-lock.json'
+        await Downloader(configured,policy=SourcePolicy(test_origin=origin),source_lock=lock).download(self.artifact,self.path)
+        self.assertTrue(lock.exists(),'completed legacy partial must retain its known source')
+        await Downloader(configured,policy=SourcePolicy(test_origin=origin),source_lock=lock).download(self.artifact,self.path.parent/'part2.bin')
+        self.assertEqual(self.requests[-1][0],'/file')
+
+    async def test_pause_during_same_source_retry_keeps_partial_without_switching(self):
+        self.mode='disconnect'
+        stop=Event()
+        def progress(value):
+            if '同源重试' in value.get('status',''):
+                stop.set()
+        with self.assertRaises(Paused):
+            await Downloader(self.source,policy=self.policy,stop=stop,progress=progress).download(self.artifact,self.path)
+        self.assertEqual(len(self.requests),1)
+        self.assertGreater(self.path.with_suffix('.zip.part').stat().st_size,0)
 
     async def test_ignored_range_truncates_instead_of_appending(self):
         await self.paused()

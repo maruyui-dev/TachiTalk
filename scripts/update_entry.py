@@ -12,7 +12,7 @@ if not getattr(sys, 'frozen', False):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from app.updates.manifest import load_signed, atomic_json
-from app.updates.install import apply_archive, InstallLock, recover, uninstall_voice
+from app.updates.install import apply_archive, InstallLock, InstallBusyError, recover, uninstall_voice
 
 
 def wait_parent(pid, timeout=90):
@@ -80,6 +80,10 @@ def main(argv=None):
             apply_archive(root, args.archive, payload)
         ok = True
         atomic_json(args.result, {'ok': True, 'root': str(root)})
+    except InstallBusyError:
+        # The original updater owns both the files and its result. In particular
+        # a racing startup recovery must not report that live transaction failed.
+        return 2
     except Exception as error:
         atomic_json(args.result, {'ok': False, 'root': str(root), 'error': f'{type(error).__name__}: {error}'})
     # Attempt restart even after a rolled-back failure. An unresolved journal is handled at startup.

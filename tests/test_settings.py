@@ -260,6 +260,13 @@ class SettingsTests(unittest.TestCase):
         self.assertEqual(c.kind.currentData(), 'portrait')
         self.assertTrue(all(path.is_file() for path in imported))
         self.assertIn(key, c.library.packs)
+        from app.core.portrait_packs import PackResources
+        from app.core.resources import ResourceLibrary
+        restored = PackResources(ResourceLibrary(self.root / 'assets', self.root / 'library.json'),
+                                 self.root / 'bubbles')
+        self.assertEqual(restored.active_id, 'default')
+        self.assertEqual(restored.state['mapping'], {})
+        self.assertIn(key, restored.packs)
 
     def test_training_page_reset_changes_only_preview_parameters(self):
         self.panel.persona_controls.user_name.setText('保留称呼')
@@ -273,6 +280,19 @@ class SettingsTests(unittest.TestCase):
         self.assertEqual((epochs.value(), name.text()), (15, '茉子_新声音'))
         self.assertFalse(self.panel.findChild(QPushButton, 'trainingStartButton').isEnabled())
         self.assertEqual(self.panel.persona_controls.user_name.text(), '保留称呼')
+
+    def test_resource_reset_write_failure_is_reported_instead_of_success(self):
+        from app.core.resources import ResourceLibrary
+        self.panel.resource_controls.library.set_mapping('平常', 'builtin:portrait:欣慰')
+        self.click('navAssets')
+        with patch.object(ResourceLibrary, 'save', side_effect=PermissionError('fixture denied')):
+            self.click('resetButton')
+        from PySide6.QtWidgets import QLabel
+        feedback = self.panel.findChild(QLabel, 'footerHint').text()
+        self.assertIn('恢复默认失败', feedback)
+        self.assertIn('fixture denied', feedback)
+        self.assertEqual(json.loads((self.root / 'library.json').read_text(encoding='utf-8'))['mapping'],
+                         {'平常': 'builtin:portrait:欣慰'})
 
     def test_inactive_service_profiles_and_keys_survive_global_backup(self):
         ai, voice = self.panel.ai_controls, self.panel.voice_controls

@@ -1,5 +1,6 @@
 """File transactions with write-ahead recovery. No remote shell commands."""
 from contextlib import AbstractContextManager
+import errno
 import json
 import os
 from pathlib import Path
@@ -37,28 +38,44 @@ def target(root, name):
     return path
 
 
+class InstallBusyError(RuntimeError):
+    """Another process owns this installation; its transaction must be left alone."""
+
+
 class InstallLock(AbstractContextManager):
     def __init__(self, root):
         self.path = Path(root) / '.tachitalk-update.lock'
         self.stream = None
 
     def __enter__(self):
-        self.stream = self.path.open('a+b')
+        try:
+            self.stream = self.path.open('a+b')
+        except OSError as error:
+            if getattr(error, 'winerror', None) in (32, 33):
+                raise InstallBusyError('已有安装或更新进程正在运行') from error
+            raise
+        locking = False
         try:
             if os.name == 'nt':
                 import msvcrt
-                self.stream.seek(0)
-                if not self.stream.read(1):
+                # Reading the locked first byte itself fails on Windows. Its
+                # length can be checked without touching another owner's byte.
+                if os.fstat(self.stream.fileno()).st_size == 0:
                     self.stream.write(b'0')
                     self.stream.flush()
                 self.stream.seek(0)
+                locking = True
                 msvcrt.locking(self.stream.fileno(), msvcrt.LK_NBLCK, 1)
             else:
                 import fcntl
+                locking = True
                 fcntl.flock(self.stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except OSError:
+        except OSError as error:
             self.stream.close()
-            raise RuntimeError('已有安装或更新进程正在运行')
+            if locking and (error.errno in (errno.EACCES, errno.EAGAIN, errno.EDEADLK)
+                            or getattr(error, 'winerror', None) in (32, 33)):
+                raise InstallBusyError('已有安装或更新进程正在运行') from error
+            raise
         return self
 
     def __exit__(self, *args):

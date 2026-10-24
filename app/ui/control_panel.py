@@ -32,7 +32,8 @@ from app.paths import ASSET_DIR, BUBBLE_DIR, PROJECT_ROOT, DATA_ROOT, FROZEN
 
 # 只从TachiTalk项目内读取界面资源，不依赖原来的“训练”文件夹。
 BASE_DIR = PROJECT_ROOT / 'resources' / 'control_panel'
-RESOURCE_STATE = DATA_ROOT / 'resources' / 'resource_library.json' if FROZEN else BASE_DIR.parent / 'resource_library.json'
+# Both source and frozen runs use profile data; developer fixtures are never new-user defaults.
+RESOURCE_STATE = DATA_ROOT / 'resources' / 'resource_library.json'
 RESOURCE_DIRECTORY = DATA_ROOT / 'assets' if FROZEN else ASSET_DIR
 RESOURCE_BUBBLE_DIRECTORY = DATA_ROOT / 'bubbles' if FROZEN else BUBBLE_DIR
 if FROZEN:
@@ -92,6 +93,7 @@ ICON_PATHS = {
     'terminal': '<rect x="2" y="4" width="20" height="16" rx="3"/><path d="m6 9 3 3-3 3m7 0h5"/>',
     'training': '<path d="M4 20V11h4v9Zm6 0V4h4v16Zm6 0V8h4v12Z"/>',
     'upload': '<path d="M12 16V3m-5 5 5-5 5 5M4 15v5h16v-5"/>',
+    'download': '<path d="M12 3v13m-5-5 5 5 5-5M4 16v5h16v-5"/>',
     'headphones': '<path d="M4 13v-2a8 8 0 0 1 16 0v2M4 11h3v9H4Zm13 0h3v9h-3Z"/>',
 }
 
@@ -202,10 +204,13 @@ def setup_navigation(window):
         ('navAI', 'settings', 'AI 服务', '配置模型接口，调整生成参数', '模型服务配置'),
         ('navAssets', 'folder', '资源管理', '整理本地立绘、气泡皮肤与神态映射', '立绘与气泡素材'),
         ('navTraining', 'training', '模型训练', '使用 GPT-SoVITS，为角色训练专属声音', '功能开发中，仅供界面预览；暂不支持训练'),
+        ('navDelivery', 'download', '更新与语音资源', '管理主程序更新与可选语音组件', '新增资源随主程序安装；语音组件可独立安装'),
     )
     stack = window.findChild(QStackedWidget, 'pageStack')
 
     def select_page(index, _checked=False, *, show_notice=True):
+        if index == len(pages) - 1 and window.ensure_update_controls() is None:
+            return
         training = index == stack.indexOf(window.training_page.page)
         if training and show_notice:
             current_name = pages[stack.currentIndex()][0]
@@ -220,6 +225,8 @@ def setup_navigation(window):
         window.findChild(QLabel, 'footerHint').setText(footer)
         window.findChild(QPushButton, 'hideButton').setVisible(index == 0)
         window.findChild(QPushButton, 'resetPositionButton').setVisible(index == 0)
+        for name in ('resetButton', 'loadSettingsButton', 'saveButton'):
+            window.findChild(QPushButton, name).setVisible(index != 6)
         window.training_page.actions.setVisible(training)
         window.setWindowTitle('TachiTalk · ' + title)
         for position, (name, icon, *_rest) in enumerate(pages):
@@ -229,7 +236,10 @@ def setup_navigation(window):
         logging.getLogger('tachitalk.ui').info('切换页面：%s', title)
 
     for index, (name, *_rest) in enumerate(pages):
-        window.findChild(QPushButton, name).clicked.connect(partial(select_page, index))
+        nav = window.findChild(QPushButton, name)
+        nav.setCheckable(True)
+        nav.setAutoExclusive(True)
+        nav.clicked.connect(partial(select_page, index))
     window.select_page = select_page
     select_page(0)
 
@@ -307,15 +317,17 @@ def load_window(startup_records=(), pet=None, library=None, audio_library=None, 
             if not hasattr(window, 'update_controls'):
                 from app.ui.update_controls import UpdateControls
                 window.update_controls = UpdateControls(window)
+                window.findChild(QStackedWidget, 'pageStack').addWidget(window.update_controls)
             if show:
-                window.update_controls.show()
+                window.select_page(6)
+                window.show()
+                window.raise_()
             return window.update_controls
         except Exception as error:
             logging.getLogger('tachitalk.ui').error('更新模块不可用：%s', error)
             window.findChild(QPushButton, 'navDelivery').setToolTip(str(error))
             return None
     window.ensure_update_controls = ensure_update_controls
-    window.findChild(QPushButton, 'navDelivery').clicked.connect(lambda: ensure_update_controls(show=True))
     if remember:
         remember_session(window)
     return window

@@ -11,7 +11,7 @@ from app.core.session_file import SessionFile
 from app.ui.configuration_services import apply_profiles, capture_profiles, commit_ai, commit_audio
 
 LOG = logging.getLogger('tachitalk.settings')
-PAGES = ('characterPage', 'dialoguePage', 'audioPage', 'aiPage', 'resourcesPage', 'trainingPage')
+PAGES = ('characterPage', 'dialoguePage', 'audioPage', 'aiPage', 'resourcesPage', 'trainingPage', 'deliveryPage')
 
 
 class SessionControls(QObject):

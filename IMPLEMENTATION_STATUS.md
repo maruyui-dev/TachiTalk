@@ -1,7 +1,181 @@
 # 模块化安装与更新实施状态
 
+## 2026-10-24 v2.0.0 源码同步
+
+- 用户追加明确要求将代码一并更新GitHub。本地开发历史与公开仓库不同，因此基于公开main创建源码提交并正常快进推送，保留本地开发分支/原工作区和stable标签，不强推、不覆盖远端历史。
+- 同步当前程序、回归测试、构建脚本、正式版README和发布文档；本机诊断/交接、凭据、缓存、运行环境、大模型和超大训练材料不新上传，既有公开10份参考音频与历史公开证据保持原blob。
+- 源码语法及凭据检查通过；v2.0.0发布标签随源码提交快进，Release说明同步源码链接。桌面和GitHub安装包字节及SHA256不变，不重新构建、不重跑下载测试。具体提交和远端验证记录见本机docs/release-evidence-2.0.0/source-sync-result.json。
+
+## 2026-10-24 v2.0.0 正式版发布与旧产物清理
+
+- 用户明确授权正式发布/清理，并追加右键管理员运行提示。版本改2.0.0、正式安装身份，安装前介绍/ZIP说明/GitHub说明均写明完整解压后右键“以管理员身份运行”。40项60.833秒相关回归、最终冻结/隔离原生安装及Qt核心自检通过；不追加下载测试。
+- 已公开发布 https://github.com/maruyui-dev/TachiTalk/releases/tag/v2.0.0 ，非测试/非草稿、latest已核对；服务器资产SHA256与本地一致。上传后已将同一ZIP剪切到D:\桌面\TachiTalk-v2.0.0-setup.zip，77,491,946字节，SHA256 `7c554fac0ef09b009cdf85978020fd982693e525ae5cb9a229537d5e955b6e90`。配套sha256及可供手动魔搭上传的版本显示JSON；未代操作魔搭。
+- 本轮没有源码提交/推送；远端v2.0.0标签锚定既有公开main72f55799，本地HEAD4666ea0与stable对象/提交不变；Release已披露自动源码归档与本地构建的区别。公钥、下载行为、稳定语音栈不变。
+- 自动审批拦截批量永久删除（blocked by policy），改为回收站可恢复清理：旧work全部历史构建/包/备份、ACL备份、旧AppData/TachiTalk加载数据、IDE/Python缓存及本轮构建副本已移走。临时目录子项1,872项已回收、25项被其他程序占用/权限限制而保留；settings等旧加载数据已清。回收站未清空，不宣称已经释放相应磁盘空间；失败项逐项记录。
+- 保留源码/.git/全部原脏工作、主程序开发环境、稳定语音模型/runtime、本地源音频10文件（哈希未变）；Inno工具迁入tools/inno。没有清私钥或宣传创作工程。详细发布/清理记录docs/release-2.0.0.md，证据docs/release-evidence-2.0.0。既往work链接已按本轮清理授权失效，docs小型验证记录保留。
+
+## 2026-10-24 v1.3.10 RTX5070反馈接续合并（本机验证完成，目标完整链路仍待确认）
+
+- 用户带回三份RTX50检测报告，提取16文件代码补丁并严格逐段比较；4文件git apply检查失败仅为CRLF，实际hunk内容均唯一匹配，保留本机后续内容及原脏工作区。小快照work/rtx50-merge-20261024/before，详细记录docs/rtx50-feedback-merge-20261024.md。
+- 已本机复现并修复资源页恢复默认未写独立资源文件、重启读回旧映射；保存失败明确反馈。冻结数据按用户新要求放EXE旁user_data，不自动迁移/回退旧AppData，目录不可写报错退出，DPAPI保持。语音首次完整识别/缺失转完整/新安装代后开启本地GPT朗读一次，其他provider不切换，后续手动关闭保留，不伪造模型就绪。
+- 补修协调器深嵌套损坏JSON启动退出、保存/标记写失败重试覆盖手动关闭，以及便携user_data/TEMP大小写排除。均先失败回归再修复；保留跨文件标记持续失败后退出仍可能重触发的限制。Inno/便携不带开发user_data且保留安装已有数据；原1.3.7/1.3.8及下载行为保持。
+- **本机验证**：主定向42项、审查定向22项、最终全量519项614.999秒OK无跳过。22个独立冻结桌面进程验证实际PNG/DPAPI/两种重启路径、目录隔离、主动关闭保留、DPR100/125/150原控件四态及滚动；实际Inno安装/核心自检、10模块代码对象一致、真实文件系统失败诊断、实际冻结updater忙锁/恢复/坏备份通过。RTX4060实际协调器检测false→true时仍未就绪，44.203秒后真实TTS加载，聊天夹具合成默认播放成功、欠载0，48.344秒结束仅关闭自有服务。未调用付费API或重下6.2GB语音。用户要求不再下载测试时下载组已完成，此后无追加/重跑。
+- **交付**：work/rtx50-merge-20261024/delivery/TachiTalk-v1.3.10-rtx50-feedback-test-main.zip，77,504,257字节，SHA256 `d70cb6005ec8cfbd23f3c49007db519068688c879efb9d9e08510e75e04b1146`；便携版TachiTalk-v1.3.10-rtx50-feedback-test-portable.zip，102,451,086字节，SHA256 `d9c0eb636d2b1bb9f29af1c4e529ededae541e34c58e7b26aae671837822ec6c`。配套sha256和小型源码接续包；独立1.3.10身份，未覆盖1.3.8/1.3.9产物。
+- **边界**：新电脑报告RTX5070实际模型合成/Realtek播放通过，仅作为其历史证据；仍未完成目标冻结首次完整语音安装和用户真实付费ASR/LLM全链路。最初错误映射写入来源未证实。纠正旧交接：现有离线导入需要完整ZIP，不直接接受四分卷清单。未清本机AppData/用户缓存、未升级稳定语音环境/信任链、未改云端/稳定标签/HEAD，未提交/推送/正式发布。
+
+## 2026-10-24 v1.3.8 安装事务修复测试包（已交付；RTX5070待目标确认）
+
+- 用户反馈1.3.7安装语音退出后打不开。已发现实际D:\桌面\TachiTalk-Test-1.3.7的voice/applying事务（40328项），原更新器仍在持续写入；不能将截图弹窗认定为原安装已经失败。未关闭该进程、删除pending/备份或重装资源。
+- 已修启动先pending后锁的顺序错误：安装进行中误启动恢复；竞争恢复的忙锁异常又覆盖共享install-result并弹“恢复未完成”。现在先探测锁，占用返回2并提示等待原安装，不覆盖原结果；真正遗留事务仍恢复，权限/IO不冒充忙锁。独立进程持锁和元数据权限回归均先失败再修复。小型快照work/voice-recovery-20261024/before；详细记录docs/voice-install-recovery-20261024.md。
+- 原安装已自然完成：实际result ok=true、pending清除、语音v2ProPlus-cu128-runtime-1检查installed=true/missing=0，主程序PID29076由原更新器自动启动且Responding=true。没有执行手动恢复/删除事务/重装/终止用户进程。
+- **最终验证**：定向21项3.916秒、全量502项514.209秒通过。实际冻结更新器验证占用退出/保留结果、释放后回滚成功、腐损备份保留诊断；冻结启动代码对象与产品一致，忙时不启动竞争恢复，遗留事务仍启动恢复。隔离原生Inno安装、产品核心Qt自检、SVG/ICO完整性通过；辅助程序未入交付。
+- **交付**：D:\TachiTalk\work\voice-recovery-20261024\delivery\TachiTalk-v1.3.8-install-recovery-test-main.zip，77,486,639字节，SHA256 `5a12650cc6095697211ec3a7e75493fe0ed387091e82ffc0f8ab0509a1db38b6`，配套sha256。独立测试身份/目录；精确基线packaging/baselines/main-1.3.8-install-recovery-test-inventory.json，证据docs/release-evidence-1.3.8-install-recovery。未发布正式Release、未改云端、原脏工作区与HEAD/stable保持。新电脑复制清单及新账号交接见HANDOFF_RTX5070.md；BUG1/4和RTX5070仍需目标验证。
+
+## 2026-10-24 v1.3.7 用户反馈修复测试包（已交付；BUG1/4及RTX5070待目标确认）
+
+- 本轮直接在 D:\TachiTalk 排查四项 BUG、魔搭卡片标识及下载检测跳滚。开始核对分支/HEAD/stable 标签均与交接一致；原 ZIP 大小和 SHA256 匹配，无 TachiTalk/Python 运行进程；原未提交内容完整保留。小型源码快照在 work/bugfix-20261024/before。
+- 检测两次跳滚已真实 Qt 复现并最小修复：禁用按钮导致焦点移到下方控件。语音临时降级覆盖用户自动朗读偏好已修，9项/50.876秒通过，包含独立进程。目标补充Qt箭头文件不存在警告后，确认 Inno Excludes:"assets"误排除嵌套界面图标目录，改为根锚定；原生安装四个SVG先RED后GREEN且保留用户图片。最终撤回自绘替代方案，原控件/QSS不变。魔搭两处卡片统一官网标识。
+- **交付**：`D:\TachiTalk\work\bugfix-20261024\delivery\TachiTalk-v1.3.7-config-voice-bugfix-test-main.zip`，77,484,153字节，SHA256 `089e61c135b97eb5852593d5685ef25e08c2edb1e39ce4bc676c866d28b3d622`；配套sha256。独立1.3.7 Test AppId/安装目录/快捷方式，QA辅助exe不入交付包。桌面复制被系统PermissionError拒绝，交付项目内原包；原v1.3.6 ZIP字节/哈希保持不变。精确基线 packaging/baselines/main-1.3.7-config-voice-bugfix-test-inventory.json。
+- **最终验证**：全量495项498.672秒通过（中间494项515.892秒仅属中间结果）。真实Inno安装四个SVG/ICO完整并保留同名用户图片；产品冻结核心自检通过；与产品相关冻结代码对象相同的隔离QA辅助程序10个独立进程验证真实FROZEN数据目录/DPAPI、保存/关闭/重启恢复、自定义映射及实际立绘、缺组件到模拟就绪的朗读意愿。实测DPR1.0/1.25/1.5各四态开关可见，检测开始/完成均不跳滚。ZIP CRC/成员、生产公钥与渠道配置、静默main gate及无QA模块混入通过。
+- **本机语音**：原稳定RTX4060 Laptop、torch2.7.1+cu128/CUDA12.8，独立端口/运行目录，未开试听页，真实monitor启动TTS后82.594秒就绪，LLM夹具回复经真实合成和默认播放，spoken=true、32000Hz单声道、欠载0；测试87.032秒结束并仅关闭本次拥有服务。未调用付费ASR/LLM、未完整下载安装6.2GB语音，不能冒充目标GPU或国内整体验收。
+- **待目标确认**：BUG1错误映射、BUG4恢复默认在源码及冻结的真实桌面/DPAPI/独立进程中均未复现，默认空mapping/实际图片、已有自定义与设置恢复已证实通过，未擅自清配置或合并根因。目标新增日志确认箭头资源遗漏，但仍无自动保存/恢复日志与非敏感映射数据。旧版已保存auto_read=false与主动关闭无法区分，本版保留，目标复测需明确核对自动朗读选项。完整分项记录 docs/release-1.3.6-bugfix-validation.md；交付说明 docs/release-1.3.7-bugfix-test.md；证据 docs/release-evidence-1.3.7-bugfix。未完成RTX5070 Laptop实机验收。
+- **执行/保护**：曾发生辅助冻结重建与启动重叠造成QtCore DLL导入失败，已记录并改为独立输出、干净PATH、成功标记后再启动，后续全部成功；不是目标用户GPU新故障。全部原脏工作区条目仍在，最终HEAD和stable对象/提交不变；未提交/推送、未改云端或信任链、未覆盖日常安装/清缓存、未升级语音环境。独立只读审查无剩余代码/安装规则阻塞。
+
+## 2026-10-24 v1.3.6 GitHub / 魔搭语音下载与独立静默检测（已交付测试包）
+
+- **交付**：`D:\桌面\TachiTalk-v1.3.6-modelscope-voice-test-main.zip`，77,983,417字节，SHA256 `8b6b0866b9b6aa854c941bce65559b324b7dc9d4d653b5a9d03344223baf475e`；配套sha256。项目副本 `work/modelscope-20261024/delivery`，精确基线 `packaging/baselines/main-1.3.6-modelscope-test-inventory.json`。测试安装器使用独立AppId、默认目录TachiTalk-Test-1.3.6及独立快捷方式，不沿用正式版目录，不关闭用户程序。冻结有效载荷已在隔离QA目录原生安装核对；未覆盖用户日常安装。
+- **Cloudflare移除**：UI卡片、状态、设置提示与切换入口已去除；默认配置v5仅GitHub/魔搭。旧v1–4配置备份到before-modelscope再迁移，清除旧首选，运行时过滤旧渠道，旧配置或内存列表不会重新启用。旧渠道下载缓存和来源记录保留，必须用户主动切换后才清理本任务。没有删除云端资源或修改Cloudflare账户、DNS、R2对象/稳定指针。
+- **任务选源**：新在线任务独立获取并验签语音清单，对签名首分卷做Range GET，至多1KiB、单次最多3秒。计时从请求前到首字节，含连接和必要重定向，严格小于250ms选GitHub，其余（含250ms、异常、超时）选魔搭。UI显示状态、实测ms、最终渠道及原因；失败不显示0ms。GitHub未收到数据前可后备魔搭，开始后最多三次同源尝试，跨分卷/重启保持来源锁；普通续传不重新测速或删除缓存。用户显式手动选择优先，切源遵循停止旧任务→持久清理标志→清本任务→零开始，含重新启动尚无清单时的切源。
+- **魔搭真实适配**：固定公开repo master resolve入口映射已上传的v1.3.0语音附件，不修改原始签名payload。入口解析到已实测的cdn-lfs-cn-1.modelscope.cn/prod/lfs-objects/64hex路径，只准明确主机/路径、HTTPS和默认证书验证；不开放任意外域。每次请求/续传从稳定入口解析，401/403临时地址失效再取一次入口，不持久化临时签名URL。保留生产release-1签名、大小、分卷/整包/文件SHA256，以及强ETag、If-Range和准确Content-Range保护；无需注册、不含上传令牌。
+- **主程序检测的最终需求变更**：本轮最初已关闭自动/启动/手动检查并证明无网络请求；之后用户明确追加“上传魔搭文件，拉取验证后启用后台静默更新”。用户最终自行上传 `main-latest.json`，代理匿名实取473字节、与交付文件一致，SHA256 `f0d1093b26a037f75f3b3807cb6296f33040213d66cfcdfd6400d8905d2197c5`；验证后启用main_feed.ENABLED=True并重新冻结。最终默认只读魔搭固定文件（64KiB、总6秒），无GitHub版本API/代理后备、无弹窗或导航。版本元数据仅供面板展示，不授权可执行更新。主检测独立main_thread，不阻塞/解锁语音busy，不覆盖语音下载状态。关闭gate的无请求回归仍保留。没有代为上传或读取登录凭据。
+- **语音与本地功能**：安装/修复直接使用voice_manifest独立入口，无需先检查主版本；本地语音、签名离线导入、旧版复用和文字立绘气泡保持可用。GPT-SoVITS v2ProPlus、PyTorch2.7.1+CUDA12.8未升级。新用户神态全部自动匹配；已有用户映射保存/重开回归通过。
+- **测试**：初版全量461项515.500秒通过；最终开启魔搭静默检测后的全量483项519.266秒通过。新增/调整回归覆盖249、249.9999、250、250.0001、慢/超时/失败、独立语音验签、旧配置、断流/续传/手动切源、重启清理、主检查解耦、静默启动和无安装授权。先RED证据含配置/原更新请求、TTFB原7249ms误算、UI原Cloudflare与耦合、跨重启手动切源、主版本未展示；已修后通过。另同产品源码长主版本说明布局1项0.733秒通过（首次即通过，非RED）。独立审查无剩余阻塞；原生冻结主程序隔离安装/核心UI、首次映射、ZIP CRC、冻结PYZ入口/真gate、生产公钥/来源与源码一致、桌面和outputs哈希均通过。
+- **本机真实链路**：生产魔搭语音清单完整读取并验签，原签名envelope与已有正式清单相同；SHA256SUMS与签名逐卷哈希一致，四卷均1KiB HTTP206。GitHub实际附件首字节约860ms，按规则魔搭；魔搭实际下载到555658字节暂停，重建Downloader并反转来源顺序后仍魔搭，If-Range/同强ETag HTTP206从555658续到1062100字节。只保存稳定resolve地址。临时URL过期刷新为确定性HTTP响应夹具测试，不冒充真实过期等待。真实UI匿名主feed读取及长来源/错误布局通过；截图actual-feed为真实面板，layout-regression-fixture明确为回归夹具。
+- **尚未验收**：用户已确认国内能够直接拉取魔搭，但本轮上述时间/字节为执行主机结果；未执行整套约6.2GB语音完整下载、安装、GPU合成及国内最终安装验收。Windows10、RTX50与干净系统仍需目标实机验证，不能把可下载写成组件验收完成。
+- **保护边界**：全部原修改和新增文件保留，无reset/clean/覆盖GitHub源码，无提交/推送/正式Release；HEAD4666ea0、stable标签对象979a8fba/提交8eb0d2b1保持。未读生产私钥、未重建信任链、未索取密码，未额外清理。证据：`docs/release-evidence-1.3.6-modelscope` 与 `work/modelscope-20261024`。
+
+## 2026-10-24 用户授权清理旧测试工具、构建与备份（已完成）
+
+- 用户取消跨电脑交接，并确认魔搭社区国内用户能够直接下载拉取。该反馈不等于完整语音安装验收；本轮只处理清理，不实施新窗口的下载渠道改造。
+- 原清单共36项，最终核对原位置均已不存在：34个目录采用可恢复的回收站方式清理；1个旧配置备份文件 `packaging/download_sources.json.bak-20261023` 已删除；桌面 `ModelScope-003-Direct-Test.cmd` 在本轮开始前已不存在，不记为本轮删除。
+- 已清理独立 `D:\ModelScopeDownloadTest-20261023` 工具目录、旧版测试包、各轮 `before` 源码副本、临时 `build/build-final/build2`、`qa/qa-final`、`release/release-final/dist` 安装/构建副本及空备份目录。范围限于清单中明确列出的旧产物，没有删除整个work目录。
+- 回收站目录按原始清单合计4,742,045,867字节（约4.42GiB）；**未清空回收站，不能宣称已释放这些磁盘空间**。目录级永久删除被执行策略拦截后，改用可恢复清理方式成功完成。
+- 保留主项目源码、Git历史、稳定语音环境、用户配置与下载状态、语音上传原分卷、发布基线及测试证据。最新v1.3.5测试ZIP保留在 `work/download-resilience-20261023/delivery/`，重新验SHA256 `3be3b68afb094bf4af05023f67f21b08216be8fcd36df5602cd7ac479c64873b` 通过；结束核对时桌面该包原路径已不在，桌面该ZIP不在本轮删除清单中，未重新复制。
+- HEAD4666ea0和stable标签对象979a8fba/指向8eb0d2b1复核保持。7个保护文件中6个与10月23日快照哈希相同；`packaging/download_sources.json` 相较旧快照已有新修改（同时出现新增魔搭测试文件），本轮未编辑或回退该配置。没有将并行开发变化写成清理破坏，也没有声称全部源码与旧快照相同。
+- 清单及核对结果：`work/cleanup-20261023/plan.json`、`results-20261024.json`、`verification-20261024.json`。本轮没有修改业务代码、安装/发布新程序、读取私钥或清理云端对象，因此没有重跑业务测试。
+
+## 2026-10-23 v1.3.5 同源续传、准备提示与布局修复（已完成并交付测试包）
+
+- **交付**：`D:\桌面\TachiTalk-v1.3.5-download-resilience-test-main.zip`，77,984,322字节，SHA256 `3be3b68afb094bf4af05023f67f21b08216be8fcd36df5602cd7ac479c64873b`；配套sha256，项目副本work/download-resilience-20261023/delivery。测试下载：https://download.jieyiblog.me/testing/v1.3.5/TachiTalk-v1.3.5-download-resilience-test-main.zip。桌面与Cloudflare完整回下载SHA一致，ZIP CRC/成员通过。
+- **用户反馈**：国内Cloudflare可开始下载约1.8MiB/s，4%后自动切源，另有切源撑宽UI和首次0%疑虑；用户没有反馈完整语音安装成功。未取得该次异常日志，不能把它直接断定为超时。未停止/替换最初发现的日常PID36412或清理其缓存，稳定环境未改。
+- **下载**：默认临时网络错误最多3次同源尝试。收到数据后固定来源，跨分卷/重启保存，失败保留缓存供继续/手动切源，不因慢速擅自切源。首次完全无进度且来源不可用仍可后备。签名、强ETag/Range、分卷/整包SHA均保留。手动切源清理本任务及来源记录，暂停/取消保留。
+- **兼容**：旧部分/完整.part恢复来源，完整分卷快路径不丢来源身份；签名附件URL变更时仅在供应商路由唯一可确认时恢复身份，新URL从零读取，不复用不同URL字节，也不请求旧缓存URL。多候选/禁用源时保留缓存并要求明确切源。
+- **界面**：真实Qt复现长错误URL撑到24830/49969px（视口1088），已修复动态标签最小宽度。按钮下方首次准备预计约5分钟提示+真实阶段/已用时间；准备中显示不确定进度，真实数据后显示百分比（不足1%显示<1%），没有人工固定延迟或到点保证。
+- **验证**：最终全量425项429.607秒通过。原5项RED→GREEN13.054秒；边界3项GREEN7.773秒。两轮全量曾分别因HTTP UI等待fixture时序失败，记录full-tests.log/full-tests-final.log保留；最终修正链式worker等待和QTest.qWait的Python线程饥饿，5秒上限与断言不变/新增busy断言，8次实际HTTP从39.429秒降至4.593秒且全过。产品/冻结安装包未为绕过测试而修改。
+- **真实链路**：生产语音验签；约1MiB有界Cloudflare读取，重建任务并反转来源顺序仍CF，HTTP200→206从540672字节续传，来源锁/ETag/Range通过。不是完整语音下载/安装、国内带宽提升或RTX50实机验收。
+- **构建**：最终冻结/隔离原生安装、文字立绘气泡、首开全映射自动通过，公钥/来源与源码匹配，无整套语音/开发者JSON/Cloudflare凭据。PYZ含pin/wait_retry、来源锁与准备提示。精确基线packaging/baselines/main-1.3.5-download-resilience-test-inventory.json；证据docs/release-evidence-1.3.5-download-resilience。
+- **边界/后续**：未公开GitHub Release，R2稳定指针仍1.3.0，仅testing新对象；未提交/推送，HEAD4666ea0与stable对象979a8fba/提交8eb0d2b1保持。若旧任务已切走，用户可手动选择Cloudflare清理旧任务后实测本版；保持现有下载状态继续重试时按原来源保留，不擅自删除。
+
+## 2026-10-23 v1.3.4 Cloudflare 默认分发与静默更新（已完成并交付测试包）
+
+- **交付**：`D:/桌面/TachiTalk-v1.3.4-cloudflare-test-main.zip`，77,986,366字节，SHA256 `70bd93f549074afeb2c1b23662df4609a9319a43749937d169adcb73634116b1`；配套sha256文件，项目副本work/cloudflare-defaults-20261023/delivery。Cloudflare测试下载：`https://download.jieyiblog.me/testing/v1.3.4/TachiTalk-v1.3.4-cloudflare-test-main.zip`，实际完整回下载验哈希通过，桌面哈希一致。
+- **实现**：Cloudflare 默认渠道与配置v4备份迁移；新旧用户不再被旧单源偏好锁住；签名/下载/版本接口均可通过现有R2直连域。安装预检检查实际渠道，手动检测额外显示GitHub；不把GitHub失败当作Cloudflare失败。取消/失败清除“检测中”状态。
+- **启动/弹窗**：线程静默检查，不强制切到下载页；上次退出在下载页则回到角色控制，明确installer语音入口保留。仅更高版本提醒，支持没有适用增量包时下载完整主程序ZIP并手动安装，普通元数据不进入无签名补丁执行器。真实Qt弹窗及ImageGen设计图在证据目录，v1.3.5仅为明示设计示例。
+- **首次配置**：新用户全部映射自动，保留已保存映射；源码状态不再读取resources中的本机“平常→调皮”开发配置，原文件未改。最终冻结隔离首开实际验证全部自动；新默认公共备用代理启用，但Cloudflare无需代理。稳定torch2.7.1+cu128含sm_120，设备auto保留，本机RTX4060，不冒充RTX50实机验收。
+- **线上**：旧dl Worker固定语音可读而API/latest400、main404；改用download.jieyiblog.me，不改Worker/DNS。原正式1.3.0主程序ZIP已上传并Cloudflare完整下载验原SHA；只启用Cloudflare的版本/语音生产验签、206范围、metadata no-store通过。线上最新稳定指针仍1.3.0，测试对象独立，不改GitHub Release。
+- **验证**：全量413项417.069秒通过；此后检测状态/静态文案小调整，最终相关67项30.679秒通过。最终冻结/隔离安装、文字立绘气泡、ZIP CRC/成员/公钥/来源/映射排除/PYZ与桌面SHA通过。未声称最后调整后重新全量，也没有完整语音安装或用户无代理/RTX50实机验收。
+- **记录**：docs/release-1.3.4-cloudflare-test.md，docs/cloudflare-downloads.md；证据docs/release-evidence-1.3.4-cloudflare，精确基线packaging/baselines/main-1.3.4-cloudflare-test-inventory.json。全工作区原修改保留，HEAD4666ea0与stable对象979a8fba/指向8eb0d2b1复核未变，无提交/推送；未读生产私钥或更换稳定语音环境。
+- **后续**：用户测试本包实际语音下载/安装及RTX50合成。未来正式发布必须先镜像附件，再更新R2 latest清单和metadata/latest.json；仅更新GitHub不会自动变更R2版本指针。
+
+## 2026-10-23 Cloudflare 语音上传材料（原分卷恢复校验已完成）
+
+- 用户准备自行上传语音资源到Cloudflare，要求现成文件位置/文件名；若本地没有则提供。已检查项目发布/备份目录、用户下载缓存和常见下载位置：保留签名清单，但未找到完整四个发布分卷；稳定解压环境不是可直接供现有UI安装的发布包。
+- 已从公开v1.3.0正式附件恢复并校验**原始分卷**到 `work/cloudflare-voice-upload-20261023/v1.3.0`，只下载一份压缩包分卷，不复制或改动稳定GPT-SoVITS环境、不重新压缩/签名。脚本 `restore_voice.py`，日志 `restore.log`；使用既有受限Downloader，部分文件/同源强ETag支持重试续传。四分卷总6,219,221,474字节，manifest7,586,508字节。
+- 签名清单生产验签及对照原发布SHA已通过；四分卷和合并流哈希已完成校验，verification.json 的 ready=true，目录可供上传。完成后会生成SHA256SUMS和 `verification.json` 的ready=true；不创建额外合并ZIP。
+- 原材料准备阶段仅处理本地文件；之后DeepSeek部署及本轮Cloudflare业务接入见上节。原签名清单URL未改。
+
+## 2026-10-23 v1.3.3 代理状态图标（已完成并交付测试包）
+
+- **交付**：`D:/桌面/TachiTalk-v1.3.3-proxy-status-icons-test-main.zip`，77,972,507字节，SHA256 `a9d43f8faa874cb4d5caf0921b9805d2085a92f50b74105e8fdb1902d12b601a`，配套 `.sha256.txt`。项目副本在 `work/proxy-status-icons-20261023/delivery`，精确基线 `packaging/baselines/main-1.3.3-proxy-status-icons-test-inventory.json`。
+- **验证**：最终相关44项24.097秒通过，真实Qt三状态截图检查、隔离原生安装/核心功能、ZIP/桌面哈希及冻结PYZ中的新图标函数/三态颜色验证通过。没有为本次显示小改动重新运行全量，1.3.2的391项结果仍仅属于该版；证据 `docs/release-evidence-1.3.3-proxy-icons`。
+
+- 用户追加要求：发现代理和未发现代理的图标明显区分。已改为绿色盾牌勾/灰色盾牌横线/橙色盾牌问号，文字同时用对应浅色底和强调色；无障碍名称与提示同步。
+- 修改仅限网络卡片显示及检测中/取消/异常时状态复位，代理识别和网络下载业务未变。重新检测清除旧绿色状态；无法确认不等于未发现。
+- `work/proxy-status-icons-20261023/before` 保留修改前源码；新增图像差异/文字/颜色/无障碍及重测状态回归先RED，首轮44项23.958秒通过。真实Qt三状态对比 `proxy-states.png` 是界面测试示例，不是实际网络检测结果。
+- 独立只读复审未发现阻塞问题。为避免不同二进制混用既有基线，测试版本升至1.3.3，已完成冻结构建和独立安装验证。项目内旧1.3.2 ZIP原哈希仍匹配；桌面旧包本次核对已不在原路径，未由本轮删除或覆盖。未更改用户安装/代理/缓存或Cloudflare业务，未提交/推送/公开发布。
+
+## 2026-10-23 v1.3.2 GitHub 检测与切源验证版（已交付，等待用户实测）
+
+- **最终交付**：`D:/桌面/TachiTalk-v1.3.2-download-diagnostics-test-main.zip`，77,972,067字节，SHA256 `f1c52c9328c46d63dff2bda2469c89d1cbe37413a17cacdd654cf2cc8f480c17`；桌面配套 `.sha256.txt`，项目内同字节包在 `work/github-diagnostics-ui-20261023/delivery/`。全部解压后运行 setup，EXE/BIN需同目录，建议新测试目录。
+- **最终验证**：完整391项通过410.807秒；最终冻结主程序与交付安装器相同字节，隔离原生安装/核心检查通过，首次映射全部自动、检测卡片可用、Cloudflare暂未接入。ZIP CRC/成员/桌面哈希通过，生产公钥与下载源一致；直接读取冻结PYZ确认诊断模块及最终多任务 `restart_archives` 已打入。证据在 `docs/release-evidence-1.3.2-network-test`，说明见 `docs/release-1.3.2-download-diagnostics-test.md`，精确主程序基线 `packaging/baselines/main-1.3.2-download-diagnostics-test-inventory.json`。
+
+- 用户选择第二版资源面板、第一版网络失败弹窗；授权 GitHub / 代理检测和安装前业务逻辑，明确暂不接入 Cloudflare。后续追加：首次启动全部神态自动匹配；手动切换来源时清理当前任务缓存并从0重下；完成后再交付测试主程序。
+- 保留此前全部未提交修改；小型源码备份及本轮证据在 `work/github-diagnostics-ui-20261023`。开始时发现用户 TachiTalk PID29268；未主动停止/替换该程序、清理用户实际缓存或切换其网络。原生QA在独立目录与隔离用户数据运行，明确禁止安装器关闭/重启其他应用；后续只读核对已未发现TachiTalk进程，不推断其退出原因。
+- 新增 `app/updates/diagnostics.py` 和 `app/ui/update_network.py`：清单/签名清单首分卷分别作小范围 GET，单项网络等待至多8秒，并行执行；首分卷 URL 先验签，原信任重定向策略保留。只读报告系统/环境/PAC代理设置，不能据此判断全部代理或实际连接路由。Cloudflare 显示暂未接入，按钮禁用，没有对应请求或下载业务。
+- 安装前检测，失败可查看详情、重测、取消或明确仍尝试现有下载源；检查与下载均在工作线程。手动检测不启动安装，关闭/取消阻止后续下载。切源先停旧任务，再清理单个签名 archive 缓存；其他任务、已安装语音不动。新增持久化 `restart_archives` 列表，清理失败及重启不能绕过待执行的清理；不同任务分别记录、按请求组件清理，安装确认保留；暂停/取消保留缓存。
+- 神态映射原代码默认就是空覆盖表（所有下拉自动匹配）；已增加冷启动全行与保存后重开回归，不通过覆盖已有用户设置来实现。冻结包仍排除个人资源JSON。
+- 流程、首次无缓存URL策略与取消清理等均有实际 RED 记录及修复。受影响65项79.513秒通过；追加保护后41项22.395秒通过，再补交错任务后43项23.772秒通过。中途全量387项412.762秒通过，最终以391项410.807秒及最终冻结验收为准；这些与小流量探测均不代表完整语音安装成功。
+- 真实只读线上探测：清单672ms、首分卷593ms，均 HTTP206、应用各读取1024字节。检测到系统/环境代理设置，因此**不是免代理完整下载验收**。截图 `ui-1440/1200/1080.png`，失败弹窗 `network-dialog-*-fixture.png` 是明确的本地失败夹具，自动映射截图使用隔离首次数据。
+- 独立审查发现的两个P2（首次无缓存固定latest清单被过严资产策略拒绝、扫描期间取消仍删除）均补先失败回归后修复。另补清理失败重试与跨重启回归。
+- 用户已有阿里云个人备案域名，可规划独立下载子域名；原网站可保留阿里云。标准R2自定义域名需要同账号Cloudflare zone，届时配置DNS并保留原站记录；备案不会自动带来Cloudflare大陆网络。当前没有改域名/DNS、购买服务或上传资源。
+- 构建数字版本提升1.3.2，避免与此前1.3.1不同二进制混用基线；未公开发布、提交或推送。HEAD4666ea0和稳定标签对象979a8fba/提交8eb0d2b1复核未变。稳定GPT-SoVITS/PyTorch/CUDA未修改，未读取生产私钥或索取密码。
+- 下一步用户运行本轮新测试包验证检测、切源从零下载及完整安装。Cloudflare业务尚未授权实施，不能将本轮交付写为免代理分发已解决。
+
+## 2026-10-23 分发目标澄清与网上调研（免代理渠道尚未实施）
+
+- 用户明确要求普通用户不配置外部代理也能下载，并要求搜索其他个人开发者的做法。此前“开启代理后可下载”仅证明该条件下连接可用，不满足产品的免代理分发目标。
+- 已核对 GPT-SoVITS 官方 ModelScope 整合包直链、Dub Genius 作者的网盘整合包、Cherry Studio 官方夸克入口及思源独立下载域名/网盘；调研见 `docs/download-distribution-research-20261023.md`，包含一手来源、成本及接入/验收边界。
+- 建议先评估国内 ModelScope 托管，条件不满足时使用国内区域 COS/OSS（按需CDN）；版本/签名清单与分卷应同时有国内渠道，保留原签名/哈希和受限镜像映射。没有确认平台配额或“永久免费”，也没有声称任何候选已通过用户关闭代理后的完整下载验收。
+- 本轮仅搜索与记录，没有修改产品/测试代码、上传资源、购买服务、改用户代理或干扰当前下载。下一步需选定并验证真实国内分发渠道，不能把新增公共 GitHub 代理或单次小流量连接写成免代理分发已完成。
+
+## 2026-10-23 用户实际拉取反馈（外部代理开启后可以下载）
+
+- 用户起初报告三个来源长时间0%，随后明确补充：**不开外部代理时失败，开启外部代理后可以下载**。最新截图具体错误为所选 GHFast 首分卷 ConnectionTimeoutError（连接超时）；不能将该图扩大为所有来源、所有网络条件都不可用。
+- 当前已确认用户反馈的“外部代理下可下载”，尚未收到完整下载、安装及实际语音合成完成的结果；没有将开始下载记为完整安装成功。
+- 本次只读核对实际Git状态、进程、日志和缓存；没有修改产品/测试代码、下载配置、安装程序或已安装程序，没有停止用户任务、切源或清缓存。缓存只读检查未取得可核实的文件增长记录，因此不虚构已下载字节数。
+- 准备阶段空间检查曾作为假设排查；小样本1/8/32文件空间估算分别约0.015/0.016/0.109秒，完整清单探测没有得到完成结果，**不能据此认定空间检查是本次连接超时原因**。诊断材料在work/prepare-stall-131；没有按该未证实假设实施修复。恢复核对时未发现仍运行的这两个诊断脚本。
+- 让用户当前下载继续，等待其完整下载/安装反馈；不启动额外大文件探测、构建或安装操作干扰本次实测。
+
+## 2026-10-23 UI 与检查误报修复（已完成本地交付，等待用户完整下载实测）
+
+- **当前交付**：`D:/桌面/TachiTalk-v1.3.1-resource-ui-test-main.zip`，77,954,899字节，SHA256 `7bfe99bfd28a95237d6e5420b54a72fc9587051b4a3b71ac17776d7e67846546`；配套 `.sha256.txt`。项目内同字节备份在 `work/ui-resource-fix-20261023/delivery/`。全部解压后运行 setup，EXE/BIN需同目录；建议新目录验证。
+- **范围已完成**：资源页嵌入主面板、真实容量圆环/下载进度、速度/ETA/来源/暂停取消/续传提示、安装位置与下载设置、独立主程序/语音状态、已审核的新版本弹窗与实际后台逻辑。最新/不支持基线/接口未知/真实网络或签名失败分开处理；API失败仍保留签名附件回退。
+- **最终验证**：366项全量385.994秒通过；最后一处“关闭当前所选代理后回到可用来源”配置修复后，相关30项9.741秒通过。实际线上voice生产签名与HTTP200/206约2MiB续传通过，原生冻结主程序隔离安装/核心检查通过，ZIP及桌面副本哈希通过。不是完整语音下载/安装验收；未声称最终367项全量运行。
+- **持久化资料**：`docs/release-1.3.1-resource-ui-test.md`，证据 `docs/release-evidence-1.3.1-ui-test/`，精确验证包主程序基线 `packaging/baselines/main-1.3.1-resource-ui-test-inventory.json`。本次基线不能与未来不同内容的同数字版本混用。
+- **保护边界**：未提交/推送/公开发布，未改安装中的日常程序及稳定语音环境；HEAD仍4666ea0，稳定标签对象979a8fba、指向8eb0d2b1未变。桌面旧1.3.0 ZIP在本次交付核对时已不在原路径，未由本轮修改/删除；没有把无法再验的旧文件写成再次验哈希成功。
+- **桌面写入记录**：Python直接创建桌面文件被系统拒绝；未改ACL/策略或提权。先在项目内生成并验证ZIP，再使用PowerShell原生Copy-Item复制到桌面，新文件名不覆盖已有内容，桌面SHA实测一致。生产私钥和密码从未读取/索取。
+- 下一步由用户运行新主程序，反馈实际GitHub语音拉取/完整安装结果；不自动开始完整下载、覆盖正式Release或替换用户日常安装。以下保留本轮实施过程。
+
+- 用户明确授权实施 UI 与逻辑修复，并构建一个主程序供其验证 GitHub 资源拉取。随后确认尚未开始语音安装；本轮先前暂停已被本次授权解除。
+- 已重新核对分支、未提交修改、HEAD 与稳定标签，均与交接一致；未发现运行中的 TachiTalk/安装器/独立更新器。既有修改保留，拟修改文件已做小型源码备份到 work/ui-resource-fix-20261023/before，未复制语音环境。
+- 实施/验收清单：docs/resource-ui-fix-plan.md。先写复现当前版主清单 404 的测试，再修复、嵌入资源页、验证与构建。完成前不记为已修复；不替换已安装程序、不覆盖公开附件或稳定标签。
+- 新增9项版本发现回归已实际 RED（原逻辑请求不存在的 main 清单、未检查基线），修复后与原 UI 测试合计19项通过6.872秒。资源页及状态分离的5项行为回归先 RED，修复及夹具隔离本机语音状态后24项通过7.734秒。证据在 work/ui-resource-fix-20261023。
+- 当前已将资源页嵌入主面板，增加磁盘圆环、下载速度/ETA/来源选择、固定新增资源目录和独立旧版复用入口。用户追加要求设计更新弹窗，已使用 ImageGen 输出效果图，随后明确通过并要求实现；已将弹窗接入现有 UpdatePrompt 和后台下载流程。
+- 本次测试包使用数字版本1.3.1及“资源面板验证版”标记，以免修改过的二进制继续冒充精确1.3.0基线。公开Release仍是1.3.0，本次尚未发布。测试夹具使用实际VERSION派生下一版，保留“比当前版本更新”的原测试含义。后续仍需全部回归、Qt截图、线上签名/下载与冻结构建验收。
+- 第一轮全回归361项通过391.464秒；独立代码审查随后发现3个新增流程边界：切源中暂停/取消仍重试、旧主程序缓存绕过新检查状态、资源页退出时会话保存被页面白名单拒绝。另发现高级JSON禁用代理可能被界面复选框误重启；这些与导航状态问题均先补真实RED测试，再修复。修复后更新/会话专项35项通过48.597秒，需再跑最终全回归。
+- 实际线上检查：公开版1.3.0、main状态current、errors为空、voice生产签名验签成功；真实Downloader首分卷读取1,078,478字节后暂停，再以HTTP206续传到2,139,534字节，ETag一致、Content-Range起点正确。没有完整下载/安装语音；证据live-check.json、github-download-probe.json、network-probe.log。
+- 本机无编译器残留，已从官方GitHub获取 Inno Setup 6.7.3，经Authenticode有效签名验证后以官方 /PORTABLE=1 模式解包到本任务work目录；未全局安装或更改语音依赖。
+
 更新时间：2026-10-23。目标版本：**v1.3.0**。
 
+## 当前最终状态（2026-10-23：GitHub发布、桌面交付与授权清理完成）
+
+- **正式发布**：[v1.3.0](https://github.com/maruyui-dev/TachiTalk/releases/tag/v1.3.0)，release ID421364787。公开main与v1.3.0标签实际指向72f55799ecd7fd4e5a67f2236b1c0f17246bad32；12附件均uploaded，服务器size/SHA256与最终本地清单一致。没有覆盖旧Release或稳定标签。
+- **桌面主程序安装包**：`D:/桌面/TachiTalk-v1.3.0-main.zip`，77,939,279字节（约77.94MB/74.33MiB），SHA256 `d8c45415b858034f8bb31e2df7cd1a003e8f2a6d2c040a69078ed6218e4a7421`。清理后再验ZIP CRC和3个成员通过；完整解压后运行TachiTalk_main_setup.exe，EXE/BIN同目录。
+- **真实测试**：原项目全量347项通过403.650秒；公开源码隔离副本全量347项通过364.268秒。实际GitHub匿名附件下载SHA、生产Ed25519验签通过；真实Downloader首次HTTP200下载后暂停，再两次206续传，Content-Range/ETag/长度均验证。仅约3.2MB探测，没有再下载完整2GB/重复安装。首次匿名API403限流，原命令重跑匿名成功，最终收据anonymous_metadata_verified=true；没有伪称首次即成功。
+- **最终清理实际完成**：会话74353退出0；56目标全部删除，remaining_rows=0。dist/build/scratch/work、重复稳定备份、旧桌面安装包/备份与指定构建缓存/截图已删除。磁盘实测净回收110,147,751,936字节（102.58GiB），清理结束D盘可用287,776,796,672字节（268.01GiB）。这是本轮最终清理数字，不与此前两套QA清理数字混淆或简单相加。
+- **清理报告**：`D:/桌面/TachiTalk-上传与清理结果.txt`；`D:/桌面/TachiTalk-清理未完成明细.csv`（只有表头，无失败文件）。完整逐根结果/计划/日志保存在docs/release-evidence-1.3.0/cleanup-result.json、cleanup-roots.json、cleanup-plan.json、cleanup-execution.log。历史暂存删除拒绝已由本次授权清理解决，无对应残留；未改变ACL/系统执行策略或提权。
+- **保留并核验存在**：Python项目全部源码/未提交修改、.git/.venv、现用services及用户assets/resources；D:/GPT-SoVITS-v2pro-20250604；生产密钥D:/TachiTalkSigning（从未读私钥）；用户指定的D:/TachiTalk-Promo、D:/TachiTalk-PV、D:/TachiTalk-acl-recovery。没有升级torch/CUDA/GPT-SoVITS。
+- **Git**：本地feature/modular-updates，HEAD仍4666ea0e1b3f255e4ee6276294e7582781f42414；任务源码仍保留为未提交修改/新增文件。临时公开worktree已正常移除，git worktree list仅原项目。stable-2026-10-22对象979a8fba7a18acaae7c579ed7795ddf75a08d9de、peeled8eb0d2b145ea065ba23f8035abb94ac0c9036956完全未变；差异空白检查通过。公开历史与本地完整历史不同，不能强推本地历史覆盖公开main。公开提交72f5579已是发布检查点；如后续整理本地检查点，先审核差异，不reset/clean或擅动稳定标签。
+- **可恢复证据**：公开验收github-public-verification.json；最终交付final-delivery-verification.json（包含实际Git状态）；public-source-full-tests.txt；正式冻结core-smoke/signature/native-updater证据；原生GPU/安装/卸载/回滚/旧目录复用JSON已归档到docs/release-evidence-1.3.0子目录。工作目录已按用户要求删除，历史小节中的work路径仅为当时位置，不能再当作现存文件。
+- **未来发布**：保留packaging/baselines/main-1.3.0-inventory.json及voice inventory。完整正式构建/分卷可从已验证Release取回，不需长期占用本地副本，不重新生成生产密钥。下一版main按精确1.3.0基线生成/签名文件差异包；latest附受支持main-from-*.json及当前voice-manifest。无尚未完成的上传/下载/解压/安装/清理操作。
+- **验证边界**：Windows10、RTX50、干净系统、公共代理实际大文件速度/Range可用性、真实断电/磁盘故障、本次正式完整离线包再次实际安装未覆盖。先前QA完整离线及独立语音真实GPU链通过，不冒充这些未做的验收。未来功能升级仍需对应测试；本版没有启动健康检查失败后自动回滚协议，仅文件事务失败恢复。
+- 当前用户的上传/桌面交付/清理要求已完成。恢复时先读本节、实际Git与证据，再执行新的明确任务；不要重新生成/上传/清理已完成内容。下方为历史阶段记录。
+## 2026-10-23 恢复：上传完成，准备公开发布
+
+- 已重新检查实际工作区、分支、最近提交、worktree、上传账本与测试进程。公开源码完整回归已结束：347项通过，364.268秒；日志已复制到 `docs/release-evidence-1.3.0/public-source-full-tests.txt`。
+- GitHub草稿421364787现有12附件，全部state=uploaded，服务器size/SHA256与最终附件清单一致。公开main为72f55799ecd7fd4e5a67f2236b1c0f17246bad32；v1.3.0标签尚不存在。没有重复上传大包。
+- 下一步按既有用户授权发布草稿，然后匿名验证公开API、签名清单与实际HTTP续传。公开验收通过后才删除正式附件本地副本；保留用户明确指定的三个其他项目、Python源码/.git/.venv、原GPT环境与生产密钥。
 ## 2026-10-23 上传GitHub、桌面安装包与最终清理（用户已授权，进行中）
 
 - 最新授权：上传正式1.3.0到GitHub；桌面留一份主程序安装包；保留Python项目和原本本地GPT-SoVITS，清理代理生成的TachiTalk副本/构建产物；删除失败必须提供具体到文件名的完整路径清单。
@@ -12,6 +186,12 @@
 - 已启动 `work/github-release-transfer.py --phase upload --voice-only`，exec56587，日志 `work/github-voice-upload.log`；持久化远端草稿ID与逐附件状态在 `docs/release-evidence-1.3.0/github-upload-state.json`。该文件不含凭据，只含公开附件ID/hash。上传API按SHA验证，未验证完不得删本地正式附件。
 - 上传完成/公开校验前不执行最终清理。清理前把main/voice基线inventory和必要测试证据归入Python项目，保留生产密钥、原始services/独立GPT、用户配置与.git/.venv。dist/build/scratch/work、旧桌面包/备份等派生产物按明确目标检查后删除；未知归属/被拒路径写逐文件CSV清单，不把失败写成成功。
 - 下一步：等正式安装器重编译完成→更新ZIP/桌面副本/附件账目→分组上传并验证→公开源提交与发布→下载/签名/Range线上实检→完成清理与详细失败清单。任何中断先查实际进程和本节账目，不盲重传或删尚未上传文件。
+- 最新进展：347项全量回归403.650秒通过（exec20121退出0）；README安装器重编译exec49614退出0；同冻结客户端隔离安装/正常启动关闭再验通过（`work/production-release-final-readme-smoke.log`）。公开checkout发现签名测试依赖预存在work目录，已让夹具自行创建；该setup问题有真实诊断，修复后公开checkout的12项签名测试0.118秒通过，证据保存在 `docs/release-evidence-1.3.0/public-clone-tests.txt`。
+- 正式附件已更新：主程序ZIP **77,939,279字节**，SHA256 `d8c45415b858034f8bb31e2df7cd1a003e8f2a6d2c040a69078ed6218e4a7421`；已覆盖本任务自己创建的桌面旧副本并再校验一致。完整包第3bin变为847,678,028字节；语音分卷/签名完全未变。总附件10,952,426,412字节（未计校验表）。
+- 公开源码已在基于远端79dcf85的隔离worktree提交 **72f55799ecd7fd4e5a67f2236b1c0f17246bad32**，56个变更文件。已正常fast-forward推送main（未强推），本地原工作分支/HEAD/稳定标签不变。119MB本地资源与本地完整历史没有上传。
+- GitHub草稿ID **421364787**。语音上传exec56587，非语音上传exec58086，各用独立进度账本避免跨进程写冲突；日志 `work/github-voice-upload.log`、`work/github-installer-upload.log`，账本 `docs/release-evidence-1.3.0/github-upload-state.json` 和 `github-nonvoice-upload-state.json`（忽略不公开）。仅当服务器state=uploaded、size及digest全匹配时标记verified。
+- 项目中已保留 `packaging/baselines/main-1.3.0-inventory.json` 和voice inventory；小型测试/签名证据已归档到docs，不依赖后面将删除的work目录。
+- 用户已明确选择 **保留** `D:/TachiTalk-Promo`、`D:/TachiTalk-PV`、`D:/TachiTalk-acl-recovery`，不得纳入清理。原独立 `D:/GPT-SoVITS-v2pro-20250604`、项目现用services/runtime、用户settings/resources、.git/.venv和生产签名密钥保留。
 
 ## 2026-10-23 用户授权清理及正式发布准备（本地交付已备齐；新增暂存删除被工具拒绝）
 
@@ -69,7 +249,7 @@
 - **真实可用命令**：`D:/Python/python.exe -X utf8 -B scripts/create_signing_key.py --directory D:/TachiTalkSigning/release-1 --check-directory`，退出0、显示目录可写、退出后目标子目录不存在；`work/signing-system-python-external-check.txt`。独立Python原AppData路径预检也退出0：`work/signing-system-python-check.txt`；项目虚拟环境对照仍退出2：`work/signing-venv-recheck.txt`。
 - 当时下一步为维护者隐藏输入密码生成；现已确认生成并接入公钥，见上方最新记录。这里的权限诊断证据保留，不重复执行密钥生成。
 
-## 当前结论
+## 历史阶段结论（以顶部恢复检查点为准）
 
 **本地实现和验收已完成；正式发布前提尚未满足，不能称为已发布或全平台验收完成。**
 
@@ -214,3 +394,25 @@
 ?? tests/test_update_ui.py
 ?? tests/test_updates.py
 ```
+
+## 2026-10-23 正式发布及公开验收完成，开始最终清理
+
+- 正式发布：https://github.com/maruyui-dev/TachiTalk/releases/tag/v1.3.0；release ID421364787；v1.3.0标签实际指向公开源码72f55799ecd7fd4e5a67f2236b1c0f17246bad32。12附件的服务器大小和SHA全部匹配。未覆盖v0.2.0/稳定标签。
+- 首次匿名API请求曾403限流；稍后原命令重跑匿名API成功，未调用凭据回退，最终收据anonymous_metadata_verified=true。官方SHA256SUMS与voice-manifest匿名下载SHA一致，生产Ed25519验签通过，40,327文件。
+- 实际官方大分卷：第一次HTTP200下载1,064,243字节后暂停；随后两次均HTTP206且Content-Range/ETag/长度正确，分别续至2,124,083/3,200,307字节，实际Downloader._transfer执行。未再次下载完整2GB或重复安装语音。证据github-public-verification.json/public-network-verification.log。
+- 公开源码347项通过364.268秒；既有原生安装/推理/卸载/回滚/旧目录复用的JSON证据已归档至docs/release-evidence-1.3.0子目录，不依赖待删除work。
+- 下一步移除干净的临时公开Git worktree，然后执行预检过的56项本地生成物清理；桌面ZIP已再次SHA核对。清理后实际剩余文件逐项列到桌面CSV。保留原分支4666ea0及全部源码修改、.git/.venv、现用services/原GPT、签名密钥、三个其他项目。
+
+## 2026-10-23 检查版本404误报修复（进行中）
+
+- 用户截图语音清单已读取（版本及5,931.1MiB可见）；用户确认尚未点击语音安装按钮。不能将截图误报当作语音下载实际失败。
+- 本轮恢复已读状态并检查分支/未提交差异/最近提交/稳定标签；仍为feature/modular-updates/4666ea0，稳定标签未变，保留此前所有源码修改。
+- 已定位UpdateClient.check丢弃Release API响应，始终请求main-from-1.3.0.json；本版无同版本增量包，404被UI原样汇总成所有检查源不可用。计划先写回归证明，再区分最新版/缺少适用增量包/真实网络或验签失败；语音入口明确独立可用。
+- 小型复现与测试仅使用work/hotfix-130，不重新打包或复制语音。不得改动已发布稳定标签/覆盖正式附件。当前无安装进程。
+
+## 2026-10-23 用户要求等待安装实测（修复已暂停）
+
+- 用户明确表示先尝试语音安装，要求暂缓修复。已停止新增修改与测试/构建/发布。
+- 本轮只有只读代码检查、线上复现及本状态记录；没有改动产品代码、测试代码、桌面安装包或已安装程序，也未启动语音下载/安装。
+- 真实复现日志work/hotfix-130/live-reproduction.txt：最新Release v1.3.0/12附件，未发布main-from-1.3.0.json；check返回main的4次HTTP404与已验签voice清单，截图现象已确认。尚未写修复/回归，不记为已修好。
+- 下一步等待用户反馈点击“安装 / 修复语音资源”后的实际表现，再决定是否继续处理检查状态误报或新的安装问题；先核对实际下载/安装进程，避免干扰用户测试。

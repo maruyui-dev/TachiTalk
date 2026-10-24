@@ -58,6 +58,26 @@ class ResourceImportTests(unittest.TestCase):
         self.assertIn(self.image.name, filenames)
         dialog.assert_called_once()
 
+    def test_first_open_all_expression_mappings_are_automatic(self):
+        controls = self.panel.resource_controls
+        self.assertTrue(controls.mapping)
+        self.assertEqual(controls.library.state['mapping'], {})
+        for expression, combo in controls.mapping.items():
+            with self.subTest(expression=expression):
+                self.assertIsNone(combo.currentData())
+                self.assertIn('自动匹配', combo.currentText())
+                self.assertEqual(combo.currentIndex(), 0)
+        controls.refresh()
+        self.assertTrue(all(combo.currentData() is None for combo in controls.mapping.values()))
+
+    def test_saved_mapping_is_preserved_when_a_user_reopens(self):
+        controls = self.panel.resource_controls
+        controls.library.set_mapping('开心', 'builtin:portrait:疑问')
+        saved = ResourceLibrary(self.root / 'assets', self.root / 'library.json',
+            catalog=controls.library.base, expressions=controls.library.expressions)
+        self.assertEqual(saved.state['mapping']['开心'], 'builtin:portrait:疑问')
+        self.assertEqual(saved.expression_key('开心'), 'builtin:portrait:疑问')
+
     def import_image(self, source=None, kind='portrait'):
         controls = self.panel.resource_controls
         key = controls.library.import_png(source or self.image, kind)

@@ -46,8 +46,13 @@ async def run(settings, ui, check_only=False):
 
 def main():
     from app.paths import PROJECT_ROOT, DATA_ROOT
-    from app.updates.install import InstallLock
+    from app.updates.install import InstallLock, InstallBusyError
     try:
+        # A journal also exists during a healthy installation. Check ownership
+        # first; a second launch must never compete with that live transaction.
+        if (PROJECT_ROOT / '.tachitalk-update.lock').exists():
+            with InstallLock(PROJECT_ROOT):
+                pass
         if (PROJECT_ROOT / '.tachitalk-pending.json').exists():
             import subprocess
             import shutil
@@ -65,9 +70,14 @@ def main():
                         '--result', str(DATA_ROOT / 'updates/install-result.json'), '--restart']
             subprocess.Popen(command, cwd=directory, creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
             return 0
-        if (PROJECT_ROOT / '.tachitalk-update.lock').exists():
-            with InstallLock(PROJECT_ROOT):
-                pass
+    except InstallBusyError:
+        message = '语音资源或程序更新正在后台安装，请等待完成后自动重启。请勿删除安装事务或重复安装。'
+        if getattr(sys, 'frozen', False):
+            import ctypes
+            ctypes.windll.user32.MessageBoxW(None, message, 'TachiTalk 正在安装', 0x40)
+        else:
+            print(message)
+        return 2
     except (OSError, RuntimeError, ValueError) as error:
         # No application DLL is replaced by this startup check. Crash recovery runs first.
         if getattr(sys, 'frozen', False):
@@ -76,6 +86,17 @@ def main():
         else:
             print(f'更新事务需要处理：{error}')
         return 1
+    if getattr(sys, 'frozen', False):
+        from app.paths import ensure_data_root
+        try:
+            ensure_data_root(DATA_ROOT)
+        except OSError as error:
+            import ctypes
+            ctypes.windll.user32.MessageBoxW(None,
+                f'无法在程序目录保存本机数据：{DATA_ROOT}\n{type(error).__name__}: {error}\n'
+                '请将完整程序文件夹放到当前用户可写的位置后重试。未改用旧AppData配置。',
+                'TachiTalk 数据目录不可写', 0x10)
+            return 1
     if not getattr(sys, 'frozen', False) and sys.prefix == sys.base_prefix:
         print("请先激活项目虚拟环境：Windows .\\.venv\\Scripts\\Activate.ps1；macOS/Linux source .venv/bin/activate")
         return 2

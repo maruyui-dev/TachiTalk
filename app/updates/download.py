@@ -1,6 +1,7 @@
 """Bounded HTTP requests and durable, conservative Range resumption."""
 import asyncio
 import json
+import logging
 from pathlib import Path
 import re
 from threading import Event
@@ -11,9 +12,17 @@ import aiohttp
 
 from app.updates.manifest import atomic_json, official_url, sha256
 
+LOG = logging.getLogger('tachitalk.updates')
+
 
 class Paused(Exception):
     pass
+
+
+class HTTPDownloadError(ValueError):
+    def __init__(self, status):
+        super().__init__(f'HTTP {status}')
+        self.retryable = status == 429 or status >= 500
 
 
 class Policy:
@@ -27,6 +36,11 @@ class Policy:
         return official_url(url)
 
     def source_url(self, url, source):
+        from app.updates.modelscope import resolve, retired
+        if retired(source):
+            raise ValueError('该下载渠道已移除，请切换到 GitHub 或魔搭')
+        if source.get('layout') == 'modelscope':
+            return resolve(url, source)
         prefix = source.get('prefix', '')
         if prefix:
             parsed = urlsplit(prefix)
@@ -39,6 +53,9 @@ class Policy:
         parsed, start = urlsplit(url), urlsplit(initial)
         if self.test_origin and url.startswith(self.test_origin + '/'):
             return
+        from app.updates.modelscope import trusted_redirect
+        if trusted_redirect(url, initial):
+            return
         hosts = {start.hostname, 'github.com', 'release-assets.githubusercontent.com', 'objects.githubusercontent.com'}
         if (parsed.scheme != 'https' or parsed.hostname not in hosts or parsed.username or parsed.password
                 or parsed.port not in (443, None)):
@@ -46,9 +63,10 @@ class Policy:
 
 
 def sources(config, kind='sources'):
+    from app.updates.modelscope import retired
     result = []
     for item in config.get(kind, []):
-        if not item.get('enabled', True):
+        if not item.get('enabled', True) or retired(item):
             continue
         item = dict(item)
         for name, default, maximum in [('connect_timeout', 8, 30), ('read_timeout', 20, 60), ('retries', 1, 3)]:
@@ -60,7 +78,7 @@ def sources(config, kind='sources'):
     return sorted(result, key=lambda item: (bool(item.get('fallback_only', False)), item.get('priority', 0)))
 
 
-async def request(session, url, headers, policy):
+async def _request_chain(session, url, headers, policy):
     initial = url
     from urllib.parse import urljoin
     for _ in range(6):
@@ -74,6 +92,16 @@ async def request(session, url, headers, policy):
             raise ValueError('重定向缺少地址')
         url = urljoin(url, location)
     raise ValueError('重定向次数过多')
+
+
+async def request(session, url, headers, policy):
+    # Always start at the stable entry. Never persist/reuse temporary LFS URLs.
+    response = await _request_chain(session, url, headers, policy)
+    from app.updates.modelscope import ENTRY
+    if url.startswith(ENTRY) and response.status in (401,403):
+        response.close()
+        response = await _request_chain(session, url, dict(headers, **{'Cache-Control':'no-cache'}), policy)
+    return response
 
 
 def session_for(source):
@@ -109,9 +137,45 @@ async def fetch_small(url, configured, *, limit=8 * 1024 * 1024, policy=None, va
 
 
 class Downloader:
-    def __init__(self, configured, *, progress=lambda value: None, stop=None, policy=None):
+    def __init__(self, configured, *, progress=lambda value: None, stop=None, policy=None, source_lock=None):
         self.configured, self.progress = configured, progress
         self.stop, self.policy = stop or Event(), policy or Policy()
+        self.source_lock = Path(source_lock) if source_lock else None
+        self.pinned_source = None
+        self._pin_recorded = False
+        if self.source_lock and self.source_lock.exists():
+            if self.source_lock.stat().st_size > 16384:
+                raise ValueError('下载来源记录过大，请手动切源后重试')
+            try:
+                value = json.loads(self.source_lock.read_text(encoding='utf-8'))
+                if (not isinstance(value, dict) or set(value) != {'name','prefix','layout'}
+                        or any(not isinstance(v,str) for v in value.values())):
+                    raise ValueError('格式无效')
+            except (ValueError, TypeError) as error:
+                raise ValueError('下载来源记录损坏，请手动切源后重试') from error
+            self.pinned_source, self._pin_recorded = value, True
+
+    @staticmethod
+    def source_identity(source):
+        return {key: source.get(key, default) for key, default in
+            (('name',''), ('prefix',''), ('layout','prefix'))}
+
+    def pin(self, source):
+        identity = self.source_identity(source)
+        if self.pinned_source is not None and self.pinned_source != identity:
+            raise ValueError('下载已固定来源，请通过切换来源清理旧任务后重试')
+        self.pinned_source = identity
+        if self.source_lock and not self._pin_recorded:
+            atomic_json(self.source_lock, identity)
+            self._pin_recorded = True
+
+    async def wait_retry(self, attempt):
+        # Short interruptible backoff; a slow but progressing stream is never switched.
+        until = monotonic() + min(2 ** attempt, 4)
+        while monotonic() < until:
+            self.check_stop()
+            await asyncio.sleep(min(.1, max(0, until - monotonic())))
+        self.check_stop()
 
     def check_stop(self):
         if self.stop.is_set():
@@ -125,19 +189,56 @@ class Downloader:
         partial = destination.with_suffix(destination.suffix + '.part')
         state = destination.with_suffix(destination.suffix + '.state.json')
         self.check_stop()
+        # Old versions left the source URL in the resumable part record. Honor it,
+        # rather than truncating a user's existing download after a configuration reorder.
+        if self.pinned_source is None and partial.is_file() and partial.stat().st_size:
+            try:
+                saved = json.loads(state.read_text(encoding='utf-8'))
+            except (OSError, ValueError, TypeError):
+                saved = {}
+            if (isinstance(saved,dict) and saved.get('sha256') == artifact['sha256']
+                    and saved.get('size') == artifact['size'] and isinstance(saved.get('url'),str)):
+                old = next((s for s in self.configured if any(self.policy.source_url(u,s)==saved['url']
+                    for u in [artifact['url'],*artifact.get('urls',[])])), None)
+                if old is None:
+                    # A signed manifest can change its asset URL without changing the
+                    # provider. Select only an unambiguous configured route; never fetch
+                    # the cached URL itself or append its bytes to a different URL.
+                    candidates = []
+                    for candidate in self.configured:
+                        resolved = self.policy.source_url(artifact['url'],candidate)
+                        prefix = candidate.get('prefix','')
+                        same_route = (saved['url'].startswith(prefix) if prefix else
+                            (urlsplit(saved['url']).scheme,urlsplit(saved['url']).netloc) ==
+                            (urlsplit(resolved).scheme,urlsplit(resolved).netloc))
+                        if same_route:
+                            candidates.append(candidate)
+                    if len(candidates) == 1:
+                        old = candidates[0]
+                if old is None:
+                    raise ValueError('原下载来源已禁用或更改，缓存已保留；请手动切换来源')
+                self.pin(old)
         if partial.is_file() and partial.stat().st_size == artifact['size'] and sha256(partial) == artifact['sha256']:
             self.check_stop()
             partial.replace(destination)
             state.unlink(missing_ok=True)
             return destination
+        configured = [s for s in self.configured if self.pinned_source is None
+            or self.source_identity(s) == self.pinned_source]
+        if not configured:
+            raise ValueError('原下载来源已禁用或更改，缓存已保留；请手动切换来源')
         failures = []
         for url in [artifact['url'], *artifact.get('urls', [])]:
             self.policy.official(url)
-            for source in self.configured:
+            for source in configured:
                 resolved = self.policy.source_url(url, source)
+                if failures and source.get('layout') == 'modelscope' and self.pinned_source is None:
+                    self.progress({'status':'GitHub 传输开始前失败，采用魔搭','source':source['name'],
+                        'source_reason':'GitHub 尚未收到资源数据即失败；改用魔搭，保留完整签名和文件校验'})
                 if source.get('fallback_only'):
                     self.progress({'status': '常规源失败，自动启用待命代理', 'source': source['name']})
-                for _ in range(source['retries'] + 1):
+                attempts = max(3, source['retries'] + 1)
+                for attempt in range(attempts):
                     self.check_stop()
                     try:
                         await self._transfer(artifact, partial, state, resolved, source)
@@ -151,7 +252,21 @@ class Downloader:
                         return destination
                     except (OSError, ValueError, TimeoutError, aiohttp.ClientError) as error:
                         failures.append(f"{source['name']}: {type(error).__name__}: {error}")
-                        self.progress({'status': '重试 / 切换下载源', 'source': source['name'], 'error': str(error)})
+                        LOG.warning('下载失败 来源=%s 次数=%s/%s 错误=%s: %s', source['name'],
+                            attempt + 1, attempts, type(error).__name__, error)
+                        transient = (isinstance(error,(OSError,TimeoutError,aiohttp.ClientError))
+                            or isinstance(error,HTTPDownloadError) and error.retryable)
+                        if transient and attempt + 1 < attempts:
+                            self.progress({'status': f'当前来源连接中断，正在同源重试 {attempt+1}/{attempts-1}',
+                                'source':source['name'],'error':f'{type(error).__name__}: {error}'})
+                            await self.wait_retry(attempt)
+                            continue
+                        if self.pinned_source is not None:
+                            raise ValueError(f"当前来源 {source['name']} 下载失败，未自动切源；缓存已保留。"
+                                f"请继续下载重试当前来源，或手动切换来源。原因：{type(error).__name__}: {error}") from error
+                        self.progress({'status':'当前来源不可用，尝试备用来源', 'source':source['name'],
+                            'error':f'{type(error).__name__}: {error}'})
+                        break
         raise ValueError('所有下载源均失败：' + '; '.join(failures))
 
     async def _transfer(self, artifact, partial, state, url, source):
@@ -183,7 +298,7 @@ class Downloader:
                 else:
                     if response.status == 416:
                         state.unlink(missing_ok=True)
-                    raise ValueError(f'HTTP {response.status}')
+                    raise HTTPDownloadError(response.status)
                 if response.content_length is not None and response.content_length != artifact['size'] - offset:
                     state.unlink(missing_ok=True)
                     raise ValueError('响应文件长度与签名清单不符')
@@ -199,6 +314,7 @@ class Downloader:
                             raise ValueError('下载长度超过清单限制')
                         output.write(block)
                         offset += len(block)
+                        self.pin(source)
                         self.progress({'status': '下载中', 'source': source['name'], 'done': offset,
                             'total': artifact['size'], 'speed': (offset - initial) / max(.01, monotonic() - started),
                             'remaining': artifact['size'] - offset})

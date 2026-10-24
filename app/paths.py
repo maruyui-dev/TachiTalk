@@ -1,14 +1,25 @@
 """项目自带文件的唯一路径入口；路径不依赖终端当前工作目录。"""
 from pathlib import Path
-import os
 import sys
 
 FROZEN = bool(getattr(sys, 'frozen', False))
 PROJECT_ROOT = Path(sys.executable).resolve().parent if FROZEN else Path(__file__).resolve().parents[1]
-DATA_ROOT = (Path(os.environ.get('LOCALAPPDATA', str(Path.home() / 'AppData' / 'Local'))) / 'TachiTalk'
-             if FROZEN else PROJECT_ROOT / '_qt_runtime_tmp')
+DATA_ROOT = PROJECT_ROOT / ('user_data' if FROZEN else '_qt_runtime_tmp')
 ASSET_DIR = PROJECT_ROOT / 'assets'
 BUBBLE_DIR = ASSET_DIR / 'bubbles'
+
+
+def ensure_data_root(directory=DATA_ROOT):
+    """Fail visibly on an unwritable installation; never reuse another profile."""
+    import tempfile
+    directory = Path(directory)
+    directory.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryFile(dir=directory, prefix='.write-check-') as probe:
+        probe.write(b'TachiTalk')
+        probe.flush()
+    return directory
+
+
 def voice_location(project_root=PROJECT_ROOT, data_root=DATA_ROOT):
     """Reuse a user-selected legacy installation without moving its runtime or models."""
     import json

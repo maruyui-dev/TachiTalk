@@ -90,6 +90,9 @@ class WheelControlTests(unittest.TestCase):
             view = self.combo.view()
             before = view.verticalScrollBar().value()
             self.wheel(view.viewport(), -120)
+            # Qt 6.12 can continue moving the popup after the wheel event. Read
+            # the target row only after scrolling settles, then click its rect.
+            QTest.qWait(250)
             self.app.processEvents()
             self.assertGreater(view.verticalScrollBar().value(), before)
             self.assertEqual(self.combo.currentIndex(), 1)

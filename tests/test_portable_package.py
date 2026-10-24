@@ -62,12 +62,24 @@ class PortablePackageTests(unittest.TestCase):
             root = Path(directory)
             for name in ('runtime/python.exe', 'runtime/package.py', 'runtime/package.pyc',
                          'scratch/key.txt', '_qt_runtime_tmp/last_session.dat',
+                         'user_data/settings/voice-component.json', 'user_data/resources/resource_library.json',
                          'runtime/__pycache__/module.pyc', 'runtime/.env', 'runtime/.env.secret', 'runtime/client.log'):
                 path = root / name
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(b'test')
             names = {relative.as_posix() for _, relative in files(root)}
             self.assertEqual(names, {'runtime/python.exe', 'runtime/package.py', 'runtime/package.pyc'})
+
+    def test_private_profile_directory_is_excluded_regardless_of_windows_case(self):
+        with TemporaryDirectory() as directory:
+            for index, name in enumerate(('USER_DATA', 'User_Data', 'user_data', 'TEMP', 'Temp', 'temp')):
+                root = Path(directory) / str(index)
+                private = root / name / 'settings' / 'profile.json'
+                private.parent.mkdir(parents=True)
+                private.write_bytes(b'private fixture')
+                (root / 'client.txt').write_bytes(b'public fixture')
+                with self.subTest(name=name):
+                    self.assertEqual({p.as_posix() for _, p in files(root)}, {'client.txt'})
 
     def test_split_rejoins_exact_bytes_and_does_not_overwrite_existing_part(self):
         with TemporaryDirectory() as directory:

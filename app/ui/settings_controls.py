@@ -177,6 +177,9 @@ class SettingsControls(QObject):
                     controls.table.setCurrentCell(-1, -1)
                 self.panel.resource_controls.refresh()
                 self.panel.resource_controls.apply()
+                # Session restore deliberately excludes resource mappings; persist
+                # the reset here so the next process cannot reload the old files.
+                library.save()
             else:
                 self.values.put(values)
                 if page == 'characterPage':

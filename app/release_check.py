@@ -37,6 +37,12 @@ def run_core(destination):
               'voice': voice_status(), 'ui_loaded': True,
               'resource_panel': hasattr(panel, 'update_controls'),
               'entry_enabled': panel.findChild(QPushButton, 'navDelivery').isEnabled()}
+    result['resource_diagnostics'] = {
+        'github_button': panel.update_controls.network_check_button.isEnabled(),
+        'modelscope': panel.update_controls.modelscope_status.text(),
+        'updates_disabled': not panel.update_controls.check_button.isEnabled()}
+    result['expression_mapping_automatic'] = all(
+        combo.currentData() is None for combo in panel.resource_controls.mapping.values())
     signals = DesktopSignals()
     ui = DesktopUI(signals, Settings().max_reply_parts)
     captions, expressions = [], []

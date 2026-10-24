@@ -1,7 +1,6 @@
 """Optional voice detection; never imports torch or starts inference."""
 import json
 from pathlib import Path
-from dataclasses import replace
 
 from app.paths import TTS_SERVICE_DIR
 from scripts.start_tts import check_files
@@ -32,7 +31,5 @@ def prepare_optional_voice(voices, root=TTS_SERVICE_DIR):
         available = LocalTTSService.local_port(options) is None or voice_status(root)['installed']
     except ValueError:
         available = False
-    if not available:
-        voices.set_tts(replace(options, auto_read=False))
-        return False
-    return True
+    voices.set_local_voice_available(available)
+    return available

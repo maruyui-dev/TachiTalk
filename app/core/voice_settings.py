@@ -139,6 +139,7 @@ class VoiceSettings:
         self._asr = ASROptions(url=settings.asr_url, models_url=settings.asr_url.rsplit('/audio/', 1)[0] + '/models',
                                model=settings.asr_model)
         self._tts = TTSOptions(url=settings.tts_url)
+        self._unavailable_tts = None
         self._output = OutputOptions(device=settings.output_device)
         self._asr_revision = self._tts_revision = self._serial = 0
         self._commands = {}
@@ -147,7 +148,19 @@ class VoiceSettings:
 
     def snapshot(self):
         with self._lock:
-            return VoiceSnapshot(self._asr, self._tts, self._output, self._asr_revision, self._tts_revision)
+            tts = self._tts
+            # Component availability is temporary; keep the user's preference in
+            # the UI/profiles so installing voice does not persist text-only mode.
+            if self._unavailable_tts == (tts.provider, tts.url):
+                tts = replace(tts, auto_read=False)
+            return VoiceSnapshot(self._asr, tts, self._output, self._asr_revision, self._tts_revision)
+
+    def set_local_voice_available(self, available):
+        with self._lock:
+            unavailable = None if available else (self._tts.provider, self._tts.url)
+            if self._unavailable_tts != unavailable:
+                self._unavailable_tts = unavailable
+                self._tts_revision += 1
 
     def set_asr(self, options):
         config.register_runtime_key(options.api_key)

@@ -10,6 +10,9 @@
 #ifndef QAMode
   #define QAMode 0
 #endif
+#ifndef TestBuild
+  #define TestBuild 0
+#endif
 #ifndef OutputDirectory
   #define OutputDirectory "..\dist\installer"
 #endif
@@ -18,14 +21,25 @@
 AppId={{97CB57C4-BD64-4535-8762-427674F9659C}
 CreateUninstallRegKey=no
 Uninstallable=no
+#elif Int(TestBuild)
+AppId=TachiTalk-Test-2.0.0
 #else
 AppId={{ABD38416-108D-4C54-9044-BC4E59DD3D83}
 #endif
+#if Int(TestBuild)
+AppName=TachiTalk 测试版 2.0.0
+#else
 AppName=TachiTalk
-AppVersion=1.3.0
+#endif
+AppVersion=2.0.0
 AppPublisher=TachiTalk
+#if Int(TestBuild)
+DefaultDirName={localappdata}\Programs\TachiTalk-Test-2.0.0
+DefaultGroupName=TachiTalk 测试版 2.0.0
+#else
 DefaultDirName={localappdata}\Programs\TachiTalk
 DefaultGroupName=TachiTalk
+#endif
 DisableDirPage=no
 DisableProgramGroupPage=yes
 PrivilegesRequired=lowest
@@ -47,8 +61,12 @@ WizardStyle=modern
 Compression=lzma2/max
 SolidCompression=yes
 LZMANumBlockThreads=4
+#if Int(TestBuild)
+CloseApplications=no
+#else
 CloseApplications=yes
-CloseApplicationsFilter=TachiTalk.exe,python.exe,*.dll,*.pyd
+#endif
+CloseApplicationsFilter=TachiTalk.exe
 RestartApplications=no
 SetupLogging=yes
 InfoBeforeFile=安装说明.txt
@@ -79,7 +97,7 @@ Name: "voice"; Description: "GPT-SoVITS v2ProPlus 语音环境和模型（可选
 #endif
 
 [Files]
-Source: "{#ReleaseDir}\*"; DestDir: "{app}"; Excludes: "assets"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: main
+Source: "{#ReleaseDir}\*"; DestDir: "{app}"; Excludes: "\assets,\user_data"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: main
 Source: "{#ReleaseDir}\assets\*"; DestDir: "{app}\assets"; Flags: onlyifdoesntexist recursesubdirs createallsubdirs; Components: main
 #if Int(MainOnly) == 0
 Source: "{#VoiceDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: voice
@@ -88,8 +106,13 @@ Source: "安装说明.txt"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 #if Int(QAMode) == 0
+#if Int(TestBuild)
+Name: "{autoprograms}\TachiTalk 测试版 2.0.0"; Filename: "{app}\TachiTalk.exe"; WorkingDir: "{app}"; IconFilename: "{app}\TachiTalk.exe"
+Name: "{autodesktop}\TachiTalk 测试版 2.0.0"; Filename: "{app}\TachiTalk.exe"; WorkingDir: "{app}"; IconFilename: "{app}\TachiTalk.exe"; Tasks: desktopicon
+#else
 Name: "{autoprograms}\TachiTalk"; Filename: "{app}\TachiTalk.exe"; WorkingDir: "{app}"; IconFilename: "{app}\TachiTalk.exe"
 Name: "{autodesktop}\TachiTalk"; Filename: "{app}\TachiTalk.exe"; WorkingDir: "{app}"; IconFilename: "{app}\TachiTalk.exe"; Tasks: desktopicon
+#endif
 #endif
 
 [Run]
@@ -108,7 +131,7 @@ procedure InitializeWizard();
 var
   OldDirectory: String;
 begin
-#if Int(QAMode) == 0
+#if (Int(QAMode) == 0) && (Int(TestBuild) == 0)
   if RegQueryStringValue(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Uninstall\{ABD38416-108D-4C54-9044-BC4E59DD3D83}_is1', 'InstallLocation', OldDirectory) or
      RegQueryStringValue(HKLM, 'Software\Microsoft\Windows\CurrentVersion\Uninstall\{ABD38416-108D-4C54-9044-BC4E59DD3D83}_is1', 'InstallLocation', OldDirectory) then
     if FileExists(AddBackslash(OldDirectory) + 'TachiTalk.exe') then

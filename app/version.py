@@ -1,1 +1,2 @@
-VERSION = '1.3.0'
+VERSION = '2.0.0'
+BUILD_LABEL = '正式版'
