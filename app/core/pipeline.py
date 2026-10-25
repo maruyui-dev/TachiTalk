@@ -189,7 +189,7 @@ class Pipeline:
         self.last_metrics = metrics
         self.history.append(metrics)
         if spoken:
-            logging.getLogger('tachitalk').info(
+            logging.getLogger('tachitalk').debug(
                 'TTS链路：日文就绪到接手 %.3fs；接手到首PCM %.3fs；首PCM到写设备 %.3fs；'
                 'TTS流水线（含队列背压及等后续分句） %.3fs',
                 metrics['japanese_to_tts_seconds'], metrics['tts_first_chunk_seconds'],

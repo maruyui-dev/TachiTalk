@@ -84,7 +84,8 @@ class ActiveInstallStartupTests(unittest.TestCase):
         with patch('app.paths.PROJECT_ROOT', self.root), \
              patch('app.paths.DATA_ROOT', self.data), \
              patch.object(sys, 'frozen', False, create=True), \
-             patch('subprocess.Popen') as recovery, redirect_stdout(output):
+             patch('subprocess.Popen') as recovery, \
+             patch('app.updates.progress_window.show_progress') as viewer, redirect_stdout(output):
             code = bootstrap.main()
         return code, recovery, output.getvalue()
 

@@ -144,6 +144,8 @@ class UpdateControls(QScrollArea):
             try:
                 result = json.loads(record.read_text(encoding='utf-8'))
                 self.state.setText('上次安装 / 更新成功' if result.get('ok') else f"上次安装 / 更新失败，已尝试恢复：{result.get('error', '')}")
+                if result.get('ok') and not result.get('cleanup', {}).get('complete', True):
+                    self.state.setText('上次安装 / 更新成功，部分材料清理未完成；详见安装日志：' + result.get('log', str(record)))
             except (OSError, ValueError):
                 self.state.setText('上次更新结果记录无法读取，请检查安装日志')
 
@@ -901,7 +903,7 @@ class UpdateControls(QScrollArea):
                     raise ValueError('源码模式请通过 Git 升级；自动二进制补丁只适用于安装版')
                 command = [sys.executable, str(self.client.root / 'scripts/update_entry.py')]
             command += ['--root', str(self.client.root), '--parent-pid', str(os.getpid()),
-                '--result', str(self.client.directory / 'install-result.json'), '--restart']
+                '--result', str(self.client.directory / 'install-result.json'), '--restart', '--show-progress']
             if prepared:
                 command += ['--manifest', str(prepared['manifest']), '--archive', str(prepared['archive'])]
             else:

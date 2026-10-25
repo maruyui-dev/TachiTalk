@@ -251,7 +251,7 @@ class DesktopPetWindow(PetWindow):
         while len(self.bubbles) >= self.MAX_BUBBLES:
             self._remove_oldest_bubble()
         self.bubbles.append(card)
-        if reply_turn is not None and reply_turn == self._reply_turn:
+        if reply_turn is not None and reply_turn in (self._reply_turn, self._reply_part_key):
             self._reply_card = card
         if self._headroom != self._required_headroom():
             positions = {bubble: bubble.mapToGlobal(QPoint()) for bubble in self.bubbles if bubble is not card}

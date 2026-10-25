@@ -235,7 +235,7 @@ def setup_navigation(window):
             button = window.findChild(QPushButton, name)
             button.setChecked(position == index)
             button.setIcon(make_icon(icon, '#d55c8d' if position == index else '#677184'))
-        logging.getLogger('tachitalk.ui').info('切换页面：%s', title)
+        logging.getLogger('tachitalk.ui').debug('切换页面：%s', title)
 
     for index, (name, *_rest) in enumerate(pages):
         nav = window.findChild(QPushButton, name)

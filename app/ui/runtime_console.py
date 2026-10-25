@@ -68,7 +68,7 @@ class ConsoleStream(io.TextIOBase):
 class ConsoleLogHandler(logging.Handler):
     """logging可以来自后台线程；这里不直接操作Qt控件。"""
     def __init__(self, console):
-        super().__init__(logging.DEBUG)
+        super().__init__(logging.INFO)
         self.console = console
         self.setFormatter(logging.Formatter('[%(asctime)s] %(levelname)-7s %(message)s', '%H:%M:%S'))
 
@@ -127,7 +127,7 @@ class RuntimeConsole(QObject):
         sys.excepthook = self._handle_exception
         threading.excepthook = self._handle_thread_exception
         self.root_logger.addHandler(self.handler)
-        self.root_logger.setLevel(logging.DEBUG)
+        self.root_logger.setLevel(logging.INFO)
         self._qt_message_handler = qInstallMessageHandler(self._handle_qt_message)
         QApplication.instance().aboutToQuit.connect(self.restore)
         self.flush_timer.start()
@@ -211,7 +211,7 @@ class RuntimeConsole(QObject):
             QtMsgType.QtFatalMsg: logging.CRITICAL,
         }.get(kind, logging.INFO)
         text = f'[Qt {logging.getLevelName(level)}] {message}\n'
-        if self.active:
+        if self.active and level >= logging.INFO:
             self.output.emit(text, level)
         if self._qt_message_handler is not None:
             self._qt_message_handler(kind, context, message)
@@ -259,7 +259,7 @@ class RuntimeConsole(QObject):
             threading.excepthook = self._thread_exception_hook
         qInstallMessageHandler(self._qt_message_handler)
         self.root_logger.removeHandler(self.handler)
-        if self.root_logger.level == logging.DEBUG:
+        if self.root_logger.level == logging.INFO:
             self.root_logger.setLevel(self._root_level)
         self.handler.close()
 

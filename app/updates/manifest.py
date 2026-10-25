@@ -17,11 +17,15 @@ def canonical(payload):
     return json.dumps(payload, ensure_ascii=True, sort_keys=True, separators=(',', ':'), allow_nan=False).encode('ascii')
 
 
-def sha256(path):
+def sha256(path, progress=None):
     digest = hashlib.sha256()
+    completed = 0
     with Path(path).open('rb') as stream:
         for block in iter(lambda: stream.read(1024 * 1024), b''):
             digest.update(block)
+            completed += len(block)
+            if progress:
+                progress(completed)
     return digest.hexdigest()
 
 

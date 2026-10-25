@@ -284,7 +284,7 @@ class LLMClient:
             "strict": True, "parameters": {
                 "type": "object", "properties": {
                     "parts": {"type": "array", "items": part_schema,
-                              "description": f"One to {limits.max_reply_parts} meaningful short parts."},
+                              "description": f"One to {limits.max_reply_parts} meaningful short chat messages. Keep each idea in its own part; do not fill the limit."},
                 }, "required": ["parts"], "additionalProperties": False,
             },
         }}
@@ -318,7 +318,7 @@ class LLMClient:
                  "只选择本轮列表中的神态，不使用历史消息中已移除的名称，不编造新神态。"
                  f"最多{limits.max_reply_parts}组，每组日文最多{self.settings.max_japanese_chars}字符，"
                  f"气泡文本最多{self.settings.max_chinese_chars}字符。每组按expression、japanese、chinese顺序生成。"
-                 "首组日文只写一句约8到16个字符的自然短句，不把问候和追问塞进同一组；"
+                 "像聊天软件一样按完整语义分条，每组是一个独立消息；长故事和续问可连续多组，不把全文塞进一个分组。首组日文只写一句约8到16个字符的自然短句，不把问候和追问塞进同一组；"
                  "随后立即给所选语言的气泡文本，再生成下一组。保持含义完整，不用无意义填充拖长回复。")
         rules += '\n神态细分与强度规则（优先于人设中的强制情绪轮换）：\n' + expression_guidance(expressions)
         rules += ('\n日常陪伴与任务规则：保留人设的语气，但知识、故事题材和咨询话题不受游戏世界观限制。'
@@ -369,11 +369,6 @@ class LLMClient:
         options.validate()
         # 只扩展本轮分组与JSON容量，单句长度、队列及语音情绪规则保持不变。
         part_limit = options.reply_parts(self.settings.max_reply_parts)
-        # Expand capacity only for requested long-form tasks; ordinary chat and
-        # an explicit UI length preference retain their established behavior.
-        if not options.reply_length and any(word in text for word in
-                ('故事', '讲解', '解释', '解题', '题目', '分析', '咨询', '建议', '步骤', '怎么办')):
-            part_limit = max(part_limit, 8)
         limits = (replace(self.settings, max_reply_parts=part_limit,
                           # 单个Unicode字符最多以一对\\uXXXX表示；同时给字段名留固定空间。
                           max_llm_chars=max(self.settings.max_llm_chars,
@@ -438,15 +433,11 @@ class LLMClient:
         headers = {'Authorization': f'Bearer {options.api_key}'} if options.api_key else {}
         timeout = aiohttp.ClientTimeout(total=options.timeout, connect=min(self.settings.connect_timeout, options.timeout),
                                         sock_read=options.timeout)
-        captions = {}
 
         def visible(fragment):
             progress['received'] = True
             for event in parser.feed(fragment):
-                if isinstance(event, CaptionPart) and not profile.stream_reply:
-                    captions[event.part_id] = event.chinese
-                else:
-                    yield event
+                yield event
 
         async with self.session.post(options.chat_url, headers=headers, json=payload,
                                      allow_redirects=False, timeout=timeout) as response:
@@ -523,8 +514,6 @@ class LLMClient:
                 if not done or not seen_tool_name:
                     raise StageError('LLM', '连接提前结束或未收到结构化回复结束标记')
             parser.finish()
-            if captions:
-                yield CaptionPart(0, ''.join(captions[index] for index in sorted(captions)))
 
     @staticmethod
     def check_finish(reason):

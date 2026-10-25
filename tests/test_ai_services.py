@@ -344,9 +344,9 @@ class AIControlBusinessTests(AIControlDefaultsTests):
         for part in range(18):
             combined = ui.caption(1, part, '文')
         self.assertEqual(combined, '文' * 18)
-        self.assertIsNone(ui.caption(1, 18, '越界'))
+        self.assertIsNone(ui.caption(1, 32, '越界'))
         ui.begin_reply(2)
-        self.assertIsNone(ui.caption(2, 18, '越界'))
+        self.assertIsNone(ui.caption(2, 32, '越界'))
 
     def setUp(self):
         self.panel = load_window()

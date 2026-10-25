@@ -27,6 +27,7 @@ from app.ui.console import ConsoleUI
 class DesktopSignals(QObject):
     transcript = Signal(str)
     caption = Signal(int, str)
+    caption_part = Signal(int, int, str)
     expression = Signal(int, str)
     reply_finished = Signal(int)
     backend_stopped = Signal()
@@ -40,6 +41,7 @@ class CaptionRelay(QObject):
         self.pet = pet
         self._lock = Lock()
         self._latest = None
+        self._parts = {}
         self._newest_turn = -1
         self._closed = False
         self.timer = QTimer(self)
@@ -58,12 +60,28 @@ class CaptionRelay(QObject):
             latest, self._latest = self._latest, None
         if latest is not None:
             self.pet.set_reply_text(*latest)
+        # Coalesce tokens within each message, never overwrite the next message.
+        # Feed one message when the existing bubble animation can accept it.
+        if not getattr(self.pet, '_animating', False):
+            with self._lock:
+                key = next(iter(self._parts), None)
+                part = self._parts.pop(key) if key is not None else None
+            if part is not None:
+                self.pet.set_reply_part(*key, part)
+
+    def offer_part(self, turn_id, part_id, text):
+        with self._lock:
+            if self._closed or turn_id < self._newest_turn:
+                return
+            self._newest_turn = turn_id
+            self._parts[(turn_id, part_id)] = text
 
     def close(self):
         self.timer.stop()
         with self._lock:
             self._closed = True
             self._latest = None
+            self._parts.clear()
 
 
 class DesktopUI(ConsoleUI):
@@ -79,6 +97,7 @@ class DesktopUI(ConsoleUI):
         combined = super().caption(turn_id, part_id, text)
         if combined is not None:
             self.signals.caption.emit(turn_id, combined)
+            self.signals.caption_part.emit(turn_id, part_id, text)
 
     def part_started(self, turn_id, part_id, expression):
         self.signals.expression.emit(turn_id, expression)
@@ -225,7 +244,7 @@ def run_desktop(settings, catalog, startup_logs=None):
     queued = Qt.ConnectionType.QueuedConnection
     caption_relay = CaptionRelay(window)
     signals.transcript.connect(window.add_transcript, queued)
-    signals.caption.connect(caption_relay.offer, Qt.ConnectionType.DirectConnection)
+    signals.caption_part.connect(caption_relay.offer_part, Qt.ConnectionType.DirectConnection)
     signals.expression.connect(window.play_expression, queued)
     signals.reply_finished.connect(window.finish_expression, queued)
     signals.backend_stopped.connect(app.quit, queued)

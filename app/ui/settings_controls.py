@@ -29,10 +29,10 @@ class SettingsControls(QObject):
         panel.findChild(QPushButton, 'resetButton').setToolTip('只恢复当前页；清空本页所有服务的API Key，保留导入图片')
         panel.findChild(QPushButton, 'saveButton').setToolTip('选择位置，备份全部页面设置；文件包含API Key，请妥善保管')
 
-    def report(self, message, error=False):
+    def report(self, message, error=False, *, quiet=False):
         self.panel.findChild(QLabel, 'footerHint').setText(message)
         logger = logging.getLogger('tachitalk.settings')
-        (logger.error if error else logger.info)(message)
+        (logger.error if error else logger.debug if quiet else logger.info)(message)
 
     def desktop_snapshot(self):
         controls = getattr(self.panel, 'character_controls', None)

@@ -45,15 +45,18 @@ async def run(settings, ui, check_only=False):
 
 
 def main():
+    from time import time
+    started_at = time()
     from app.paths import PROJECT_ROOT, DATA_ROOT
     from app.updates.install import InstallLock, InstallBusyError
+    from app.updates.cleanup import needs_cleanup
     try:
         # A journal also exists during a healthy installation. Check ownership
         # first; a second launch must never compete with that live transaction.
         if (PROJECT_ROOT / '.tachitalk-update.lock').exists():
             with InstallLock(PROJECT_ROOT):
                 pass
-        if (PROJECT_ROOT / '.tachitalk-pending.json').exists():
+        if (PROJECT_ROOT / '.tachitalk-pending.json').exists() or needs_cleanup(PROJECT_ROOT):
             import subprocess
             import shutil
             import os
@@ -67,16 +70,28 @@ def main():
             else:
                 command = [sys.executable, str(PROJECT_ROOT / 'scripts/update_entry.py')]
             command += ['--root', str(PROJECT_ROOT), '--recover', '--parent-pid', str(os.getpid()),
-                        '--result', str(DATA_ROOT / 'updates/install-result.json'), '--restart']
+                        '--result', str(DATA_ROOT / 'updates/install-result.json'), '--restart', '--show-progress']
             subprocess.Popen(command, cwd=directory, creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
             return 0
     except InstallBusyError:
-        message = '语音资源或程序更新正在后台安装，请等待完成后自动重启。请勿删除安装事务或重复安装。'
+        message = '语音资源或程序更新正在安装，打开当前事务的只读进度窗口。'
         if getattr(sys, 'frozen', False):
-            import ctypes
-            ctypes.windll.user32.MessageBoxW(None, message, 'TachiTalk 正在安装', 0x40)
+            import subprocess
+            import shutil
+            import os
+            import uuid
+            directory = DATA_ROOT / 'updates/updaters'
+            directory.mkdir(parents=True, exist_ok=True)
+            updater = directory / f'{uuid.uuid4().hex}.exe'
+            shutil.copy2(PROJECT_ROOT / 'TachiTalkUpdater.exe', updater)
+            subprocess.Popen([str(updater), '--root', str(PROJECT_ROOT), '--observe',
+                              '--result', str(DATA_ROOT / 'updates/install-result.json')],
+                             cwd=directory, creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
         else:
             print(message)
+            # Source mode also views the original job; no recovery/install arguments.
+            from app.updates.progress_window import show_progress
+            show_progress(DATA_ROOT / 'updates/install-result.json')
         return 2
     except (OSError, RuntimeError, ValueError) as error:
         # No application DLL is replaced by this startup check. Crash recovery runs first.
@@ -137,6 +152,11 @@ def main():
         from app.ui.runtime_console import StartupLogBuffer
         startup_logs = StartupLogBuffer()
         logging.getLogger().addHandler(startup_logs)
+        from threading import Timer
+        from app.updates.cleanup import cleanup_updater_copies
+        housekeeping = Timer(5, cleanup_updater_copies, args=(PROJECT_ROOT, DATA_ROOT, started_at))
+        housekeeping.daemon = True
+        housekeeping.start()
     try:
         from app.ui.pet.expressions import ExpressionCatalog
         settings = Settings()

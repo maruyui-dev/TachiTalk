@@ -36,6 +36,7 @@ class PetWindow(QWidget):
         self._pending_messages = deque(maxlen=self.MAX_PENDING_MESSAGES)
         self._reply_turn = None
         self._reply_card = None
+        self._reply_part_key = None
         self._expression_turn = None
         self._animation_group = None
         self._animating = False
@@ -162,6 +163,26 @@ class PetWindow(QWidget):
         self._expression_turn = turn_id
         self.character.change_expression(expression)
 
+    @Slot(int, int, str)
+    def set_reply_part(self, turn_id, part_id, text):
+        """Each semantic message gets a bubble; token updates stay in that bubble."""
+        if self._closing or not text.strip() or (self._reply_turn is not None and turn_id < self._reply_turn):
+            return
+        key = (turn_id, part_id)
+        if self._reply_part_key != key:
+            self._reply_part_key = key
+            self._reply_turn = turn_id
+            self._reply_card = None
+        if self._reply_card is not None and self._reply_card in self.bubbles:
+            self._reply_card.set_message(text)
+            self._layout_children()
+            return
+        for index, (color, _, pending_key) in enumerate(self._pending_messages):
+            if pending_key == key:
+                self._pending_messages[index] = (color, text, key)
+                return
+        self._queue_message('pink', text, key)
+
     @Slot(int)
     def finish_expression(self, turn_id):
         if not self._closing and self._expression_turn == turn_id:
@@ -181,7 +202,7 @@ class PetWindow(QWidget):
             oldest.hide()
             oldest.deleteLater()
         self.bubbles.append(card)
-        if reply_turn is not None and reply_turn == self._reply_turn:
+        if reply_turn is not None and reply_turn in (self._reply_turn, self._reply_part_key):
             self._reply_card = card
         group = QParallelAnimationGroup(self)
         for bubble, target in self._bubble_positions():

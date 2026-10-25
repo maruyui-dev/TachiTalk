@@ -16,14 +16,14 @@ class ConsoleUI:
 
     def status(self, text):
         if text != self.last_status:
-            self.logger.info("状态：%s", redact(text))
+            self.logger.debug("状态：%s", redact(text))
             self.last_status = text
 
     def info(self, text):
         self.logger.info("%s", redact(text))
 
     def transcript(self, text):
-        self.logger.info("你：%s", redact(text))
+        self.logger.debug("你：%s", redact(text))
 
     def begin_reply(self, turn_id):
         self.reply_turn = turn_id
@@ -31,7 +31,7 @@ class ConsoleUI:
         ai = getattr(self, 'ai_settings', None)
         # 请求在后台冻结配置，UI可能同时改值；为允许的最长回复预留有界容量，
         # 实际分组上限仍由本轮LLM解析器校验，避免两线程快照时刻不同而丢正文。
-        self.reply_max_parts = AIOptions(reply_length=2000).reply_parts(self.max_parts) if ai is not None else self.max_parts
+        self.reply_max_parts = AIOptions(reply_length=2000).reply_parts(self.max_parts)
 
     def caption(self, turn_id, part_id, text):
         if turn_id != self.reply_turn:
@@ -49,7 +49,7 @@ class ConsoleUI:
     def end_reply(self, turn_id):
         if turn_id == self.reply_turn and self.caption_parts:
             combined = ''.join(self.caption_parts[index] for index in sorted(self.caption_parts))
-            self.logger.info('桌宠：%s', redact(combined))
+            self.logger.debug('桌宠：%s', redact(combined))
 
     def error(self, error):
         stage = error.stage if isinstance(error, StageError) else "程序"
@@ -77,14 +77,14 @@ class ConsoleUI:
 
     def timings(self, values):
         if values.get('spoken') is False:
-            self.logger.info('文字回复：本轮处理 %.3fs；自动朗读已关闭', values['round_seconds'])
+            self.logger.debug('文字回复：本轮处理 %.3fs；自动朗读已关闭', values['round_seconds'])
             return
         if values.get('input_kind') == 'text':
-            self.logger.info('文字对话：发送到首块写设备 %.3fs；本轮处理 %.3fs；播放队列峰值 %d',
+            self.logger.debug('文字对话：发送到首块写设备 %.3fs；本轮处理 %.3fs；播放队列峰值 %d',
                              values['speech_end_to_first_audio'], values['round_seconds'],
                              values['audio_queue_high_water'])
             return
-        self.logger.info(
+        self.logger.debug(
             "耗时：ASR %.3fs；日文首段 %.3fs；TTS首块 %.3fs；说完到首块写设备 %.3fs；本轮处理 %.3fs；播放队列峰值 %d",
             values["asr_seconds"], values["first_japanese_seconds"],
             values["tts_first_chunk_seconds"], values["speech_end_to_first_audio"],

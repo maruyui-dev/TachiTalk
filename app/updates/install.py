@@ -1,6 +1,7 @@
 """File transactions with write-ahead recovery. No remote shell commands."""
-from contextlib import AbstractContextManager
+from contextlib import AbstractContextManager, nullcontext
 import errno
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -9,7 +10,7 @@ import stat
 import uuid
 import zipfile
 
-from app.updates.manifest import allowed_path, atomic_json, safe_path, sha256, validate
+from app.updates.manifest import allowed_path, atomic_json, canonical, safe_path, sha256, validate
 
 
 def version_path(component):
@@ -31,9 +32,16 @@ def target(root, name):
     for part in (path, *path.parents):
         if part == root:
             break
-        if part.is_symlink() or (hasattr(part, 'is_junction') and part.is_junction()):
+        try:
+            info = part.lstat()
+        except FileNotFoundError:
+            continue
+        if stat.S_ISLNK(info.st_mode) or getattr(info, 'st_file_attributes', 0) & getattr(stat, 'FILE_ATTRIBUTE_REPARSE_POINT', 0):
             raise ValueError('安装目录中不允许链接或目录联接')
-    if not path.resolve().is_relative_to(root):
+    # safe_path excludes absolute paths and '..'; every ancestor below the
+    # canonical root was just checked for reparse points. Resolving the full
+    # deep runtime path again repeats the same filesystem traversal per file.
+    if not path.is_relative_to(root):
         raise ValueError('文件超出安装目录')
     return path
 
@@ -82,18 +90,22 @@ class InstallLock(AbstractContextManager):
         self.stream.close()  # OS releases the lock, including on process death.
 
 
-def recover(root):
+def recover(root, progress=None):
     """Call under InstallLock, before launching application or another transaction."""
     root = Path(root)
     pending = root / '.tachitalk-pending.json'
+    report = progress or (lambda *a, **k: None)
     if not pending.exists():
         return
+    report('recovery')
     journal = json.loads(pending.read_text(encoding='utf-8'))
     backup = target(root, journal['backup'])
     if not journal['backup'].startswith('.tachitalk-transactions/'):
         raise ValueError('无效备份目录')
     if journal['state'] != 'committed':
-        for item in reversed(journal['operations']):
+        total = len(journal['operations'])
+        for index, item in enumerate(reversed(journal['operations'])):
+            report('recovery', index, total, current=item['path'])
             if item['path'] != version_path(journal['component']):
                 allowed_path(journal['component'], item['path'])
             path = target(root, item['path'])
@@ -107,6 +119,10 @@ def recover(root):
                     replace_file(saved, path)
             else:
                 path.unlink(missing_ok=True)
+            report('recovery', index + 1, total, current=item['path'])
+    else:
+        from app.updates.cleanup import mark_committed
+        mark_committed(root, backup.parent, journal.get('cleanup_cache'), journal.get('cleanup_preserve'))
     pending.unlink()
 
 
@@ -124,7 +140,7 @@ def disk_required(payload, root):
     size = sum(file['size'] for file in payload['files'])
     backup = sum(path.stat().st_size for name in [r['path'] for r in payload['files']] + payload.get('delete', [])
                  if (path := target(root, name)).is_file())
-    return size * 2 + backup + 32 * 1024 * 1024
+    return size + backup + 32 * 1024 * 1024
 
 
 def check_space(payload, root):
@@ -134,12 +150,37 @@ def check_space(payload, root):
     return required, free
 
 
-def apply_archive(root, archive, payload, *, fault=None):
-    """Only use a payload returned by signature verification at an external boundary."""
+def _backup_file(source, saved, *, allow_link, progress):
+    saved.parent.mkdir(parents=True, exist_ok=True)
+    if allow_link:
+        try:
+            os.link(source, saved)
+        except OSError:
+            pass  # FAT/exFAT, permission or sharing constraints: use the durable copy path.
+        else:
+            return sha256(saved, progress)
+    digest = hashlib.sha256()
+    copied = 0
+    with source.open('rb') as src, saved.open('xb') as destination:
+        while block := src.read(1024 * 1024):
+            destination.write(block)
+            digest.update(block)
+            copied += len(block)
+            progress(copied)
+        destination.flush()
+        os.fsync(destination.fileno())
+    shutil.copystat(source, saved)
+    return digest.hexdigest()
+
+
+def apply_archive(root, archive, payload, *, fault=None, progress=None, lock_held=False):
+    """Authenticate input, retain rollback data, then stream each file into place."""
     validate(payload)
     root, archive = Path(root).resolve(), Path(archive)
-    with InstallLock(root):
-        recover(root)
+    report = progress or (lambda *a, **k: None)
+    with nullcontext() if lock_held else InstallLock(root):
+        recover(root, progress)
+        report('prepare')
         if payload['component'] == 'main' and local_version(root) != payload['base_version']:
             raise ValueError('补丁不适用于当前主程序版本')
         if payload['component'] == 'voice':
@@ -148,91 +189,144 @@ def apply_archive(root, archive, payload, *, fault=None):
                 raise ValueError('请先升级主程序后安装此语音组件')
             if payload.get('base_version', '*') != '*' and local_version(root, 'voice') != payload['base_version']:
                 raise ValueError('语音补丁不适用于当前语音版本')
-        if (archive.stat().st_size != payload['archive']['size'] or sha256(archive) != payload['archive']['sha256']):
+        archive_size = payload['archive']['size']
+        if archive.stat().st_size != archive_size:
             raise ValueError('更新包完整性校验失败')
-        check_space(payload, root)
+        records = {record['path']: record for record in payload['files']}
+        record_name = version_path(payload['component'])
+        prior_owned = {}
+        existing_record = target(root, record_name)
+        if existing_record.is_file():
+            prior = json.loads(existing_record.read_text(encoding='utf-8'))
+            prior_owned.update({r['path']: r for r in prior.get('files', [])})
+        owned = dict(prior_owned)
+        for name in payload.get('delete', []):
+            owned.pop(name, None)
+        owned.update(records)
+        record_data = canonical({'version': payload['version'], 'files': list(owned.values())})
+        operations = [*records, *payload.get('delete', []), record_name]
+        plan, backup_bytes = [], 0
+        for index, name in enumerate(operations):
+            destination = target(root, name)
+            existed = destination.exists()
+            if existed and not destination.is_file():
+                raise ValueError('目标不是普通文件，拒绝替换')
+            size = destination.stat().st_size if existed else 0
+            backup_bytes += size
+            plan.append((name, destination, existed, size))
+            # Before examining existing files, the preparation byte total is unknown.
+            report('prepare', index + 1, None, current=name)
+        required = sum(r['size'] for r in records.values()) + len(record_data) + backup_bytes + 32 * 1024**2
+        if shutil.disk_usage(root).free < required:
+            raise ValueError(f'安装空间不足：需要 {required} 字节')
+        prepare_total = archive_size + backup_bytes
+        report('prepare', 0, prepare_total, unit='bytes', current=archive.name)
+        if sha256(archive, lambda n: report('prepare', n, prepare_total, unit='bytes', current=archive.name)) != payload['archive']['sha256']:
+            raise ValueError('更新包完整性校验失败')
         transaction = root / '.tachitalk-transactions' / uuid.uuid4().hex
         stage, backup = transaction / 'stage', transaction / 'backup'
-        # Reject pre-existing reparse points even in the transaction parent.
         target(root, transaction.relative_to(root).as_posix())
         stage.mkdir(parents=True)
         backup.mkdir()
-        records = {record['path']: record for record in payload['files']}
+        from app.updates.cleanup import managed_cache, mark_committed
+        journal = {'component': payload['component'], 'state': 'applying',
+                   'backup': backup.relative_to(root).as_posix(), 'operations': [],
+                   'cleanup_cache': managed_cache(root, archive, payload), 'cleanup_preserve': []}
+        pending = root / '.tachitalk-pending.json'
         with zipfile.ZipFile(archive) as zipped:
             infos = zipped.infolist()
             if len(infos) != len(records) or {i.filename for i in infos} != set(records):
                 raise ValueError('压缩包内容与签名文件清单不一致')
             for info in infos:
-                record = records[info.filename]
-                mode = info.external_attr >> 16
-                if info.is_dir() or stat.S_ISLNK(mode) or info.file_size != record['size']:
+                if info.is_dir() or stat.S_ISLNK(info.external_attr >> 16) or info.file_size != records[info.filename]['size']:
                     raise ValueError('压缩包文件类型或大小不合法')
-                output = target(stage, info.filename)
-                output.parent.mkdir(parents=True, exist_ok=True)
-                with zipped.open(info) as source, output.open('xb') as destination:
-                    copied = 0
-                    while block := source.read(1024 * 1024):
-                        copied += len(block)
-                        if copied > record['size']:
-                            raise ValueError('解压文件超过签名大小')
-                        destination.write(block)
-                if copied != record['size'] or sha256(output) != record['sha256']:
-                    raise ValueError('解压文件哈希不匹配')
-        record_name = version_path(payload['component'])
-        owned = {}
-        existing_record = target(root, record_name)
-        if existing_record.is_file():
-            prior = json.loads(existing_record.read_text(encoding='utf-8'))
-            owned.update({r['path']: r for r in prior.get('files', [])})
-        for name in payload.get('delete', []):
-            owned.pop(name, None)
-        owned.update(records)
-        atomic_json(target(stage, record_name), {'version': payload['version'], 'files': list(owned.values())})
-        operations = [*records, *payload.get('delete', []), record_name]
-        journal = {'component': payload['component'], 'state': 'applying',
-                   'backup': backup.relative_to(root).as_posix(), 'operations': []}
-        pending = root / '.tachitalk-pending.json'
-        try:
-            for index, name in enumerate(operations):
-                destination = target(root, name)
-                existed = destination.exists()
-                if existed and not destination.is_file():
-                    raise ValueError('目标不是普通文件，拒绝替换')
+            prepared = archive_size
+            for name, destination, existed, size in plan:
                 digest = ''
                 if existed:
                     saved = target(backup, name)
-                    saved.parent.mkdir(parents=True, exist_ok=True)
-                    shutil.copyfile(destination, saved)
-                    with saved.open('r+b') as stream:
-                        os.fsync(stream.fileno())
-                    shutil.copystat(destination, saved)
-                    digest = sha256(saved)
+                    sensitive = name.lower().startswith(('assets/audio/tts_reference/',
+                        'services/gpt_sovits/gpt_weights', 'services/gpt_sovits/sovits_weights'))
+                    digest = _backup_file(destination, saved, allow_link=not sensitive,
+                        progress=lambda n, base=prepared, name=name: report('prepare', base + n,
+                            prepare_total, unit='bytes', current=name))
+                    if sensitive and prior_owned.get(name, {}).get('sha256') != digest:
+                        journal['cleanup_preserve'].append(name)
+                prepared += size
                 journal['operations'].append({'path': name, 'existed': existed, 'sha256': digest})
-            # The complete backup plan is durable before the first replacement. Rewriting this
-            # growing JSON for each of ~40k runtime files would otherwise cause quadratic I/O.
+                report('prepare', prepared, prepare_total, unit='bytes', current=name)
+            # Complete, durable recovery plan BEFORE the first final file changes.
             atomic_json(pending, journal)
-            for index, name in enumerate(operations):
-                destination = target(root, name)
-                if name in payload.get('delete', []):
-                    destination.unlink(missing_ok=True)
-                else:
-                    replace_file(target(stage, name), destination)
+            installed_bytes = installed_files = 0
+            total_bytes = sum(r['size'] for r in records.values()) + len(record_data)
+            indices = {name: index for index, name in enumerate(operations)}
+            report('install', 0, total_bytes, unit='bytes', files_done=0, files_total=len(operations))
+            try:
+                for info in infos:
+                    record = records[info.filename]
+                    output = target(stage, info.filename)
+                    output.parent.mkdir(parents=True, exist_ok=True)
+                    digest = hashlib.sha256()
+                    with zipped.open(info) as source, output.open('xb') as destination:
+                        copied = 0
+                        while block := source.read(1024 * 1024):
+                            copied += len(block)
+                            if copied > record['size']:
+                                raise ValueError('解压文件超过签名大小')
+                            destination.write(block)
+                            digest.update(block)
+                            installed_bytes += len(block)
+                            report('install', installed_bytes, total_bytes, unit='bytes', current=info.filename,
+                                   files_done=installed_files, files_total=len(operations))
+                        if copied != record['size'] or digest.hexdigest() != record['sha256']:
+                            raise ValueError('解压文件大小或哈希不匹配')
+                        destination.flush()
+                        os.fsync(destination.fileno())
+                    destination = target(root, info.filename)
+                    destination.parent.mkdir(parents=True, exist_ok=True)
+                    output.replace(destination)  # Same volume: no second whole-file copy.
+                    installed_files += 1
+                    if fault:
+                        fault(indices[info.filename], info.filename)
+                    report('install', installed_bytes, total_bytes, unit='bytes', current=info.filename,
+                           files_done=installed_files, files_total=len(operations))
+                for name in payload.get('delete', []):
+                    target(root, name).unlink(missing_ok=True)
+                    installed_files += 1
+                    if fault:
+                        fault(indices[name], name)
+                    report('install', installed_bytes, total_bytes, unit='bytes', current=name,
+                           files_done=installed_files, files_total=len(operations))
+                output = target(stage, record_name)
+                output.parent.mkdir(parents=True, exist_ok=True)
+                with output.open('xb') as stream:
+                    stream.write(record_data)
+                    stream.flush()
+                    os.fsync(stream.fileno())
+                destination = target(root, record_name)
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                output.replace(destination)
                 if fault:
-                    fault(index, name)
-            journal['state'] = 'committed'
-            atomic_json(pending, journal)
-            pending.unlink()
-        except BaseException:
-            recover(root)
-            raise
+                    fault(indices[record_name], record_name)
+                installed_bytes += len(record_data)
+                report('install', installed_bytes, total_bytes, unit='bytes', current=record_name,
+                       files_done=len(operations), files_total=len(operations))
+                journal['state'] = 'committed'
+                atomic_json(pending, journal)
+                mark_committed(root, transaction, journal['cleanup_cache'], journal['cleanup_preserve'])
+                pending.unlink()
+            except BaseException:
+                recover(root, progress)
+                raise
         return transaction
 
 
-def uninstall_voice(root):
+def uninstall_voice(root, progress=None, lock_held=False):
     """Remove only recorded, unchanged managed files. Legacy installations are never guessed."""
     root = Path(root).resolve()
-    with InstallLock(root):
-        recover(root)
+    report = progress or (lambda *a, **k: None)
+    with nullcontext() if lock_held else InstallLock(root):
+        recover(root, progress)
         record_name = version_path('voice')
         record = target(root, record_name)
         if not record.is_file():
@@ -241,7 +335,8 @@ def uninstall_voice(root):
         if not owned:
             raise ValueError('没有已记录的可卸载语音文件')
         remove, preserved = [], []
-        for item in owned:
+        for index, item in enumerate(owned):
+            report('verify', index, len(owned), current=item['path'])
             allowed_path('voice', item['path'])
             path = target(root, item['path'])
             if path.is_file() and sha256(path) == item['sha256']:
@@ -256,7 +351,8 @@ def uninstall_voice(root):
         journal = {'component': 'voice', 'state': 'applying', 'backup': backup.relative_to(root).as_posix(), 'operations': []}
         pending = root / '.tachitalk-pending.json'
         try:
-            for name in [*remove, record_name]:
+            for index, name in enumerate([*remove, record_name]):
+                report('backup', index, len(remove) + 1, current=name)
                 path, saved = target(root, name), target(backup, name)
                 saved.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(path, saved)
@@ -265,13 +361,16 @@ def uninstall_voice(root):
                 shutil.copystat(path, saved)
                 journal['operations'].append({'path': name, 'existed': True, 'sha256': sha256(saved)})
             atomic_json(pending, journal)
-            for name in [*remove, record_name]:
+            for index, name in enumerate([*remove, record_name]):
+                report('uninstall', index, len(remove) + 1, current=name)
                 path = target(root, name)
                 path.unlink()
+                report('uninstall', index + 1, len(remove) + 1, current=name)
+            report('commit')
             journal['state'] = 'committed'
             atomic_json(pending, journal)
             pending.unlink()
         except BaseException:
-            recover(root)
+            recover(root, progress)
             raise
         return preserved

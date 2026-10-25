@@ -129,7 +129,7 @@ class SessionControls(QObject):
                     self.apply(previous, self.prepare(previous))
                     raise
                 self.loaded = True
-                self.panel.settings_controls.report('已恢复上次关闭时的界面设置')
+                self.panel.settings_controls.report('已恢复上次关闭时的界面设置', quiet=True)
                 return True
             except (OSError, ValueError, TypeError, KeyError, RuntimeError, AttributeError) as error:
                 if source is self.file:
@@ -152,7 +152,7 @@ class SessionControls(QObject):
             self.prepare(document)
             target = self.recovery if self.preserve_original else self.file
             target.write(document)
-            LOG.info('已自动保存界面设置')
+            LOG.debug('已自动保存界面设置')
             return True
         except (OSError, ValueError, TypeError, KeyError, RuntimeError, AttributeError) as error:
             self.panel.settings_controls.report(f'自动保存失败（{type(error).__name__}），原配置文件保留', error=True)

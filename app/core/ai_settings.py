@@ -22,7 +22,9 @@ class AIOptions:
     chat_path: str = ''  # 入口自检/旧配置可显式指定，面板按服务类型自动选择路径。
 
     def reply_parts(self, default):
-        return max(default, (self.reply_length + 119) // 120 + 1) if self.reply_length else default
+        # Capacity is independent of this turn's keywords: a short follow-up can
+        # continue a long story. Length/tokens still guide how much to generate.
+        return max(default, 32)
 
     def validate(self, *, for_models=False):
         if self.provider not in ('deepseek', 'openai', 'custom'):
