@@ -78,6 +78,7 @@ def freeze(target=None, work=None, trust_keys=None):
                         ignore=shutil.ignore_patterns('__pycache__', '*.pyc', '*.json', 'audio'))
     (target / 'scripts').mkdir(exist_ok=True)
     shutil.copy2(ROOT / 'scripts/tts_service_entry.py', target / 'scripts/tts_service_entry.py')
+    shutil.copy2(ROOT / 'scripts/training_worker.py', target / 'scripts/training_worker.py')
     shutil.copy2(ROOT / 'app/services/whisper_worker.py', target / 'scripts/whisper_worker.py')
     for name in ('requirements.txt', 'README.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md'):
         shutil.copy2(ROOT / name, target / name)

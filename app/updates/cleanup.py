@@ -10,7 +10,7 @@ import stat
 import logging
 
 from app.updates.install import target
-from app.updates.manifest import atomic_json, MAX_MANIFEST
+from app.updates.manifest import atomic_json, filesystem_path, MAX_MANIFEST
 
 JOB = 'cleanup.json'
 PROFILES = ('user_data', '_qt_runtime_tmp')
@@ -51,7 +51,7 @@ def cleanup_updater_copies(root, data, started_at):
 
 def managed_cache(root, archive, payload):
     """An offline ZIP outside our exact per-hash cache is always user-owned."""
-    archive = Path(archive).absolute()
+    root, archive = filesystem_path(root), filesystem_path(archive)
     for profile in PROFILES:
         expected = Path(root) / profile / 'updates/downloads' / payload['archive']['sha256'] / 'package.zip'
         if archive == expected:
@@ -61,7 +61,7 @@ def managed_cache(root, archive, payload):
 
 
 def transaction_path(root, transaction):
-    root, transaction = Path(root).resolve(), Path(transaction).absolute()
+    root, transaction = filesystem_path(Path(root).resolve()), filesystem_path(transaction)
     if transaction.parent != root / '.tachitalk-transactions':
         raise ValueError('清理事务目录超出范围')
     return target(root, transaction.relative_to(root).as_posix())
@@ -69,7 +69,7 @@ def transaction_path(root, transaction):
 
 def mark_committed(root, transaction, cache=None, preserve=None):
     """Persist after the committed journal, before removing the pending marker."""
-    root = Path(root).resolve()
+    root = filesystem_path(Path(root).resolve())
     transaction = transaction_path(root, transaction)
     name = (transaction / JOB).relative_to(root).as_posix()
     target(root, name + '.new')
@@ -101,7 +101,7 @@ def _jobs(root):
 def needs_cleanup(root):
     """Resume crashes once; a reported IO failure must not cause restart loops."""
     try:
-        return any(job is not None and not job.get('blocked') for _, job, _ in _jobs(Path(root).resolve()))
+        return any(job is not None and not job.get('blocked') for _, job, _ in _jobs(filesystem_path(Path(root).resolve())))
     except (OSError, ValueError):
         return False  # Optional housekeeping must not prevent a usable app from starting.
 
@@ -161,7 +161,7 @@ def _plan(root, transaction, job, report):
 
 
 def cleanup_committed(root, progress=None):
-    root = Path(root).resolve()
+    root = filesystem_path(Path(root).resolve())
     report = progress or (lambda *a, **k: None)
     result = {'complete': True, 'removed_files': 0, 'removed_bytes': 0, 'errors': [], 'preserved': []}
     if (root / '.tachitalk-pending.json').exists():

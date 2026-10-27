@@ -31,7 +31,7 @@ class InlineExtractionTests(unittest.TestCase):
             apply_archive(self.root, self.archive, self.payload,
                           progress=lambda phase, *a, **k: events.append(phase))
         self.assertEqual(set(events), {'prepare', 'install'}, 'Install still has avoidable standalone phases')
-        self.assertTrue(all('stage' not in p.relative_to(self.root).parts for p in hashed),
+        self.assertTrue(all('stage' not in p.parts for p in hashed),
                         'Staged files were reopened for a second full hash pass')
         self.assertEqual((self.root / 'TachiTalk.exe').read_bytes(), b'new executable')
 

@@ -107,7 +107,7 @@ class AudioLibrary:
                 if (not valid_expression_name(ref.name) or ref.name.casefold() in names
                         or not isinstance(ref.key, str) or UUID(ref.key).hex != ref.key or ref.key in keys
                         or type(ref.enabled) is not bool
-                        or ref.language != 'ja' or not isinstance(ref.prompt, str) or len(ref.prompt) > 1000
+                        or ref.language not in ('ja', 'zh', 'en', 'ko', 'yue') or not isinstance(ref.prompt, str) or len(ref.prompt) > 1000
                         or not isinstance(ref.scene, str) or len(ref.scene) > 200
                         or not isinstance(ref.path, str) or not Path(ref.path).is_absolute()):
                     raise ValueError('音频名称、路径或原文无效；昵称不得重复')
@@ -185,13 +185,14 @@ class AudioLibrary:
         self._commit(data)
         return ref
 
-    def update(self, key, *, name, scene, prompt, enabled, default=False):
+    def update(self, key, *, name, scene, prompt, enabled, default=False, language=None):
         data, pack = self._edit()
         ref = self.records[key]
-        ref = replace(ref, name=name.strip(), scene=scene.strip(), prompt=prompt.strip(), enabled=enabled)
+        ref = replace(ref, name=name.strip(), scene=scene.strip(), prompt=prompt.strip(), enabled=enabled,
+                      language=ref.language if language is None else language)
         if enabled:
             if not ref.prompt:
-                raise ValueError('启用前请填写与参考音频一致的日语原文')
+                raise ValueError('启用前请填写与参考音频一致的原文')
             inspect_audio(ref.path)
         if default and not enabled:
             raise ValueError('默认音频必须启用')

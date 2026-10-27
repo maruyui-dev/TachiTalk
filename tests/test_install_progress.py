@@ -98,6 +98,33 @@ class InstallProgressTests(unittest.TestCase):
                 window.deleteLater()
                 self.app.processEvents()
 
+    def test_next_transaction_does_not_inherit_previous_restart_close_timer(self):
+        with TemporaryDirectory() as directory:
+            result = Path(directory) / 'install-result.json'
+            with InstallProgress(result, directory) as previous:
+                previous.finish('succeeded', 'previous task', restarted=True)
+            window = InstallProgressWindow(result)
+            window.show()
+            try:
+                with InstallProgress(result, directory) as current:
+                    current.report('backup', 0, 2)
+                    window.refresh()
+                    QTest.qWait(2800)
+                    self.assertTrue(window.isVisible())
+                    self.assertFalse(window.closing_after_restart,
+                                     'The new transaction inherited an already-fired close timer')
+                    current.finish('succeeded', 'current task', restarted=True)
+                    window.refresh()
+                    deadline = time.monotonic() + 4
+                    while window.isVisible() and time.monotonic() < deadline:
+                        QTest.qWait(50)
+                    self.assertFalse(window.isVisible(), 'Completed updater window never closed')
+            finally:
+                window.observer = True
+                window.close()
+                window.deleteLater()
+                self.app.processEvents()
+
     @unittest.skipUnless(os.name == 'nt', 'Windows junction guard')
     def test_junction_and_traversal_guards_survive_path_optimization(self):
         with TemporaryDirectory() as directory:

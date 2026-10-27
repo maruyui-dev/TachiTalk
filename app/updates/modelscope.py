@@ -1,4 +1,4 @@
-"""Public voice mirror adapter; signed GitHub identities remain unchanged."""
+"""Public component mirror adapter; signed GitHub identities remain unchanged."""
 import re
 from urllib.parse import urlsplit
 
@@ -15,6 +15,11 @@ def main_file(path):
     return bool(match and (match[3] is None or match[3] == match[1]))
 
 
+def training_file(path):
+    return bool(re.fullmatch(r'training-manifest\.json|SHA256SUMS-training\.txt|'
+        r'training-v2ProPlus-training-[1-9]\d*\.zip(?:\.part\d{3})?', path))
+
+
 def resolve(url, source):
     if source.get('prefix') != ENTRY:
         raise ValueError('魔搭入口必须为已配置的公开语音仓库')
@@ -24,6 +29,10 @@ def resolve(url, source):
         r'/releases/download/(v\d+\.\d+\.\d+)/(main-[^/]+)', url)
     if main and main_file('main/' + main[1] + '/' + main[2]):
         return ENTRY + 'main/' + main[1] + '/' + main[2]
+    training = re.fullmatch(r'https://github\.com/' + re.escape(REPOSITORY) +
+        r'/releases/(?:latest/download|download/v\d+\.\d+\.\d+)/([^/]+)', url)
+    if training and training_file(training[1]):
+        return ENTRY + training[1]
     name = 'voice-manifest.json' if url == latest else url[len(release):] if url.startswith(release) else ''
     if name not in FILES:
         raise ValueError('此签名附件尚未接入魔搭仓库，请使用原始来源')
@@ -40,6 +49,7 @@ def trusted_redirect(url, initial):
     # Observed public LFS endpoint. No wildcard subdomains or arbitrary OSS hosts.
     if (target.hostname == 'modelscope.cn' and url.startswith(ENTRY)
             and (url[len(ENTRY):] in FILES | {METADATA_FILE} or main_file(url[len(ENTRY):])
+                or training_file(url[len(ENTRY):])
                 or re.fullmatch(r'TachiTalk-v\d+\.\d+\.\d+-main-latest\.json', url[len(ENTRY):]))):
         return True
     if (target.hostname == 'cdn-lfs-cn-1.modelscope.cn' and

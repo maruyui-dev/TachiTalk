@@ -7,6 +7,25 @@ import runpy
 import sys
 
 
+def active_models(record, data_root):
+    """Only workbench-owned v2ProPlus outputs may override the vendor defaults."""
+    record = Path(record)
+    if not record.is_file():
+        return {}
+    data = json.loads(record.read_text(encoding='utf-8'))
+    project = Path(data['project']).resolve()
+    parent = (Path(data_root) / 'training/projects').resolve()
+    if data.get('version') != 'v2ProPlus' or project.parent != parent:
+        raise ValueError('Invalid active training project')
+    result = {}
+    for kind, field, suffix in [('gpt', 't2s_weights_path', '.ckpt'), ('sovits', 'vits_weights_path', '.pth')]:
+        path = Path(data[kind]).resolve()
+        if project not in path.parents or path.suffix != suffix or not path.is_file():
+            raise ValueError('Active trained model is missing or outside its project')
+        result[field] = str(path)
+    return result
+
+
 def probe_cuda(torch):
     """覆盖声纹FFT/复数abs、矩阵乘与卷积；CUDA可见不代表这些算子能运行。"""
     with torch.inference_mode():
@@ -51,6 +70,7 @@ def main():
     parser.add_argument('--state-dir', required=True)
     parser.add_argument('--port', required=True, type=int)
     parser.add_argument('--device', choices=('auto', 'cpu'), default='auto')
+    parser.add_argument('--model-record')
     args = parser.parse_args()
     root, state = Path(args.service_root).resolve(), Path(args.state_dir).resolve()
     state.mkdir(parents=True, exist_ok=True)
@@ -63,6 +83,8 @@ def main():
     custom = configs['custom']
     for field in ('bert_base_path', 'cnhuhbert_base_path', 't2s_weights_path', 'vits_weights_path'):
         custom[field] = str((root / custom[field]).resolve())
+    if args.model_record:
+        custom.update(active_models(args.model_record, state.parent))
     runtime = select_device(torch, force_cpu=args.device == 'cpu')
     custom.update(device=runtime['device'], is_half=runtime['is_half'])
     if runtime['device'] == 'cpu':

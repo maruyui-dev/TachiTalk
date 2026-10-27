@@ -173,6 +173,15 @@ def build_page(view):
     view.preparation_hint.hide()
     view.resource_row.addWidget(voice, 3)
 
+    training, training_box = card()
+    training_box.addWidget(label('v2ProPlus 完整训练包', title=True))
+    view.training_state = label('', muted=True)
+    training_box.addWidget(view.training_state)
+    training_box.addWidget(label('按需安装切分、自动标注、人声分离的工具与权重及训练底模，复用已有推理环境。', muted=True))
+    training_box.addWidget(button('下载 / 修复完整训练包', view.install_training))
+    training_box.addWidget(button('卸载托管训练扩展', view.remove_training))
+    layout.addWidget(training)
+
     disk, box = card()
     view.disk_title = label('安装磁盘', title=True)
     box.addWidget(view.disk_title)

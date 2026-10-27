@@ -32,6 +32,10 @@ class InstallProgressWindow(QWidget):
         self.terminal = False
         self.state = {}
         self.closing_after_restart = False
+        self.restart_close_timer = QTimer(self)
+        self.restart_close_timer.setSingleShot(True)
+        self.restart_close_timer.setInterval(2500)
+        self.restart_close_timer.timeout.connect(self.close)
         self.setWindowTitle('TachiTalk · 安装进度' + ('（只读）' if observer else ''))
         self.resize(690, 470)
         self.setMinimumWidth(530)
@@ -81,12 +85,16 @@ class InstallProgressWindow(QWidget):
 
     def refresh(self):
         try:
-            self.state = json.loads(self.path.read_text(encoding='utf-8'))
+            state = json.loads(self.path.read_text(encoding='utf-8'))
         except (OSError, ValueError) as error:
             self.bar.setRange(0, 0)
             self.notice.setText('尚未取得可读进度，不能确认工作是否推进。请查看安装结果和日志。')
             self.diagnostics.setPlainText(f'进度文件：{self.path}\n{type(error).__name__}: {error}')
             return
+        if state.get('transaction') != self.state.get('transaction'):
+            self.restart_close_timer.stop()
+            self.closing_after_restart = False
+        self.state = state
         s, now = self.state, time.time()
         status = s['status']
         self.terminal = status != 'running'
@@ -132,7 +140,7 @@ class InstallProgressWindow(QWidget):
         self.diagnostics.setPlainText(json.dumps(text, ensure_ascii=False, indent=2))
         if status == 'succeeded' and s.get('restarted') and not self.observer and not self.closing_after_restart:
             self.closing_after_restart = True
-            QTimer.singleShot(2500, self.close)
+            self.restart_close_timer.start()
 
     def closeEvent(self, event):
         if self.observer or self.terminal:

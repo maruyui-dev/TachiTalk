@@ -57,6 +57,16 @@ class AudioLibraryTests(unittest.TestCase):
                 self.library.update(before.default.key, name='修改', scene='', prompt='a', enabled=True, default=True)
         self.assertEqual(self.library.snapshot(), before)
 
+    def test_trained_reference_preserves_prompt_language_and_other_recordings(self):
+        original = self.library.snapshot().default
+        imported = self.library.add(self.source)
+        self.library.update(imported.key, name='训练声音', scene='', prompt='你好。', language='zh', enabled=True, default=True)
+        current = self.library.snapshot()
+        self.assertEqual(current.default.language, 'zh')
+        self.assertIn(original, current.references)
+        restored = AudioLibrary(self.root / 'state.json').snapshot()
+        self.assertEqual(restored.default.language, 'zh')
+
     def test_pack_selection_and_removal_are_independent(self):
         key = self.library.create_pack('另一个角色')
         self.library.add(self.source)

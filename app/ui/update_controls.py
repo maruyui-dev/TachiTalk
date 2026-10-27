@@ -151,6 +151,9 @@ class UpdateControls(QScrollArea):
 
     def refresh_summary(self):
         status = voice_status(TTS_SERVICE_DIR)
+        from app.training.project import training_status
+        training = training_status(TTS_SERVICE_DIR, self.client.root)
+        self.training_state.setText('已安装 · 仅 v2ProPlus' if training['installed'] else '未安装 / 文件不完整 · 可导入维护者签名的训练扩展')
         state = self.main_result['state']
         latest = self.main_result.get('version')
         descriptions = {'disabled': '更新检查暂未开放', 'current': '已是最新版本', 'no_patch': '有新版本，但没有适用的增量包',
@@ -423,6 +426,8 @@ class UpdateControls(QScrollArea):
             if name == 'voice-manifest':
                 self.check_errors['voice'] = result['error']
                 self.refresh_summary()
+            elif name == 'training-manifest':
+                self.state.setText('未取得可用的签名训练包；可导入维护者签名的离线训练扩展。\n' + result['error'])
             return
         value = result['value']
         if name == 'main-manifest':
@@ -442,6 +447,10 @@ class UpdateControls(QScrollArea):
             self.check_errors.pop('voice', None)
             self.refresh_summary()
             self.begin_download('voice', confirm=self.confirm_after_probe)
+        elif name == 'training-manifest':
+            if not self.stop.is_set():
+                self.envelopes['training'] = value
+                self.begin_download('training')
         elif name == 'diagnose':
             if value.get('state') == 'cancelled':
                 self.finish_preparation()
@@ -641,6 +650,22 @@ class UpdateControls(QScrollArea):
             return
         self.begin_download('voice', confirm=confirm)
 
+    def install_training(self):
+        if self.busy:
+            return
+        if not voice_status(TTS_SERVICE_DIR)['installed']:
+            self.state.setText('请先安装 v2ProPlus 推理资源包；训练扩展复用该环境。')
+            return
+        if 'training' in self.envelopes:
+            self.begin_download('training')
+        else:
+            self.start('training-manifest', lambda progress, stop: asyncio.run(
+                self.client.voice_manifest(progress, stop=stop, component='training')))
+
+    def remove_training(self):
+        if QMessageBox.question(self, '卸载训练扩展', '只移除未修改的托管训练组件，保留推理环境、训练项目和用户模型。是否继续？') == QMessageBox.StandardButton.Yes:
+            self.launch_updater(None, uninstall_component='training')
+
     def remove_voice(self):
         if QMessageBox.question(self, '卸载可选语音', '将关闭主程序并卸载本目录托管的语音文件；旧版外部目录、修改过的文件及用户数据会保留。是否继续？') == QMessageBox.StandardButton.Yes:
             self.launch_updater(None)
@@ -683,17 +708,19 @@ class UpdateControls(QScrollArea):
             if payload['archive']['sha256'] in self.client.configuration().get('restart_archives', []):
                 self.reset_selected_download(component, confirm=confirm)
                 return
-            if component == 'voice' and confirm:
+            if component in ('voice', 'training') and confirm:
                 answer = QMessageBox.question(self, '安装独立语音组件',
-                    f"版本 {payload['version']}，需下载 {size_text(payload['archive']['size'])}。\n"
-                    '将安装或修复 GPT-SoVITS 运行环境与配音资源，完成下载后关闭软件安装并重启。是否继续？')
+                    f"版本 {payload['version']}，需下载 {size_text(payload['archive']['size'])}。\n" +
+                    ('包含切分、自动标注、人声分离权重和 v2ProPlus 训练底模，复用已有运行环境；完成后自动清理并重启。是否继续？' if component == 'training' else
+                     '将安装或修复 GPT-SoVITS 运行环境与配音资源，完成下载后关闭软件安装并重启。是否继续？'))
                 if answer != QMessageBox.StandardButton.Yes:
                     self.finish_preparation()
                     return
-            if component == 'voice':
+            if component in ('voice', 'training'):
                 self.begin_preparation()
             self.last_component = component
-            self.task_title.setText('正在准备语音资源下载' if component == 'voice' else '正在准备主程序更新')
+            self.task_title.setText({'voice': '正在准备语音资源下载', 'training': '正在准备 v2ProPlus 训练扩展',
+                                     'main': '正在准备主程序更新'}[component])
             self.task_count.setText('1 个任务')
             if component == 'main':
                 self.start('prepare', lambda progress, stop: asyncio.run(self.client.prepare(
@@ -890,7 +917,11 @@ class UpdateControls(QScrollArea):
                 shutil.rmtree(path)
         self.start('clear', clear)
 
-    def launch_updater(self, prepared):
+    def launch_updater(self, prepared, *, uninstall_component='voice'):
+        training = getattr(self.panel, 'training_page', None)
+        if training is not None and training.job.running:
+            self.state.setText('请先停止并保存训练任务，再安装资源或更新。')
+            return
         def prepare_command(progress, stop):
             directory = self.client.directory / 'updaters'
             directory.mkdir(exist_ok=True)
@@ -907,7 +938,7 @@ class UpdateControls(QScrollArea):
             if prepared:
                 command += ['--manifest', str(prepared['manifest']), '--archive', str(prepared['archive'])]
             else:
-                command += ['--uninstall-voice']
+                command += ['--uninstall-training' if uninstall_component == 'training' else '--uninstall-voice']
             return command
         self.start('handoff', prepare_command)
 

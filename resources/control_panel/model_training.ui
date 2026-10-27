@@ -654,7 +654,7 @@
                                       <item>
                                         <widget class="QLabel" name="trainingDropHint">
                                           <property name="text">
-                                            <string>拖入音频文件，或点击导入</string>
+                                    <string>点击“导入音频”选择文件</string>
                                           </property>
                                           <property name="alignment">
                                             <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -846,7 +846,7 @@
                                     <property name="checked">
                                       <bool>true</bool>
                                     </property>
-                                    <property name="enabled">
+                                    <property name="visible">
                                       <bool>false</bool>
                                     </property>
                                   </widget>
@@ -1001,7 +1001,7 @@
                                 <item>
                                   <widget class="QLabel" name="trainingAdvancedHint">
                                     <property name="text">
-                  <string>高级参数（开发中）</string>
+                                    <string>按完整训练轮保存，可在保存后停止</string>
                                     </property>
                                     <property name="tone" stdset="0">
                                       <string>muted</string>
@@ -1011,7 +1011,7 @@
                                 <item>
                                   <widget class="QLabel" name="trainingParameterHint">
                                     <property name="text">
-                                      <string>参数仅作界面示例，当前不会运行训练。</string>
+                                    <string>复用已安装的运行环境，训练项目与默认角色独立保存。</string>
                                     </property>
                                     <property name="tone" stdset="0">
                                       <string>muted</string>
@@ -1204,7 +1204,7 @@
                                       <item>
                                         <widget class="QLabel" name="trainingProgressCaption">
                                           <property name="text">
-                                            <string>总体进度</string>
+                                            <string>本阶段实际进度</string>
                                           </property>
                                         </widget>
                                       </item>
@@ -1269,7 +1269,7 @@
                                       <item>
                                         <widget class="QLabel" name="trainingTaskStatus1">
                                           <property name="text">
-                                            <string>等待</string>
+                                            <string>导入音频副本</string>
                                           </property>
                                           <property name="tone" stdset="0">
                                             <string>muted</string>
@@ -1320,7 +1320,7 @@
                                       <item>
                                         <widget class="QLabel" name="trainingTaskStatus2">
                                           <property name="text">
-                                            <string>等待</string>
+                                            <string>校对后处理</string>
                                           </property>
                                           <property name="tone" stdset="0">
                                             <string>muted</string>
@@ -1371,7 +1371,7 @@
                                       <item>
                                         <widget class="QLabel" name="trainingTaskStatus3">
                                           <property name="text">
-                                            <string>等待</string>
+                                            <string>可分阶段执行</string>
                                           </property>
                                           <property name="tone" stdset="0">
                                             <string>muted</string>
@@ -1422,7 +1422,7 @@
                                       <item>
                                         <widget class="QLabel" name="trainingTaskStatus4">
                                           <property name="text">
-                                            <string>等待</string>
+                                            <string>保存到当前项目</string>
                                           </property>
                                           <property name="tone" stdset="0">
                                             <string>muted</string>
@@ -1435,7 +1435,7 @@
                                 <item>
                                   <widget class="QLabel" name="trainingLogHint">
                                     <property name="text">
-                                      <string>训练日志接入后将在右侧日志栏同步显示。</string>
+                                    <string>日志在本页同步显示；详细日志保存在当前项目任务目录。</string>
                                     </property>
                                     <property name="tone" stdset="0">
                                       <string>muted</string>

@@ -20,6 +20,22 @@ INFERENCE_DIRS = {'AR', 'BigVGAN', 'configs', 'eres2net', 'f5_tts', 'feature_ext
                   'module', 'text', 'TTS_infer_pack'}
 INFERENCE_FILES = {'sv.py', 'utils.py', 'process_ckpt.py', 'stream_v2pro.py'}
 PRETRAINED = {'chinese-hubert-base', 'chinese-roberta-wwm-ext-large', 'fast_langdetect', 'sv'}
+TRAINING_VERSION = 'v2ProPlus-training-2'
+
+
+def training_entries(root):
+    """Only v2ProPlus training additions. Never duplicate the private CUDA runtime."""
+    from app.training.project import TRAINING_FILES, training_status
+    service = Path(root) / 'services/gpt_sovits'
+    status = training_status(service)
+    if not status['installed']:
+        raise ValueError('训练扩展不完整：' + '; '.join(status['missing']))
+    for source, relative in files(service / 'training'):
+        name = relative.as_posix()
+        if (name in TRAINING_FILES or name in {'LICENSE', 'SOURCE.json', 'training_progress.py',
+                                              'ASR-LICENSE.txt', 'UVR-LICENSE.txt', 'README.md'}
+                or name.startswith('tools/') and source.suffix in {'.py', '.json'}):
+            yield source, Path('services/gpt_sovits/training') / relative
 
 
 def voice_entries(root):
@@ -123,6 +139,8 @@ def create_package(entries, output, component, version, base_version, base_files
         'archive': {'size': archive.stat().st_size, 'sha256': sha256(archive)}, 'parts': parts}
     if component == 'voice':
         payload['min_main_version'] = '1.3.0'
+    elif component == 'training':
+        payload['min_main_version'] = '2.0.0'
     validate(payload)
     atomic_json(output / 'unsigned-payload.json', payload)
     atomic_json(output / 'inventory.json', {'component': component, 'version': version, 'files': records})
@@ -151,7 +169,7 @@ def sign_payload(payload, key_path, key_id):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--component', choices=('main', 'voice'), required=True)
+    parser.add_argument('--component', choices=('main', 'voice', 'training'), required=True)
     parser.add_argument('--root', type=Path, default=ROOT)
     parser.add_argument('--client', type=Path, default=ROOT / 'dist/TachiTalk')
     parser.add_argument('--version', required=True)
@@ -171,7 +189,7 @@ def main():
     if args.inventory_only:
         if args.output.exists():
             raise ValueError('inventory 已存在，拒绝覆盖')
-        entries = main_entries(args.client) if args.component == 'main' else voice_entries(args.root)
+        entries = main_entries(args.client) if args.component == 'main' else training_entries(args.root) if args.component == 'training' else voice_entries(args.root)
         atomic_json(args.output, {'component': args.component, 'version': args.version, 'files': inventory(entries)})
         return
     if args.full_main and args.component != 'main':
@@ -181,7 +199,7 @@ def main():
     base = json.loads(args.base_inventory.read_text(encoding='utf-8')) if args.base_inventory else None
     if base and (base['component'] != args.component or base['version'] != args.base_version):
         raise ValueError('基线inventory组件或版本不匹配')
-    entries = main_entries(args.client) if args.component == 'main' else voice_entries(args.root)
+    entries = main_entries(args.client) if args.component == 'main' else training_entries(args.root) if args.component == 'training' else voice_entries(args.root)
     payload = create_package(entries, args.output, args.component, args.version, args.base_version,
         base_files=base['files'] if base and not args.full_main else None,
         notes=args.notes.read_text(encoding='utf-8') if args.notes else '', tag=args.tag)
@@ -191,7 +209,7 @@ def main():
     envelope = sign_payload(payload, key_path, args.key_id)
     from app.updates.manifest import verify
     verify(envelope, json.loads((ROOT / 'packaging/release_keys.json').read_text(encoding='utf-8')))
-    name = f'main-from-{args.base_version}.json' if args.component == 'main' else 'voice-manifest.json'
+    name = f'main-from-{args.base_version}.json' if args.component == 'main' else f'{args.component}-manifest.json'
     atomic_json(args.output / name, envelope)
     print(f'Signed manifest: {name}', flush=True)
 

@@ -13,7 +13,7 @@ if not getattr(sys, 'frozen', False):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from app.updates.manifest import load_signed, atomic_json
-from app.updates.install import apply_archive, InstallLock, InstallBusyError, recover, uninstall_voice
+from app.updates.install import apply_archive, InstallLock, InstallBusyError, recover, uninstall_voice, uninstall_component
 from app.updates.progress import InstallProgress
 from app.updates.cleanup import cleanup_committed
 
@@ -59,6 +59,7 @@ def main(argv=None):
     parser.add_argument('--restart', action='store_true')
     parser.add_argument('--recover', action='store_true')
     parser.add_argument('--uninstall-voice', action='store_true')
+    parser.add_argument('--uninstall-training', action='store_true')
     parser.add_argument('--show-progress', action='store_true')
     parser.add_argument('--observe', action='store_true', help='只读查看已有安装，不启动安装或恢复')
     args = parser.parse_args(argv)
@@ -100,7 +101,9 @@ def run_install(args, root, progress):
             progress.report('waiting')
             wait_parent(args.parent_pid)
             parent_exited = True
-        if args.uninstall_voice:
+        if getattr(args, 'uninstall_training', False):
+            uninstall_component(root, 'training', progress.report, lock_held=True)
+        elif args.uninstall_voice:
             uninstall_voice(root, progress.report, lock_held=True)
         elif args.recover:
             progress.report('recovery')
@@ -134,7 +137,10 @@ def complete_install(args, root, progress, outcome):
     ok, parent_exited, unresolved, error_text, cleanup = outcome
     restarted = False
     if args.restart and parent_exited and not unresolved:
-        progress.report('restart')
+        # Restarting the restored application is not a successful installation.
+        # Keep the failed work phase/file/counters available in its diagnostics.
+        if ok:
+            progress.report('restart')
         command = [str(root / 'TachiTalk.exe')] if (root / 'TachiTalk.exe').is_file() else [sys.executable, str(root / 'main.py')]
         try:
             subprocess.Popen(command, cwd=root)

@@ -10,15 +10,16 @@ import stat
 import uuid
 import zipfile
 
-from app.updates.manifest import allowed_path, atomic_json, canonical, safe_path, sha256, validate
+from app.updates.manifest import allowed_path, atomic_json, canonical, filesystem_path, safe_path, sha256, validate
 
 
 def version_path(component):
-    return 'release-version.json' if component == 'main' else 'services/gpt_sovits/component-version.json'
+    return {'main': 'release-version.json', 'voice': 'services/gpt_sovits/component-version.json',
+            'training': 'services/gpt_sovits/training/component-version.json'}[component]
 
 
 def local_version(root, component='main'):
-    record = Path(root) / version_path(component)
+    record = filesystem_path(root) / version_path(component)
     if record.exists():
         return json.loads(record.read_text(encoding='utf-8'))['version']
     # Old onedir installations and the stable source baseline have no version record.
@@ -92,7 +93,7 @@ class InstallLock(AbstractContextManager):
 
 def recover(root, progress=None):
     """Call under InstallLock, before launching application or another transaction."""
-    root = Path(root)
+    root = filesystem_path(root)
     pending = root / '.tachitalk-pending.json'
     report = progress or (lambda *a, **k: None)
     if not pending.exists():
@@ -127,6 +128,7 @@ def recover(root, progress=None):
 
 
 def replace_file(source, destination):
+    source, destination = filesystem_path(source), filesystem_path(destination)
     destination.parent.mkdir(parents=True, exist_ok=True)
     temporary = destination.with_name(destination.name + '.tachitalk-new')
     shutil.copyfile(source, temporary)
@@ -137,6 +139,7 @@ def replace_file(source, destination):
 
 
 def disk_required(payload, root):
+    root = filesystem_path(root)
     size = sum(file['size'] for file in payload['files'])
     backup = sum(path.stat().st_size for name in [r['path'] for r in payload['files']] + payload.get('delete', [])
                  if (path := target(root, name)).is_file())
@@ -176,19 +179,25 @@ def _backup_file(source, saved, *, allow_link, progress):
 def apply_archive(root, archive, payload, *, fault=None, progress=None, lock_held=False):
     """Authenticate input, retain rollback data, then stream each file into place."""
     validate(payload)
-    root, archive = Path(root).resolve(), Path(archive)
+    original_root = Path(root).resolve()
+    root, archive = filesystem_path(original_root), filesystem_path(archive)
     report = progress or (lambda *a, **k: None)
     with nullcontext() if lock_held else InstallLock(root):
         recover(root, progress)
         report('prepare')
         if payload['component'] == 'main' and local_version(root) != payload['base_version']:
             raise ValueError('补丁不适用于当前主程序版本')
-        if payload['component'] == 'voice':
+        if payload['component'] in ('voice', 'training'):
             from app.updates.manifest import version_tuple
             if version_tuple(local_version(root)) < version_tuple(payload.get('min_main_version', '1.3.0')):
                 raise ValueError('请先升级主程序后安装此语音组件')
-            if payload.get('base_version', '*') != '*' and local_version(root, 'voice') != payload['base_version']:
+            if payload.get('base_version', '*') != '*' and local_version(root, payload['component']) != payload['base_version']:
                 raise ValueError('语音补丁不适用于当前语音版本')
+        if payload['component'] == 'training':
+            from app.paths import voice_location
+            base = voice_location(root, root / 'user_data')
+            if not (base / 'services/gpt_sovits/runtime/python.exe').is_file():
+                raise ValueError('请先安装 v2ProPlus 推理资源包，再安装训练扩展')
         archive_size = payload['archive']['size']
         if archive.stat().st_size != archive_size:
             raise ValueError('更新包完整性校验失败')
@@ -246,7 +255,9 @@ def apply_archive(root, archive, payload, *, fault=None, progress=None, lock_hel
                 if existed:
                     saved = target(backup, name)
                     sensitive = name.lower().startswith(('assets/audio/tts_reference/',
-                        'services/gpt_sovits/gpt_weights', 'services/gpt_sovits/sovits_weights'))
+                        'services/gpt_sovits/gpt_weights', 'services/gpt_sovits/sovits_weights',
+                        'services/gpt_sovits/training/gpt_sovits/pretrained_models/',
+                        'services/gpt_sovits/training/models/'))
                     digest = _backup_file(destination, saved, allow_link=not sensitive,
                         progress=lambda n, base=prepared, name=name: report('prepare', base + n,
                             prepare_total, unit='bytes', current=name))
@@ -318,16 +329,22 @@ def apply_archive(root, archive, payload, *, fault=None, progress=None, lock_hel
             except BaseException:
                 recover(root, progress)
                 raise
-        return transaction
+        return original_root / transaction.relative_to(root)
 
 
 def uninstall_voice(root, progress=None, lock_held=False):
+    return uninstall_component(root, 'voice', progress, lock_held)
+
+
+def uninstall_component(root, component, progress=None, lock_held=False):
     """Remove only recorded, unchanged managed files. Legacy installations are never guessed."""
-    root = Path(root).resolve()
+    if component not in ('voice', 'training'):
+        raise ValueError('不能卸载此组件')
+    root = filesystem_path(Path(root).resolve())
     report = progress or (lambda *a, **k: None)
     with nullcontext() if lock_held else InstallLock(root):
         recover(root, progress)
-        record_name = version_path('voice')
+        record_name = version_path(component)
         record = target(root, record_name)
         if not record.is_file():
             raise ValueError('旧版或外部语音没有托管清单，不能自动卸载；请保留或手动管理该目录')
@@ -337,7 +354,7 @@ def uninstall_voice(root, progress=None, lock_held=False):
         remove, preserved = [], []
         for index, item in enumerate(owned):
             report('verify', index, len(owned), current=item['path'])
-            allowed_path('voice', item['path'])
+            allowed_path(component, item['path'])
             path = target(root, item['path'])
             if path.is_file() and sha256(path) == item['sha256']:
                 remove.append(item['path'])
@@ -348,7 +365,7 @@ def uninstall_voice(root, progress=None, lock_held=False):
         backup.mkdir(parents=True)
         if shutil.disk_usage(root).free < sum(target(root, n).stat().st_size for n in [*remove, record_name]) + 32 * 1024**2:
             raise ValueError('卸载备份磁盘空间不足')
-        journal = {'component': 'voice', 'state': 'applying', 'backup': backup.relative_to(root).as_posix(), 'operations': []}
+        journal = {'component': component, 'state': 'applying', 'backup': backup.relative_to(root).as_posix(), 'operations': []}
         pending = root / '.tachitalk-pending.json'
         try:
             for index, name in enumerate([*remove, record_name]):
@@ -369,6 +386,8 @@ def uninstall_voice(root, progress=None, lock_held=False):
             report('commit')
             journal['state'] = 'committed'
             atomic_json(pending, journal)
+            from app.updates.cleanup import mark_committed
+            mark_committed(root, backup.parent, None, [])
             pending.unlink()
         except BaseException:
             recover(root, progress)

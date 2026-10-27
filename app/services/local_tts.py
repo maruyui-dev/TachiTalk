@@ -24,6 +24,26 @@ class LocalTTSService:
         self.endpoint = None
         self.lock = asyncio.Lock()
         self.ready = False
+        self.model_signature = None
+        self.suspended = False
+        self.loop = None
+
+    def configuration_signature(self):
+        record = self.state_dir.parent / 'settings/active_voice_model.json'
+        try:
+            status = record.stat()
+            return status.st_mtime_ns, status.st_size
+        except FileNotFoundError:
+            return None
+
+    async def suspend(self):
+        self.suspended = True
+        try:
+            async with self.lock:
+                await self.close()
+        except BaseException:
+            self.suspended = False
+            raise
 
     @staticmethod
     def local_port(options):
@@ -70,6 +90,9 @@ class LocalTTSService:
         command = [str(self.root / 'runtime/python.exe'), '-u', '-B',
                    str(PROJECT_ROOT / 'scripts/tts_service_entry.py'), '--service-root', str(self.root),
                    '--state-dir', str(self.state_dir), '--port', str(port)]
+        record = self.state_dir.parent / 'settings/active_voice_model.json'
+        if record.is_file():
+            command += ['--model-record', str(record)]
         try:
             self.process, self.job = spawn_hidden(command, cwd=self.root, env=env, stdin=subprocess.DEVNULL,
                                                   stdout=self.log, stderr=subprocess.STDOUT)
@@ -79,11 +102,18 @@ class LocalTTSService:
             raise
 
     async def ensure(self, options):
+        self.loop = asyncio.get_running_loop()
         port = self.local_port(options)
         if port is None:
             return
         url = f'http://127.0.0.1:{port}/openapi.json'
         async with self.lock:
+            if self.suspended:
+                raise ValueError('模型训练 / 试听正在使用本地环境，完成后自动恢复桌宠朗读')
+            signature = self.configuration_signature()
+            if self.model_signature != signature:
+                await self.close()
+                self.model_signature = signature
             if self.endpoint != url:
                 await self.close()
                 self.endpoint = url

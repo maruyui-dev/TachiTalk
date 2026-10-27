@@ -2,6 +2,7 @@
 import base64
 import hashlib
 import json
+import os
 import re
 from pathlib import Path, PurePosixPath
 from urllib.parse import urlsplit
@@ -11,6 +12,20 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 
 REPOSITORY = 'maruyui-dev/TachiTalk'
 MAX_MANIFEST = 32 * 1024 * 1024  # Private runtime inventory is already ~10 MiB; bounded explicitly.
+
+
+def filesystem_path(path):
+    """Use Unicode extended paths for installer IO, independent of Windows policy.
+
+    This only changes the IO spelling. Signed relative names and target() still
+    enforce the component boundary and reject links before any file is changed.
+    """
+    path = Path(os.path.abspath(path))
+    value = str(path)
+    if os.name == 'nt' and not value.startswith('\\\\?\\'):
+        value = '\\\\?\\UNC\\' + value[2:] if value.startswith('\\\\') else '\\\\?\\' + value
+        return Path(value)
+    return path
 
 
 def canonical(payload):
@@ -60,12 +75,17 @@ def allowed_path(component, value):
     if component == 'main':
         allowed = (lower in {'tachitalk.exe', 'tachitalkupdater.exe', 'readme.md', 'license', 'third_party_notices.md', 'requirements.txt'}
                    or lower.startswith(('_internal/', 'resources/control_panel/', 'licenses/'))
-                   or lower in {'scripts/tts_service_entry.py', 'scripts/whisper_worker.py'})
+                   or lower in {'scripts/tts_service_entry.py', 'scripts/whisper_worker.py', 'scripts/training_worker.py'})
+    elif component == 'training':
+        allowed = lower.startswith('services/gpt_sovits/training/')
+    elif component == 'voice':
+        allowed = (lower.startswith(('services/gpt_sovits/', 'assets/audio/tts_reference/'))
+                   and not lower.startswith('services/gpt_sovits/training/'))
     else:
-        allowed = lower.startswith(('services/gpt_sovits/', 'assets/audio/tts_reference/'))
+        allowed = False
     if not allowed or lower.endswith(('.log', '.tmp', '.tachitalk.json')) or '/__pycache__/' in lower:
         raise ValueError(f'组件无权修改文件：{value}')
-    if lower in {'services/gpt_sovits/component-version.json'}:
+    if lower in {'services/gpt_sovits/component-version.json', 'services/gpt_sovits/training/component-version.json'}:
         raise ValueError('版本记录由安装事务管理')
 
 
@@ -86,7 +106,7 @@ def version_tuple(value):
 
 
 def validate(payload):
-    if payload.get('schema') != 1 or payload.get('component') not in ('main', 'voice'):
+    if payload.get('schema') != 1 or payload.get('component') not in ('main', 'voice', 'training'):
         raise ValueError('未知清单格式或组件')
     component = payload['component']
     if len(payload['files']) > 100000 or len(payload.get('delete', [])) > 100000:

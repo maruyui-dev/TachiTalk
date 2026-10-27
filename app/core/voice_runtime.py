@@ -72,10 +72,14 @@ async def monitor_voice_services(session, settings, inputs, voices, speech, ui, 
             ai_snapshot = ai.snapshot() if ai is not None else None
             signatures = {'LLM': ai_snapshot.revision if ai_snapshot is not None else 0,
                           'ASR': snapshot.asr_revision, 'TTS': snapshot.tts_revision}
+            service = getattr(voices, 'local_service', None)
+            suspended = getattr(voices, 'training_active', False)
+            if service is not None and hasattr(service, 'configuration_signature'):
+                signatures['TTS'] = (snapshot.tts_revision, service.configuration_signature(), suspended)
             desired = {'LLM'}
             if inputs.recording_state()[0]:
                 desired.add('ASR')
-            if snapshot.tts.auto_read:
+            if snapshot.tts.auto_read and not suspended:
                 desired.add('TTS')
             for name, signature in signatures.items():
                 if seen.get(name) != signature:

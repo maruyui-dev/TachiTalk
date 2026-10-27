@@ -105,10 +105,11 @@ class UpdateClient:
             return {'manifests':{},'errors':{},'main':{'state':'disabled','version':None}}
         return await main_feed.check(progress)
 
-    async def voice_manifest(self, progress=lambda value: None, *, stop=None, selected_source=None):
+    async def voice_manifest(self, progress=lambda value: None, *, stop=None, selected_source=None, component='voice'):
         """Independent signed voice discovery; never request release/version APIs."""
+        label = '完整训练包' if component == 'training' else '语音'
         if stop is not None and stop.is_set():
-            raise Paused('已取消读取语音清单')
+            raise Paused(f'已取消读取{label}清单')
         config = self.configuration()
         configured = sources(config, 'manifest_sources')
         # First-run discovery need not wait on GitHub. Routing probes the signed
@@ -118,16 +119,16 @@ class UpdateClient:
             configured = [s for s in configured if s['name'] == selected_source]
         def validate(body):
             payload = verify(json.loads(body), self.keys)
-            if payload['component'] != 'voice':
-                raise ValueError('不是语音组件清单')
-        progress({'status':'正在独立获取并验证语音清单','phase':'preparing'})
-        body = await fetch_small(f'https://github.com/{REPOSITORY}/releases/latest/download/voice-manifest.json',
+            if payload['component'] != component:
+                raise ValueError(f'不是{label}组件清单')
+        progress({'status':f'正在独立获取并验证{label}清单','phase':'preparing'})
+        body = await fetch_small(f'https://github.com/{REPOSITORY}/releases/latest/download/{component}-manifest.json',
             configured, limit=MAX_MANIFEST, validator=validate)
         validate(body)
         if stop is not None and stop.is_set():
             raise Paused('已取消读取语音清单')
         envelope = json.loads(body)
-        atomic_json(self.directory / 'voice-manifest.json', envelope)
+        atomic_json(self.directory / f'{component}-manifest.json', envelope)
         return envelope
 
     async def main_manifest(self, version, progress=lambda value: None, *, stop=None, selected_source=None):
@@ -288,7 +289,7 @@ class UpdateClient:
         if shutil.disk_usage(cache).free < 2 * payload['archive']['size'] + 32 * 1024 * 1024:
             raise ValueError('下载缓存磁盘空间不足')
         configured = sources(config)
-        preferred = config.get('preferred_download_source') if payload['component'] == 'voice' else None
+        preferred = config.get('preferred_download_source') if payload['component'] in ('voice', 'training') else None
         if payload['component'] == 'main' and selected_source:
             configured = [s for s in configured if s['name'] == selected_source]
             if not configured:
@@ -301,7 +302,7 @@ class UpdateClient:
             if not configured:
                 raise ValueError('所选下载源已禁用或不存在，请切换来源')
             progress({'status':'按用户选择使用来源；切源任务从零开始','source':preferred})
-        elif not has_cache and payload['component'] == 'voice':
+        elif not has_cache and payload['component'] in ('voice', 'training'):
             from app.updates.diagnostics import select_voice_source
             route = await select_voice_source(payload['parts'][0], stop=stop, progress=progress)
             github = [s for s in configured if not s.get('prefix')]

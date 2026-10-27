@@ -60,6 +60,11 @@ class ControlPanelWindow(QMainWindow):
         return super().eventFilter(watched, event)
 
     def closeEvent(self, event):
+        training = getattr(self, 'training_page', None)
+        if training is not None and training.job.running:
+            training.log.appendPlainText('任务仍在运行，请先请求停止并等待保存完成，再退出程序。')
+            event.ignore()
+            return
         if not self._closing:
             self._closing = True
             self.closing.emit()
@@ -198,14 +203,14 @@ class PreviewImage(QObject):
 
 
 def setup_navigation(window):
-    """侧栏切换页面；开发中的训练页先提示，再进入预览。"""
+    """侧栏切换页面；训练工作台直接进入。"""
     pages = (
         ('navCharacter', 'person', '角色控制', '调整人物与气泡的显示方式', '设置实时预览'),
         ('navChat', 'chat', '对话设置', '配置角色人设与日常对话偏好', '人设与对话偏好'),
         ('navAudio', 'audio', '语音与音频', '配置录音、语音识别和语音播放', '输入与输出设备'),
         ('navAI', 'settings', 'AI 服务', '配置模型接口，调整生成参数', '模型服务配置'),
         ('navAssets', 'folder', '资源管理', '整理本地立绘、气泡皮肤与神态映射', '立绘与气泡素材'),
-        ('navTraining', 'training', '模型训练', '使用 GPT-SoVITS，为角色训练专属声音', '功能开发中，仅供界面预览；暂不支持训练'),
+        ('navTraining', 'training', '模型训练', 'GPT-SoVITS v2ProPlus · 数据处理、训练与试听', '推理与训练资源按需安装；项目独立保存'),
         ('navDelivery', 'download', '更新与语音资源', '管理主程序更新与可选语音组件', '新增资源随主程序安装；语音组件可独立安装'),
     )
     stack = window.findChild(QStackedWidget, 'pageStack')
@@ -214,12 +219,8 @@ def setup_navigation(window):
         if index == len(pages) - 1 and window.ensure_update_controls() is None:
             return
         training = index == stack.indexOf(window.training_page.page)
-        if training and show_notice:
-            current_name = pages[stack.currentIndex()][0]
-            window.findChild(QPushButton, current_name).setChecked(True)
-            window.training_page.show_notice()
-            if window._closing:
-                return
+        if training:
+            window.training_page.refresh()
         _, _, title, subtitle, footer = pages[index]
         stack.setCurrentIndex(index)
         window.findChild(QLabel, 'pageTitle').setText(title)
