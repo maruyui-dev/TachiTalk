@@ -43,3 +43,12 @@ r5用户关闭旧程序和已结束的失败窗口，完整解压ZIP，保持EXE
 未覆盖桌面日常安装，未升级GPT-SoVITS/PyTorch/CUDA，未读生产私钥、未签新资源清单，r6训练上传三文件不变。本轮未提交/推送/发布GitHub，也未改魔搭云端；HEAD4666ea0及原未提交修改保留。
 
 开发回滚可使用before中本轮业务文件小型快照；用户需要回滚主程序可同目录安装原r6/r5，保留user_data及语音资源，但旧版会重新存在此路径限制问题。
+
+## GitHub发布（2026-10-27，用户明确授权）
+
+- 已上传r7主程序ZIP及校验文件到原正式版Release：[下载r7](https://github.com/maruyui-dev/TachiTalk/releases/download/v2.0.0/TachiTalk-v2.0.0-setup-r7.zip)，[发布页](https://github.com/maruyui-dev/TachiTalk/releases/tag/v2.0.0)。原7个附件均保留，v2.0.0标签未移动；发布说明现推荐r7并明确r5需手动同目录覆盖主程序。
+- ZIP附件ID681502213，116,267,943字节；GitHub服务端SHA256与上文一致。校验附件ID681503589，97字节。匿名GET验证ZIP返回HTTP206、前1024字节有效且总量116267943，校验文件HTTP200并与本地一致；没有将前缀检查宣称为完整回下载，完整附件摘要由GitHub服务端校验。
+- 对应源码提交：[683162a2f52b262afd5139e4ec8f3caca17628b7](https://github.com/maruyui-dev/TachiTalk/commit/683162a2f52b262afd5139e4ec8f3caca17628b7)。96个冻结应用代码对象和随包业务脚本一致，匿名读取公开install.py与本地字节相同；发布包含既有r6训练工作台，README已更新。标签旧自动源码归档不代表r7，使用对应源码提交。
+- 本次只发布r7主程序及源码，没有上传完整训练包或操作魔搭；已签名训练三文件仍按原交付目录提供，由用户后续上传。Release说明明确训练权重独立发行，GitHub附件尚未上线。
+- 初次附件上传连接重置，检查GitHub无半成品后改用流式传输成功。使用本项目内独立索引创建提交并正常快进push，不切换当前分支、修改真实索引或覆盖原脏工作区。没有重新跑全量回归、下载安装大型语音包或读取生产私钥。过程见work/github-r7-20261027/published.json、public-download-verification.json及发布日志。
+- 若需撤回推荐，可使用保存的release-before.json恢复Release标题/正文，旧附件仍存在；不强推main或移动版本标签。旧r5/r6仍有本次修复前的路径限制，回滚需结合具体故障判断。
